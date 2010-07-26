@@ -8,7 +8,7 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 #include <UnitTest++.h>
 #include "../fileservice.h"
 
-TEST(TestFileToBuffer)
+TEST(TestFileToBufferEquals)
 {
     FileService fileservice;
     ofstream testdata;
@@ -20,4 +20,13 @@ TEST(TestFileToBuffer)
     CHECK_EQUAL(data.c_str(), buffer);
     remove(data.c_str());
     delete[] buffer;
+}
+
+TEST(TestFileToBufferNoFile)
+{
+    FileService fileservice;
+    try {
+        char* buffer = fileservice.fileToBuffer("nonexistent.txt");
+        CHECK(false); // Exception should have been thrown.
+    } catch (FileNotFoundException& e) {}
 }
