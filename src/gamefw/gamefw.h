@@ -1,0 +1,14 @@
+/*
+Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
+
+*/
+
+#define GL3_PROTOTYPES 1
+#include <GL3/gl3.h>
+
+#include <bullet/btBulletDynamicsCommon.h>
+
+#include "game.h"
+#include "gamestate.h"
+#include "rendercontext.h"
+#include "renderjob.h"
