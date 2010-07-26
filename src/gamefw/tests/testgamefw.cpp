@@ -9,6 +9,6 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 int main(int argc, char* argv[])
 {
     google::InitGoogleLogging(argv[0]);
-    
+
     return UnitTest::RunAllTests();
 }

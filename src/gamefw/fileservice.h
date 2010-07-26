@@ -10,23 +10,31 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 #include <GL/gl.h>
 
+class fipImage;
+
 using namespace std;
 
 class FileNotFoundException: public exception
 {
-    public:
-        virtual const char* what() const throw();
+public:
+    virtual const char* what() const throw();
 };
 
 class FileService
 {
-    public:
-        // Returns dynamically allocated char* to the file's contents. Used for
-        // example to pass glsl shader sources to the compiler.
-        char* fileToBuffer(string filename);
+public:
+    FileService();
+    ~FileService();
 
-        // Creates an opengl texture and returns it's ID.
-        GLuint makeTexture( string name);
-};
+    // Returns dynamically allocated char* to the file's contents. Used for
+    // example to pass glsl shader sources to the compiler.
+    char* fileToBuffer ( string filename );
+
+    // Creates an opengl texture and returns it's ID.
+    GLuint makeTexture ( string name );
+
+private:
+    const fipImage& readImage ( string name );
+    };
 
 #endif // FILESERVICE_H
