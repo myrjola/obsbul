@@ -11,16 +11,16 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 // services or audio.
 class Locator
 {
-    public:
-        // Returns the file system service.
-        static const FileService& getFileService();
+public:
+    // Returns the file system service.
+    static FileService& getFileService();
 
-        // Binds the given service as the located file service.
-        static void RegisterFileService(FileService& service);
+    // Binds the given service as the located file service.
+    static void RegisterFileService(FileService& service);
 
-    private:
-        static FileService file_service;
-                
+private:
+    static FileService* file_service;
+
 };
 
 #endif // LOCATOR_H

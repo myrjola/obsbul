@@ -2,8 +2,9 @@
 Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 */
+#include "../common.h"
 
-#include <string>
+#include <set>
 
 #include <GL/gl.h>
 
@@ -14,24 +15,35 @@ using namespace std;
 
 class ShaderProgram
 {
-    public:
-        // Compiles and links a shader program from the given source code.
-        ShaderProgram(string vertex_source,
-                      string geometry_source,
-                      string fragment_source);
+public:
+    // Compiles and links a shader program from the given source code.
+    ShaderProgram(char* vertex_source,
+                  char* geometry_source,
+                  char* fragment_source,
+                  set<string>& defines);
 
-        // Returns shader_program.
-        GLuint getProgram();
+    // Returns shader_program.
+    GLuint getProgram();
 
-        // Detaches shaders and deletes them and the program.
-        ~ShaderProgram();
+    // Returns vector of defines used when compiling the program.
+    set<string>& getDefines();
+    
+    // Reloads shaders even in the middle of the game.
+    void reload();
 
-    private:
-        GLuint compile_shader(GLenum type, char* defines, char* source);
+    // Detaches shaders and deletes them and the program.
+    ~ShaderProgram();
 
-        void link_program();
-        
-        GLuint vertex_shader, geometry_shader, fragment_shader, shader_program;
+private:
+    GLuint compileShader(GLenum type, char** defines, char* source);
+
+    void linkProgram();
+
+    GLuint vertex_shader, geometry_shader, fragment_shader, shader_program;
+
+    set<string> defines;
+
+    
 
 };
 

@@ -2,12 +2,13 @@
 Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 */
+#include "../common.h"
 
-#include <vector>
 #include <map>
+#include <set>
 
 #include <GL/gl.h>
-#include <string>
+#include "shaderprogram.h"
 
 using namespace std;
 
@@ -16,20 +17,23 @@ using namespace std;
 
 class ShaderFactory
 {
-    public:
-        ShaderFactory();
+public:
+    ShaderFactory();
 
-        // Returns the ID of the shader object, made from an übershader using
-        // the given defines.
-        GLuint makeShader(vector<string> defines);
+    // Returns a ShaderProgram made from an übershader using
+    // the given defines.
+    ShaderProgram& makeShader(set< string > defines);
 
-        ~ShaderFactory();
+    ~ShaderFactory();
 
-    private:
-        GLuint alreadyCompiledCheck(vector<string> defines);
+private:
+    map< string, vector<GLuint> >* define_table;
+    map< GLuint, ShaderProgram >*  program_table;
+
+    char* vertex_source, *geometry_source, *fragment_source;
 };
 
-        
-        
+
+
 
 #endif // SHADERFACTORY_H

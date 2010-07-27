@@ -1,5 +1,7 @@
-add_executable(testgamefw testgamefw.cpp testfileservice.cpp)
+include_directories(/usr/include/bullet)
 
-target_link_libraries(testgamefw gamefw UnitTest++ boost_filesystem)
+add_executable(testgamefw testshaderfactory.cpp testgamefw.cpp testfileservice.cpp)
+
+target_link_libraries(testgamefw UnitTest++ boost_filesystem BulletDynamics gamefw)
 
 add_test(testGameFW testgamefw)

@@ -30,10 +30,9 @@ TEST(TestFileToBufferEquals)
 TEST(TestFileToBufferNoFile)
 {
     FileService fileservice;
-    try {
-        char* buffer = fileservice.fileToBuffer("nonexistent.txt");
-        CHECK(false); // Exception should have been thrown.
-    } catch (FileNotFoundException& e) {}
+    char* buffer;
+    CHECK_THROW(buffer = fileservice.fileToBuffer("nonexistent.txt"),
+                 FileNotFoundException);
 }
 
 TEST(TestMakeTexture)
@@ -61,8 +60,8 @@ TEST(TestMakeTexture)
 TEST(TestMakeTextureNoFile)
 {
     FileService fileservice;
-    try {
-        fileservice.makeTexture("nonexistent");
-        CHECK(false); // Exception should have been thrown.
-    } catch (FileNotFoundException& e) {}
+    GLuint texture;
+    CHECK_THROW(texture = fileservice.makeTexture("nonexistent"),
+                 FileNotFoundException);
+    glDeleteTextures(1, &texture);
 }

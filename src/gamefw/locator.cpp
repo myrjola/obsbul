@@ -2,19 +2,21 @@
 Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 */
-#include <assert.h>
+#include "../common.h"
 
 #include "locator.h"
 
-const FileService& Locator::getFileService()
+FileService* Locator::file_service;
+
+FileService& Locator::getFileService()
 {
-    assert(&file_service != NULL);
-    return file_service;
+    assert(file_service != NULL);
+    return *file_service;
 }
 
 void Locator::RegisterFileService(FileService& service)
 {
-    file_service = service;
+    file_service = &service;
 }
 
 

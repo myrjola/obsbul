@@ -2,12 +2,11 @@
 Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 */
-#include <iostream>
+#include "../common.h"
+
 #include <fstream>
-#include <cassert>
 
 #include <FreeImagePlus.h>
-#include <glog/logging.h>
 
 #include "fileservice.h"
 
