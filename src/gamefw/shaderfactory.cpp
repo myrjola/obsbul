@@ -55,15 +55,15 @@ ShaderProgram& ShaderFactory::makeShader(set< string > defines)
                                                geometry_source,
                                                fragment_source,
                                                defines);
+    GLuint id = program->getProgramID();
     foreach (string current_define, defines) {
         map<string, vector<GLuint> >::iterator result;
         if (define_table->find(current_define) == define_table->end()) {
             // Define not found.
             (*define_table)[current_define] = *new vector<GLuint>();
         }
-        (*define_table)[current_define].push_back(program->getProgram());
+        (*define_table)[current_define].push_back(id);
     }
-    GLuint id = program->getProgram();
     program_table->insert(make_pair(id, *program));
     return program_table->at(id);
 }

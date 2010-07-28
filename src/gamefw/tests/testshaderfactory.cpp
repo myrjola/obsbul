@@ -35,8 +35,8 @@ TEST_FIXTURE(ShaderFactoryFixture, TestMakeShader)
     ShaderProgram& also_p1 = factory->makeShader(d1);
     ShaderProgram& p2 = factory->makeShader(d2);
     
-    CHECK_EQUAL(p1.getProgram(), also_p1.getProgram());
-    
-    CHECK(p1.getProgram() != p2.getProgram());
+    CHECK_EQUAL(p1.getProgramID(), also_p1.getProgramID());
+
+    CHECK(p1.getProgramID() != p2.getProgramID());
 }
 

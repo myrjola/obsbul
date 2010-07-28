@@ -8,8 +8,11 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 #include <cassert>
 #include <iostream>
+#include <cstring>
 #include <vector>
 #include <exception>
+
+using namespace std;
 
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;

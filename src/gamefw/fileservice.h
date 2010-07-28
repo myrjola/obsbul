@@ -5,14 +5,12 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 #ifndef FILESERVICE_H
 #define FILESERVICE_H
-#include <string>
-#include <exception>
+
+#include "../common.h"
 
 #include <GL/gl.h>
 
 class fipImage;
-
-using namespace std;
 
 class FileNotFoundException: public exception
 {
