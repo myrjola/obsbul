@@ -6,17 +6,17 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 #include "locator.h"
 
-FileService* Locator::file_service;
+FileService* Locator::s_file_service;
 
 FileService& Locator::getFileService()
 {
-    assert(file_service != NULL);
-    return *file_service;
+    assert(s_file_service != NULL);
+    return *s_file_service;
 }
 
-void Locator::RegisterFileService(FileService& service)
+void Locator::registerFileService(FileService& service)
 {
-    file_service = &service;
+    s_file_service = &service;
 }
 
 

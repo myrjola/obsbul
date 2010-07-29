@@ -12,34 +12,35 @@ const char* ShaderProgramCreationError::what() const throw()
 ShaderProgram::ShaderProgram(char* vertex_source,
                              char* geometry_source,
                              char* fragment_source,
-                             set< string >& defines) :
-                             defines(defines), vertex_source(vertex_source),
-                             geometry_source(geometry_source),
-                             fragment_source(fragment_source)
+                             set< string >& defines)
+        :
+        m_defines(defines), m_vertex_source(vertex_source),
+        m_geometry_source(geometry_source),
+        m_fragment_source(fragment_source)
 {
-    program_id = glCreateProgram();
-    makeProgram(program_id);
+    m_program_id = glCreateProgram();
+    makeProgram(m_program_id);
 }
 
 
 GLuint ShaderProgram::getProgramID()
 {
-    return program_id;
+    return m_program_id;
 }
 
 ShaderProgram::~ShaderProgram()
 {
-    glDetachShader(program_id, vertex_shader);
-    glDetachShader(program_id, fragment_shader);
+    glDetachShader(m_program_id, m_vertex_shader);
+    glDetachShader(m_program_id, m_fragment_shader);
     // TODO: Detach & delete geometry shader.
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
-    glDeleteProgram(program_id);
+    glDeleteShader(m_vertex_shader);
+    glDeleteShader(m_fragment_shader);
+    glDeleteProgram(m_program_id);
 }
 
 set< string >& ShaderProgram::getDefines()
 {
-    return defines;
+    return m_defines;
 }
 
 GLuint ShaderProgram::compileShader(GLenum type, set<string>& defines, char* source)
@@ -75,15 +76,15 @@ GLuint ShaderProgram::compileShader(GLenum type, set<string>& defines, char* sou
 
 void ShaderProgram::makeProgram(GLuint program_id)
 {
-    vertex_shader = compileShader(GL_VERTEX_SHADER, defines, vertex_source);
-    fragment_shader = compileShader(GL_FRAGMENT_SHADER, defines, fragment_source);
+    m_vertex_shader = compileShader(GL_VERTEX_SHADER, m_defines, m_vertex_source);
+    m_fragment_shader = compileShader(GL_FRAGMENT_SHADER, m_defines, m_fragment_source);
 
     // TODO: Make geometry shader compilation optional.
 //     geometry_shader = compileShader(GL_GEOMETRY_SHADER, defines, fragment_source);
 //     glAttachShader(program_id, geometry_shader);
-    
-    glAttachShader(program_id, vertex_shader);
-    glAttachShader(program_id, fragment_shader);
+
+    glAttachShader(program_id, m_vertex_shader);
+    glAttachShader(program_id, m_fragment_shader);
     glLinkProgram(program_id);
 
     GLint status_ok;

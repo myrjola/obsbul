@@ -13,29 +13,52 @@ using namespace std;
 #ifndef SHADERPROGRAM_H
 #define SHADERPROGRAM_H
 
+/**
+ * @brief Thrown when something goes awry in the creation of ShaderProgram.
+ */
 class ShaderProgramCreationError : public exception
 {
 public:
+    /**
+     * @return Announcement that something went wrong.
+     */
     virtual const char* what() const throw();
 };
 
+/**
+ * @brief Abstraction of OpenGL shader program.
+ */
 class ShaderProgram
 {
 public:
-    // Compiles and links a shader program from the given source code.
-    // Throws ShaderProgramCreationError if errors occur.
+    /**
+     * Compiles and links a shader program from the given source code.
+     *
+     * @throw ShaderProgramCreationError When compile or linking errors occur.
+     *
+     * @param vertex_source Buffer to vertex shader source.
+     * @param geometry_source Buffer to geometry shader source.
+     * @param fragment_source Buffer to fragment shader source.
+     * @param defines Set of defines used when compiling.
+     */
     ShaderProgram(char* vertex_source,
                   char* geometry_source,
                   char* fragment_source,
                   set<string>& defines);
 
-    // Returns shader_program.
+    /**
+     * @return The object ID of the shader program.
+     */
     GLuint getProgramID();
 
-    // Returns vector of defines used when compiling the program.
+    /**
+     * @return The defines used in the compilation of the program.
+     */
     set<string>& getDefines();
-    
-    // Detaches shaders and deletes them and the program.
+
+    /**
+     * Detaches shaders and deletes them and the program.
+     */
     ~ShaderProgram();
 
 private:
@@ -44,16 +67,13 @@ private:
     void makeProgram(GLuint program_id);
 
     void logErrors(GLuint object_id, PFNGLGETSHADERIVPROC shader_iv,
-        PFNGLGETSHADERINFOLOGPROC shader_infolog);
+                   PFNGLGETSHADERINFOLOGPROC shader_infolog);
 
-    GLuint vertex_shader, geometry_shader, fragment_shader, program_id;
+    GLuint m_vertex_shader, m_geometry_shader, m_fragment_shader, m_program_id;
 
-    char* vertex_source, *geometry_source, *fragment_source;
+    char* m_vertex_source, *m_geometry_source, *m_fragment_source;
 
-    set<string> defines;
-
-    
-
+    set<string> m_defines;
 };
 
 #endif // SHADERPROGRAM_H

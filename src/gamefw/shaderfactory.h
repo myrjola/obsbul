@@ -7,7 +7,6 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 #include <map>
 #include <set>
 
-#include <GL/gl.h>
 #include "shaderprogram.h"
 
 using namespace std;
@@ -15,22 +14,35 @@ using namespace std;
 #ifndef SHADERFACTORY_H
 #define SHADERFACTORY_H
 
+/**
+ * @brief Manages the compilation of shaders from an übershader.
+ */
 class ShaderFactory
 {
 public:
+    /**
+     * The shader sources are read in the constructor.
+     */
     ShaderFactory();
 
-    // Returns a ShaderProgram made from an übershader using
-    // the given defines.
+    /** Creates a ShaderProgram made from an übershader.
+     *
+     * @param defines Set of defines used in the compilation.
+     *
+     * @return The compiled ShaderProgram.
+     */
     ShaderProgram& makeShader(set< string > defines);
 
+    /**
+     * Destructor.
+     */
     ~ShaderFactory();
 
 private:
-    map< string, vector<GLuint> >* define_table;
-    map< GLuint, ShaderProgram >*  program_table;
+    map< string, vector<GLuint> >* m_define_table;
+    map< GLuint, ShaderProgram >*  m_program_table;
 
-    char* vertex_source, *geometry_source, *fragment_source;
+    char* m_vertex_source, *m_geometry_source, *m_fragment_source;
 };
 
 

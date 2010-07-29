@@ -8,7 +8,7 @@ struct ShaderFactoryFixture
     ShaderFactoryFixture()
     {
         FileService* fileservice = new FileService();
-        Locator::RegisterFileService(*fileservice);
+        Locator::registerFileService(*fileservice);
         factory = new ShaderFactory();
         
     }
