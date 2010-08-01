@@ -29,7 +29,7 @@ TEST_FIXTURE(ShaderFactoryFixture, TestMakeShader)
     d1.insert("DUMMY1");
     d1.insert("DUMMY2");
     set<string> d2;
-    d2.insert("DUMMY2");
+    d2.insert("DUMMY3");
     
     ShaderProgram& p1 = factory->makeShader(d1);
     ShaderProgram& also_p1 = factory->makeShader(d1);

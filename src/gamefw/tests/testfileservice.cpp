@@ -21,7 +21,7 @@ TEST(TestFileToBufferEquals)
     std::string data = "Hello,\nWorld!";
     testdata << data;
     testdata.close();
-    char* buffer = fileservice.fileToBuffer("temp.txt");
+    char* buffer = fileservice.fileToBuffer(filename);
     CHECK_EQUAL(data.c_str(), buffer);
     remove(filename.c_str());
     delete[] buffer;
@@ -65,3 +65,4 @@ TEST(TestMakeTextureNoFile)
                  FileNotFoundException);
     glDeleteTextures(1, &texture);
 }
+

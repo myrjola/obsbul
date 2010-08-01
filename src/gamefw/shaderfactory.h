@@ -39,7 +39,7 @@ public:
     ~ShaderFactory();
 
 private:
-    map< string, vector<GLuint> >* m_define_table;
+    map< string, vector<GLuint>* >* m_define_table;
     map< GLuint, ShaderProgram* >*  m_program_table;
 
     char* m_vertex_source, *m_geometry_source, *m_fragment_source;

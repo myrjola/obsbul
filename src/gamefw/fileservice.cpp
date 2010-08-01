@@ -7,6 +7,7 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 #include <fstream>
 
 #include <FreeImagePlus.h>
+#include <physfs.h>
 
 #include "fileservice.h"
 
@@ -15,10 +16,30 @@ using namespace std;
 FileService::FileService()
 {
     FreeImage_Initialise( 0 );
+    if (!PHYSFS_isInit())
+        PHYSFS_init(NULL);
+    PHYSFS_setSaneConfig("config", PROJECT_NAME, "ob", 0, 1);
+
+    dirseparator.assign(PHYSFS_getDirSeparator());
+    
+    // Find the project directory
+    string basedir(PHYSFS_getBaseDir());
+
+    string project_name(PROJECT_NAME);
+    
+    int project_path_pos = basedir.find(project_name);
+    if (project_path_pos == basedir.npos) {
+        DLOG(FATAL) << "Project " << project_name <<
+        " root directory not found from " << basedir;
+    }
+    basedir.erase(project_path_pos + project_name.length());
+
+    PHYSFS_mount(basedir.c_str(), NULL, 0); // Mount to root.
 }
 
 FileService::~FileService()
 {
+    PHYSFS_deinit();
     FreeImage_DeInitialise();
 }
 
@@ -29,7 +50,9 @@ const char* FileNotFoundException::what() const throw()
 
 char* FileService::fileToBuffer( string filename )
 {
-    ifstream file( filename.c_str(), ios::in | ios::ate );
+    string realpath(getRealPath(filename));
+    
+    ifstream file( realpath.c_str(), ios::in | ios::ate );
     ifstream::pos_type size;
     char* buffer;
 
@@ -88,14 +111,28 @@ GLuint FileService::makeTexture( string name )
 const fipImage& FileService::readImage( string name )
 {
     string filename = "assets/images/" + name + ".png";
+
+    string realpath(getRealPath(filename));
+
     fipImage* image = new fipImage;
 
-    if ( !image->load( filename.c_str() ) ) {
-        DLOG( ERROR ) << filename << " not found.";
-        throw FileNotFoundException();
+    if ( !image->load( realpath.c_str() ) ) {
+        assert(false); // Shouldn't fail.
     }
     image->convertTo24Bits();
 
     DLOG( INFO ) << filename << " loaded to texture.";
     return *image;
 }
+
+string FileService::getRealPath(string path)
+{
+    if (!PHYSFS_exists(path.c_str())) {
+        DLOG( ERROR ) << path << " not found.";
+        throw FileNotFoundException();
+    }
+    string realpath(PHYSFS_getRealDir(path.c_str()));
+    realpath += dirseparator + path;
+    return realpath;
+}
+

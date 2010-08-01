@@ -15,7 +15,7 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 ShaderFactory::ShaderFactory()
 {
     m_program_table = new map< GLuint, ShaderProgram* >();
-    m_define_table = new map< string, vector<GLuint> >();
+    m_define_table = new map< string, vector<GLuint>* >();
     FileService& fileservice = Locator::getFileService();
     m_vertex_source = fileservice.fileToBuffer(VERTEX_PATH);
     m_geometry_source = fileservice.fileToBuffer(GEOMETRY_PATH);
@@ -25,7 +25,16 @@ ShaderFactory::ShaderFactory()
 
 ShaderFactory::~ShaderFactory()
 {
+    pair<GLuint, ShaderProgram*> program_table_pair;
+    foreach (program_table_pair, *m_program_table) {
+        delete program_table_pair.second;
+    }
     delete m_program_table;
+
+    pair<string, vector<GLuint>* > define_table_pair;
+    foreach (define_table_pair, *m_define_table) {
+        delete define_table_pair.second;
+    }
     delete m_define_table;
     delete [] m_vertex_source;
     delete [] m_geometry_source;
@@ -36,10 +45,10 @@ ShaderProgram& ShaderFactory::makeShader(set< string > defines)
 {
     vector<GLuint> possible_programs;
 
-    map< string, vector<GLuint> >::iterator result;
+    map< string, vector<GLuint>* >::iterator result;
     result = m_define_table->find(*defines.begin());
     if (result != m_define_table->end()) { // If first define found in map.
-        possible_programs = result->second;
+        possible_programs = *result->second;
     }
     foreach (GLuint id, possible_programs) {
         ShaderProgram& candidate = *m_program_table->at(id);
@@ -56,12 +65,11 @@ ShaderProgram& ShaderFactory::makeShader(set< string > defines)
             defines);
     GLuint id = program->getProgramID();
     foreach (string current_define, defines) {
-        map<string, vector<GLuint> >::iterator result;
         if (m_define_table->find(current_define) == m_define_table->end()) {
             // Define not found.
-            (*m_define_table)[current_define] = *new vector<GLuint>();
+            (*m_define_table)[current_define] = new vector<GLuint>();
         }
-        (*m_define_table)[current_define].push_back(id);
+        m_define_table->at(current_define)->push_back(id);
     }
     m_program_table->insert(make_pair(id, program));
     return *m_program_table->at(id);
