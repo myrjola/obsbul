@@ -55,14 +55,19 @@ GLuint ShaderProgram::compileShader(GLenum type, set<string>& defines, char* sou
         s += define;
         s += "\n";
         size_t length = s.length() + 1;
-        char line[length + 1];
+        char* line = new char[length + 1];
         strcpy(line, s.c_str());
         compiler_input.push_back(line);
     }
     compiler_input.push_back(source);
 
+
     glShaderSource(shader, compiler_input.size(), (const GLchar**) &compiler_input[0], NULL);
     glCompileShader(shader);
+    
+    foreach (char* s, compiler_input) {
+//         delete[] s;
+    }
 
     GLint status_ok;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status_ok);

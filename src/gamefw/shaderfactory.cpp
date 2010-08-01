@@ -14,7 +14,7 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 ShaderFactory::ShaderFactory()
 {
-    m_program_table = new map< GLuint, ShaderProgram >();
+    m_program_table = new map< GLuint, ShaderProgram* >();
     m_define_table = new map< string, vector<GLuint> >();
     FileService& fileservice = Locator::getFileService();
     m_vertex_source = fileservice.fileToBuffer(VERTEX_PATH);
@@ -42,7 +42,7 @@ ShaderProgram& ShaderFactory::makeShader(set< string > defines)
         possible_programs = result->second;
     }
     foreach (GLuint id, possible_programs) {
-        ShaderProgram& candidate = m_program_table->at(id);
+        ShaderProgram& candidate = *m_program_table->at(id);
         if (candidate.getDefines() == defines) { // If matching program.
             return candidate;
         }
@@ -63,6 +63,6 @@ ShaderProgram& ShaderFactory::makeShader(set< string > defines)
         }
         (*m_define_table)[current_define].push_back(id);
     }
-    m_program_table->insert(make_pair(id, *program));
-    return m_program_table->at(id);
+    m_program_table->insert(make_pair(id, program));
+    return *m_program_table->at(id);
 }
