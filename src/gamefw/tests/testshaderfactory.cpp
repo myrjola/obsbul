@@ -3,6 +3,8 @@
 #include <set>
 #include "../gamefw.h"
 
+using namespace gamefw;
+
 struct ShaderFactoryFixture
 {
     ShaderFactoryFixture()
@@ -40,3 +42,7 @@ TEST_FIXTURE(ShaderFactoryFixture, TestMakeShader)
     CHECK(p1.getProgramID() != p2.getProgramID());
 }
 
+TEST_FIXTURE(ShaderFactoryFixture, TestMakeShaderEmptyDefines) {
+    set<string> empty_set;
+    CHECK_THROW(factory->makeShader(empty_set), ShaderProgramCreationError);
+}

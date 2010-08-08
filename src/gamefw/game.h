@@ -9,6 +9,7 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 #ifndef GAME_H
 #define GAME_H
 
+namespace gamefw {
 
 class Game
 {
@@ -23,5 +24,7 @@ private:
     sf::ContextSettings m_main_window_context;
     sf::Window m_main_window;
 };
+
+}
 
 #endif // GAME_H

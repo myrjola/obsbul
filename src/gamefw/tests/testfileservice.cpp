@@ -12,6 +12,8 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 #include "../fileservice.h"
 
+using namespace gamefw;
+
 TEST(TestFileToBufferEquals)
 {
     FileService fileservice;
@@ -48,7 +50,7 @@ TEST(TestMakeTexture)
     black.rgbReserved = 255;
     image.setPixelColor(0, 0, &black);
     boost::filesystem::create_directories("assets/images");
-    assert(image.save("assets/images/temp.png"));
+    image.save("assets/images/temp.png");
     
     GLuint texture = fileservice.makeTexture("temp");
 

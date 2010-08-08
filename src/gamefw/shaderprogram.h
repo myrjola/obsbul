@@ -8,10 +8,10 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 #include <set>
 
-using namespace std;
-
 #ifndef SHADERPROGRAM_H
 #define SHADERPROGRAM_H
+
+namespace gamefw {
 
 /**
  * @brief Thrown when something goes awry in the creation of ShaderProgram.
@@ -39,7 +39,7 @@ public:
      * @param vertex_source Buffer to vertex shader source.
      * @param geometry_source Buffer to geometry shader source.
      * @param fragment_source Buffer to fragment shader source.
-     * @param defines Set of defines used when compiling.
+     * @param defines Set of defines used when compiling. Empty set not allowed.
      */
     ShaderProgram(char* vertex_source,
                   char* geometry_source,
@@ -75,5 +75,7 @@ private:
 
     set<string> m_defines;
 };
+
+}
 
 #endif // SHADERPROGRAM_H

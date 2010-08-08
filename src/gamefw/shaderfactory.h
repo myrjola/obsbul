@@ -14,6 +14,8 @@ using namespace std;
 #ifndef SHADERFACTORY_H
 #define SHADERFACTORY_H
 
+namespace gamefw {
+
 /**
  * @brief Manages the compilation of shaders from an übershader.
  */
@@ -45,7 +47,6 @@ private:
     char* m_vertex_source, *m_geometry_source, *m_fragment_source;
 };
 
-
-
+}
 
 #endif // SHADERFACTORY_H

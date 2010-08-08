@@ -12,6 +12,8 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 #define GEOMETRY_PATH "src/uber.g.glsl"
 #define FRAGMENT_PATH "src/uber.f.glsl"
 
+using namespace gamefw;
+
 ShaderFactory::ShaderFactory()
 {
     m_program_table = new map< GLuint, ShaderProgram* >();
@@ -45,6 +47,11 @@ ShaderProgram& ShaderFactory::makeShader(set< string > defines)
 {
     vector<GLuint> possible_programs;
 
+    if (defines.empty()) { // Defines not allowed to be empty.
+        DLOG(ERROR) << "ShaderFactory::makeShader passed an empty defines set.";
+        throw ShaderProgramCreationError();
+    }
+    
     map< string, vector<GLuint>* >::iterator result;
     result = m_define_table->find(*defines.begin());
     if (result != m_define_table->end()) { // If first define found in map.

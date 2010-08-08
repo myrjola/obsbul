@@ -8,6 +8,8 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 #include <SFML/Graphics.hpp>
 
+using namespace gamefw;
+
 enum Windows {
     MAIN
 };

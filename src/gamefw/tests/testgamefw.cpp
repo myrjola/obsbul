@@ -6,9 +6,13 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 #include <UnitTest++.h>
 #include <glog/logging.h>
 
+#include <GL/gl.h>
+
 #include <physfs.h>
 
 #include "../gamefw.h"
+
+using namespace gamefw;
 
 int main(int argc, char* argv[])
 {
@@ -18,7 +22,8 @@ int main(int argc, char* argv[])
     DLOG(INFO) << PHYSFS_getBaseDir();
 
     Game* game = new Game();
-//     while (true)
-//         game->update();
+    GLint maxbuffers;
+    //     while (true)
+    //         game->update();
     return UnitTest::RunAllTests();
 }

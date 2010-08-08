@@ -12,9 +12,16 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
     #define PROJECT_NAME "ObscureBulldozer"
 #endif
 
+
 #include <GL/gl.h>
 
 class fipImage;
+
+namespace gamefw {
+
+class EntityFactory;
+
+class Entity;
 
 /**
  * @brief Exception thrown when FileService can't find a file
@@ -80,12 +87,34 @@ public:
      */
     GLuint makeTexture(string name);
 
+    /**
+     * Creates Entity using all the assets needed. Searches in the path
+     * assets/entities for XML-files.
+     *
+     * @throw EntityCreationError If failed to create Entity.
+     * 
+     * @param name The name of the entity file without the ".xml".
+     * @return A fully initialized Entity object.
+     */
+    Entity& createEntity(string name);
+
+    /**
+     * Issues a search in the virtual filesystem and returns the absolute path
+     * to the searched path.
+     *
+     * @throw FileNotFoundException When file not found.
+     * @return The absolute path to the searched file.
+     */
+    string getRealPath(string path);
+
 private:
     const fipImage& readImage(string name);
 
-    string getRealPath(string path);
-
     string dirseparator;
+
+    EntityFactory* m_entity_factory;
 };
+
+}
 
 #endif // FILESERVICE_H

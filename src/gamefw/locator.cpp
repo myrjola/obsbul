@@ -6,7 +6,10 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 #include "locator.h"
 
+using namespace gamefw;
+
 FileService* Locator::s_file_service;
+ShaderFactory* Locator::s_shader_factory;
 
 FileService& Locator::getFileService()
 {
@@ -17,6 +20,17 @@ FileService& Locator::getFileService()
 void Locator::registerFileService(FileService& service)
 {
     s_file_service = &service;
+}
+
+ShaderFactory& Locator::getShaderFactory()
+{
+    assert(s_shader_factory != NULL);
+    return *s_shader_factory;
+}
+    
+void Locator::registerShaderFactory(ShaderFactory& service)
+{
+    s_shader_factory = &service;
 }
 
 

@@ -4,6 +4,8 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 */
 #include "shaderprogram.h"
 
+using namespace gamefw;
+
 const char* ShaderProgramCreationError::what() const throw()
 {
     return "Error when creating shader program.";

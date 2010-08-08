@@ -11,7 +11,9 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 #include "fileservice.h"
 
-using namespace std;
+#include "gamefw.h"
+
+using namespace gamefw;
 
 FileService::FileService()
 {
@@ -35,10 +37,13 @@ FileService::FileService()
     basedir.erase(project_path_pos + project_name.length());
 
     PHYSFS_mount(basedir.c_str(), NULL, 0); // Mount to root.
+
+    m_entity_factory = new EntityFactory();
 }
 
 FileService::~FileService()
 {
+    delete m_entity_factory;
     PHYSFS_deinit();
     FreeImage_DeInitialise();
 }
@@ -134,5 +139,12 @@ string FileService::getRealPath(string path)
     string realpath(PHYSFS_getRealDir(path.c_str()));
     realpath += dirseparator + path;
     return realpath;
+}
+
+Entity& FileService::createEntity(string name)
+{
+    string path = "assets/entities/" + name + ".xml";
+    string realpath(getRealPath(path));
+    return m_entity_factory->createEntity(realpath);
 }
 
