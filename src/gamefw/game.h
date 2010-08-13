@@ -18,6 +18,8 @@ public:
 
     ~Game();
 
+    sf::Window* getMainWindow();
+
     void update();
 
 private:

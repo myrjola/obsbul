@@ -25,6 +25,11 @@ string Entity::getName()
     return *m_name;
 }
 
+void Entity::setRenderJob(shared_ptr< RenderJob > renderjob)
+{
+    m_renderjob = renderjob;
+}
+
 shared_ptr< RenderJob > Entity::getRenderJob()
 {
     return m_renderjob;

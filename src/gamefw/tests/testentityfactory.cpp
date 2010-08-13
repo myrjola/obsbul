@@ -29,4 +29,5 @@ TEST_FIXTURE(EntityFactoryFixture, TestCreateEntity)
     CHECK_EQUAL("Sphere", entity.getName());
     CHECK_EQUAL("A sphere using albedo and normal textures with phong shading",
                 entity.getDesc());
+    
 }

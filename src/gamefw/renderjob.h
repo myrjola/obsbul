@@ -40,9 +40,10 @@ typedef struct {
  * @brief Mesh material properties.
  */
 typedef struct {
-    btVector3 diffuse;
-    btVector3 specular;
-    GLuint shininess;
+    GLfloat diffuse[4];
+    GLfloat specular[4];
+    GLfloat shininess;
+    GLfloat padding[3]; // Needed for std140 layout.
 } t_material;
     
 
@@ -65,7 +66,11 @@ public:
         BITANGENT,
         // textures
         ALBEDO_TEX = 0,
-        NORMAL_TEX
+        NORMAL_TEX,
+        // uniform block indices.
+        MATERIAL = 0,
+        GLOBAL,
+        TRANSFORM
     } indices;
 
     
@@ -80,17 +85,8 @@ public:
     GLuint num_textures;
 
     struct {
-        GLuint position;
-        GLuint normal;
-        GLuint texcoord;
-        GLuint material_idx;
-    } m_attributes;
-
-    struct {
         GLuint materials;
-        GLuint modelmatrix;
-        GLuint normalmatrix;
-        GLuint mvpmatrix;
+        GLuint transforms;
     } m_uniforms;
 
     GLuint m_shaderprogram;
@@ -99,7 +95,7 @@ public:
     btTransform m_normalmatrix;
     btTransform m_mvpmatrix;
 
-    int m_face_count, m_vertex_count;
+    int m_vertex_count;
 };
 
 }

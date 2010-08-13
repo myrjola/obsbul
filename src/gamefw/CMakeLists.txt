@@ -6,6 +6,7 @@ set(SFML_LIBRARIES sfml-audio sfml-graphics sfml-window sfml-system)
 
 target_link_libraries(gamefw glog freeimageplus ${OPENGL_LIBRARY} tinyxml
                      ${SFML_LIBRARIES} BulletDynamics ${PHYSFS_LIBRARY}
-                     glm)
+                     glm ${GLUT_glut_LIBRARY})
+message(${SFML_LIBRARIES})
 
 add_subdirectory(tests)

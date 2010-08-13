@@ -28,6 +28,12 @@ Game::~Game()
 
 }
 
+sf::Window* Game::getMainWindow()
+{
+    return &m_main_window;
+}
+
+
 void Game::update()
 {
     if (!m_main_window.IsOpened()) {
@@ -38,7 +44,5 @@ void Game::update()
         if (event.Type == sf::Event::Closed) {
             m_main_window.Close();
         }
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        m_main_window.Display();
     }
 }

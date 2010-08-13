@@ -5,11 +5,13 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 #include "entityfactory.h"
 
+#include <sstream>
+
 #include <boost/tokenizer.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 
-#define MATERIAL_BY_FACE
+#define MATERIAL_BY_FACE // To get material indices.
 #include <glm.h>
 
 #include "locator.h"
@@ -26,6 +28,7 @@ Entity& EntityFactory::createEntity(string path)
 {
     Entity* entity = new Entity();
     shared_ptr<RenderJob> renderjob(new RenderJob());
+    entity->setRenderJob(renderjob);
 
     
     m_current_entityfile = new TiXmlDocument(path);
@@ -75,18 +78,7 @@ Entity& EntityFactory::createEntity(string path)
             renderjob->m_textures[i] = created_textures[i];
         }
     }
-
-    // Load model.
-    TiXmlElement* model_element =
-        dochandle.FirstChild("gfx").FirstChild("model").ToElement();
-    if (!model_element) {
-        DLOG(INFO) << "No model element in entity file " << path;
-        throw EntityCreationError();
-    }
-    string modelpath = "assets/models/" + string(model_element->GetText()) + ".obj";
-    string absolute_path(Locator::getFileService().getRealPath(modelpath));
-    loadModel(absolute_path, renderjob);
-
+    
     // Load shaders.
     TiXmlElement* shader_defines_element =
         dochandle.FirstChild("gfx").FirstChild("shader_defines").ToElement();
@@ -107,7 +99,18 @@ Entity& EntityFactory::createEntity(string path)
     ShaderFactory& shaderfactory = Locator::getShaderFactory();
     ShaderProgram& shaderprogram = shaderfactory.makeShader(defines);
     renderjob->m_shaderprogram = shaderprogram.getProgramID();
-    
+
+    // Load model.
+    TiXmlElement* model_element =
+        dochandle.FirstChild("gfx").FirstChild("model").ToElement();
+    if (!model_element) {
+        DLOG(INFO) << "No model element in entity file " << path;
+        throw EntityCreationError();
+    }
+    string modelpath = "assets/models/" + string(model_element->GetText()) + ".obj";
+    string absolute_path(Locator::getFileService().getRealPath(modelpath));
+    loadModel(absolute_path, renderjob);
+
     DLOG(INFO) << "Entity "
                   << (name_element ? name_element->GetText() : "*UnNamed*")
                   << " created from " << path;
@@ -129,7 +132,7 @@ void EntityFactory::loadModel(string& path, shared_ptr< RenderJob > renderjob)
     // Create vertex- and element buffers.
     for (int i = 0; i < numtriangles; i++) {
         GLMtriangle* triangle = model->triangles + i;
-        int material_idx = triangle->material;
+        GLuint material_idx = triangle->material;
         for (int j = 0; j < 3; j++) {
             int pos, nor, tex;
             pos = triangle->vindices[j];
@@ -140,9 +143,11 @@ void EntityFactory::loadModel(string& path, shared_ptr< RenderJob > renderjob)
             
             if (result == vec_indexes.end()) { // If vertex not created.
                 t_vertex vertex;
-                memcpy(vertex.position, model->vertices + pos, sizeof(GLfloat) * 3);
-                memcpy(vertex.normal, model->normals + nor, sizeof(GLfloat) * 3);
-                memcpy(vertex.texcoord, model->texcoords + tex, sizeof(GLfloat) * 2);
+                memcpy(vertex.position, model->vertices + pos * 3, sizeof(GLfloat) * 3);
+                vertex.position[3] = 1.0;
+                memcpy(vertex.normal, model->normals + nor * 3, sizeof(GLfloat) * 3);
+                vertex.normal[3] = 0.0;
+                memcpy(vertex.texcoord, model->texcoords + tex * 2, sizeof(GLfloat) * 2);
                 vertex.material_idx = material_idx;
                 int vert_idx = vertex_buffer.size();
                 vertex_buffer.push_back(vertex);
@@ -151,46 +156,97 @@ void EntityFactory::loadModel(string& path, shared_ptr< RenderJob > renderjob)
                 // TODO: tangent and bitangent calculations.
             }
             GLushort vertex_index = (GLushort) result->second;
-            element_buffer.push_back(vertex_index);
+            element_buffer.push_back((short) vertex_index);
         }
     }
+    renderjob->m_vertex_count = element_buffer.size();
 
     glGenVertexArrays(1, &renderjob->m_buffer_objects.vao);
     glBindVertexArray(renderjob->m_buffer_objects.vao);
-    glGenBuffers(1, &renderjob->m_buffer_objects.vertex_buffer);
-    glGenBuffers(1, &renderjob->m_buffer_objects.element_buffer);
+    {
+        glGenBuffers(1, &renderjob->m_buffer_objects.vertex_buffer);
+        glGenBuffers(1, &renderjob->m_buffer_objects.element_buffer);
 
-    glBindBuffer(GL_ARRAY_BUFFER, renderjob->m_buffer_objects.vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, vertex_buffer.size() * sizeof(t_vertex),
-        &vertex_buffer[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, renderjob->m_buffer_objects.vertex_buffer);
+        glBufferData(GL_ARRAY_BUFFER, vertex_buffer.size() * sizeof(t_vertex),
+            &vertex_buffer[0], GL_STATIC_DRAW);
+
+        glVertexAttribPointer(
+            RenderJob::POSITION,
+            4, GL_FLOAT, GL_FALSE, sizeof(t_vertex),
+            (void*) offsetof(t_vertex, position)
+        );
+
+        glVertexAttribPointer(
+            RenderJob::NORMAL,
+            4, GL_FLOAT, GL_FALSE, sizeof(t_vertex),
+            (void*) offsetof(t_vertex, normal)
+        );
+
+        glVertexAttribPointer(
+            RenderJob::TEXCOORD,
+            2, GL_FLOAT, GL_FALSE, sizeof(t_vertex),
+            (void*) offsetof(t_vertex, texcoord)
+        );
+
+        glVertexAttribIPointer(
+            RenderJob::MATERIAL_IDX,
+            1, GL_UNSIGNED_INT, sizeof(t_vertex),
+            (void*) offsetof(t_vertex, material_idx)
+        );
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderjob->m_buffer_objects.element_buffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, element_buffer.size() * sizeof(GLushort),
+                    &element_buffer[0], GL_STATIC_DRAW);
+    }
+    glBindVertexArray(0);
+
+    int program_id = renderjob->m_shaderprogram;
+    int num_materials = model->nummaterials;
+
+    // Create materials and bind them to uniform block.
+    t_material materials[num_materials];
+    for (int i = 0; i < num_materials; i++) {
+        model->materials[i].diffuse;
+        memcpy(materials[i].diffuse, model->materials[i].diffuse,
+               sizeof(GLfloat) * 3);
+        materials[i].diffuse[3] = 1.0f;
+        
+        memcpy(materials[i].specular, model->materials[i].specular,
+               sizeof(GLfloat) * 3);
+        materials[i].specular[3] = 1.0f;
+//         materials[i].shininess = model->materials[i].shininess;
+    }
+    GLfloat mat_diffuse[num_materials * 4];
+    for (int i = 0; i < num_materials; i++) {
+        
+    }
+
+    GLuint material_location = glGetUniformBlockIndex(program_id,
+                                                      "materials");
+    assert(material_location != GL_INVALID_INDEX);
     
-    glVertexAttribPointer(
-        RenderJob::POSITION,
-        3, GL_FLOAT, GL_FALSE, sizeof(t_vertex),
-        (void*) offsetof(t_vertex, position)
-    );
-                          
-    glVertexAttribPointer(
-        RenderJob::NORMAL,
-        3, GL_FLOAT, GL_FALSE, sizeof(t_vertex),
-        (void*) offsetof(t_vertex, normal)
-    );
-                          
-    glVertexAttribPointer(
-        RenderJob::TEXCOORD,
-        2, GL_FLOAT, GL_FALSE, sizeof(t_vertex),
-        (void*) offsetof(t_vertex, texcoord)
-    );
-                          
-    glVertexAttribPointer(
-        RenderJob::MATERIAL_IDX,
-        3, GL_UNSIGNED_INT, GL_FALSE, sizeof(t_vertex),
-        (void*) offsetof(t_vertex, material_idx)
-    );
+    GLint block_size = 0;
+    glGetActiveUniformBlockiv(
+        program_id,
+        material_location,
+        GL_UNIFORM_BLOCK_DATA_SIZE,
+        &block_size);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderjob->m_buffer_objects.element_buffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, element_buffer.size() * sizeof(GLushort),
-                 &element_buffer[0], GL_STATIC_DRAW);
-                          
+    DLOG(INFO) << block_size << " " << sizeof(t_material) * num_materials;
+    assert(block_size == sizeof(t_material) * num_materials);
+
+    // Create Uniform Buffer Object and fill with material data.
+    glGenBuffers(1, &renderjob->m_uniforms.materials);
+    glBindBuffer(GL_UNIFORM_BUFFER, renderjob->m_uniforms.materials);
+    glBufferData(GL_UNIFORM_BUFFER, block_size, materials, GL_STATIC_DRAW);
+//     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    // Attach the UBO to RenderJob::MATERIAL index.
+    glBindBufferBase(GL_UNIFORM_BUFFER, RenderJob::MATERIAL, renderjob->m_uniforms.materials);
+    // Associate the block in the GLSL source to this index.
+    glUniformBlockBinding(program_id, material_location, RenderJob::MATERIAL);
+
+    checkOGLError();
     glmDelete(model);
 }
