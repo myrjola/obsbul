@@ -8,14 +8,15 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 #include "../common.h"
 
+#include "gamefw.h"
+
 #define TIXML_USE_STL
 #include <tinyxml.h>
 
-#include "gamefw.h"
+struct _GLMmodel;
+typedef _GLMmodel GLMmodel;
 
 namespace gamefw {
-
-class Entity;
 
 /**
  * @brief Thrown when EntityFactory fails in the creation of an Entity.
@@ -48,7 +49,7 @@ public:
     Entity& createEntity(string path);
 
 private:
-    void loadModel(string& path, shared_ptr<RenderJob> renderjob);
+    void loadModel(GLMmodel* path, shared_ptr<RenderJob> renderjob);
     
     TiXmlDocument* m_current_entityfile;
 };

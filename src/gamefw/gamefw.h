@@ -2,6 +2,7 @@
 Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 
 */
+
 #ifndef GAMEFW_H
 #define GAMEFW_H
 

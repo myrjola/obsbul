@@ -14,9 +14,6 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 #define MATERIAL_BY_FACE // To get material indices.
 #include <glm.h>
 
-#include "locator.h"
-
-
 using namespace gamefw;
 
 const char* EntityCreationError::what() const throw()
@@ -90,26 +87,38 @@ Entity& EntityFactory::createEntity(string path)
     string shader_defines(shader_defines_element->GetText());
     // Tokenize shader_defines;
     typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-    boost::char_separator<char> comma(",");
+    boost::char_separator<char> comma(", ");
     tokenizer tokens(shader_defines, comma);
     foreach(string define, tokens) {
         defines.insert(define);
     }
+    
+    // Load model and check number of materials.
+    TiXmlElement* model_element =
+        dochandle.FirstChild("gfx").FirstChild("model").ToElement();
+    if (!model_element) {
+        DLOG(ERROR) << "No model element in entity file " << path;
+        throw EntityCreationError();
+    }
+    string modelpath = "assets/models/" + string(model_element->GetText()) + ".obj";
+    string absolute_path(Locator::getFileService().getRealPath(modelpath));
+    GLMmodel* model = glmReadOBJ(absolute_path.c_str());
+    GLuint num_materials = model->nummaterials;
+    string materials_define("MATERIALS");
+    if (defines.find(materials_define) != defines.end()) { // If materials define found.
+        defines.erase(materials_define);
+        stringstream materials_define_stream;
+        materials_define_stream << materials_define << " " << num_materials;
+        defines.insert(materials_define_stream.str());
+}
 
     ShaderFactory& shaderfactory = Locator::getShaderFactory();
     ShaderProgram& shaderprogram = shaderfactory.makeShader(defines);
     renderjob->m_shaderprogram = shaderprogram.getProgramID();
 
-    // Load model.
-    TiXmlElement* model_element =
-        dochandle.FirstChild("gfx").FirstChild("model").ToElement();
-    if (!model_element) {
-        DLOG(INFO) << "No model element in entity file " << path;
-        throw EntityCreationError();
-    }
-    string modelpath = "assets/models/" + string(model_element->GetText()) + ".obj";
-    string absolute_path(Locator::getFileService().getRealPath(modelpath));
-    loadModel(absolute_path, renderjob);
+    // Load model after shader creation because uniform blocks
+    // needs a working shader program.
+    loadModel(model, renderjob);
 
     DLOG(INFO) << "Entity "
                   << (name_element ? name_element->GetText() : "*UnNamed*")
@@ -117,9 +126,8 @@ Entity& EntityFactory::createEntity(string path)
     return *entity;
 }
 
-void EntityFactory::loadModel(string& path, shared_ptr< RenderJob > renderjob)
+void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob)
 {
-    GLMmodel* model = glmReadOBJ(path.c_str());
 
     vector<t_vertex> vertex_buffer;
     vector<GLushort> element_buffer;
@@ -209,19 +217,12 @@ void EntityFactory::loadModel(string& path, shared_ptr< RenderJob > renderjob)
     for (int i = 0; i < num_materials; i++) {
         model->materials[i].diffuse;
         memcpy(materials[i].diffuse, model->materials[i].diffuse,
-               sizeof(GLfloat) * 3);
-        materials[i].diffuse[3] = 1.0f;
-        
+               sizeof(GLfloat) * 4);
         memcpy(materials[i].specular, model->materials[i].specular,
-               sizeof(GLfloat) * 3);
-        materials[i].specular[3] = 1.0f;
-//         materials[i].shininess = model->materials[i].shininess;
+               sizeof(GLfloat) * 4);
+        materials[i].shininess = model->materials[i].shininess;
     }
-    GLfloat mat_diffuse[num_materials * 4];
-    for (int i = 0; i < num_materials; i++) {
-        
-    }
-
+    
     GLuint material_location = glGetUniformBlockIndex(program_id,
                                                       "materials");
     assert(material_location != GL_INVALID_INDEX);
@@ -233,14 +234,13 @@ void EntityFactory::loadModel(string& path, shared_ptr< RenderJob > renderjob)
         GL_UNIFORM_BLOCK_DATA_SIZE,
         &block_size);
 
-    DLOG(INFO) << block_size << " " << sizeof(t_material) * num_materials;
     assert(block_size == sizeof(t_material) * num_materials);
 
     // Create Uniform Buffer Object and fill with material data.
     glGenBuffers(1, &renderjob->m_uniforms.materials);
     glBindBuffer(GL_UNIFORM_BUFFER, renderjob->m_uniforms.materials);
     glBufferData(GL_UNIFORM_BUFFER, block_size, materials, GL_STATIC_DRAW);
-//     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     // Attach the UBO to RenderJob::MATERIAL index.
     glBindBufferBase(GL_UNIFORM_BUFFER, RenderJob::MATERIAL, renderjob->m_uniforms.materials);
