@@ -1,7 +1,3 @@
-/*
-Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
-
-*/
 
 #ifndef FILESERVICE_H
 #define FILESERVICE_H

@@ -1,7 +1,3 @@
-/*
-Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
-
-*/
 
 #include "../../common.h"
 
@@ -31,7 +27,7 @@ int main(int argc, char* argv[])
     
     shared_ptr<RenderJob> renderjob = entity.getRenderJob();
 
-    checkOGLError();
+    checkOpenGLError();
     
     glUseProgram(renderjob->m_shaderprogram);
     glBindVertexArray(renderjob->m_buffer_objects.vertex_buffer);

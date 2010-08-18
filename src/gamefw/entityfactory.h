@@ -1,7 +1,3 @@
-/*
-Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
-
-*/
 
 #ifndef ENTITYFACTORY_H
 #define ENTITYFACTORY_H
@@ -16,6 +12,42 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 struct _GLMmodel;
 typedef _GLMmodel GLMmodel;
 
+/**
+ * @brief Vertex representation.
+ *
+ * GPU:s like 128-bit (4 floats) aligned buffers.
+ */
+typedef struct {
+    /// Vertex position.
+    GLfloat position[4];
+    /// Vertex surface normal.
+    GLfloat normal[4];
+    /// Vertex uv texture coordinate.
+    GLfloat texcoord[2];
+    /// Vertex material index.
+    GLuint material_idx;
+} t_vertex;
+
+/**
+ * @brief Extra buffers for the vertex representation.
+ */
+typedef struct {
+    /// Vertex surface tangent.
+    GLfloat tangent[4];
+    /// Vertex surface bitangent.
+    GLfloat bitangent[4];
+} t_vertex_extra;
+
+/**
+ * @brief Mesh material properties.
+ */
+typedef struct {
+    GLfloat diffuse[4];
+    GLfloat specular[4];
+    GLfloat shininess;
+    GLfloat padding[3]; // Needed for std140 layout.
+} t_material;
+ 
 namespace gamefw {
 
 /**
@@ -51,6 +83,12 @@ public:
 private:
     void loadModel(GLMmodel* path, shared_ptr<RenderJob> renderjob);
     
+    void genVertexBuffers(shared_ptr<RenderJob> renderjob,
+            t_vertex* vertex_buffer, size_t vertex_buffer_length,
+            GLushort* element_buffer, size_t element_buffer_length);
+
+    void createMaterials(shared_ptr<RenderJob> renderjob, GLMmodel* model);
+
     TiXmlDocument* m_current_entityfile;
 };
 

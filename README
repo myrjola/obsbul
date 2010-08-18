@@ -7,3 +7,6 @@ OpenGL
 glog
 UnitTest++
 FreeImagePlus
+TinyXML
+GLM - OpenGL mathematics
+GLM - OBJ library

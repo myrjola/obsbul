@@ -1,7 +1,3 @@
-/*
-Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
-
-*/
 
 #ifndef GAMEFW_H
 #define GAMEFW_H
@@ -11,42 +7,48 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 #define GL3_PROTOTYPES 1
 #include <GL3/gl3.h>
 
+
+/**
+ * @brief Exception thrown by checkOpenGLError when there's an OpenGL internal error.
+ */
+class OpenGLError: public exception {};
+
 /**
  * Checks if OpenGL has generated an error.
  * 
- * @return true if an error has been generated.
+ * @throw OpenGLError When an error has occured.
  */
-inline bool checkOGLError()
+inline void checkOpenGLError()
+{
+    int error;
+    if((error = glGetError()) != GL_NO_ERROR)
     {
-        int error;
-        if((error = glGetError()) != GL_NO_ERROR)
+        string s;
+        switch(error)
         {
-            string s;
-            switch(error)
-            {
-            case GL_INVALID_ENUM:
-                s = "GL_INVALID_ENUM";
-                break;
-            case GL_INVALID_VALUE:
-                s = "GL_INVALID_VALUE";
-                break;
-            case GL_INVALID_OPERATION:
-                s = "GL_INVALID_OPERATION";
-                break;
-            case GL_INVALID_FRAMEBUFFER_OPERATION:
-                s = "GL_INVALID_FRAMEBUFFER_OPERATION";
-                break;
-            case GL_OUT_OF_MEMORY:
-                s = "GL_OUT_OF_MEMORY";
-                break;
-            default:
-                s = "UNKNOWN";
-                break;
-            }
-            DLOG(ERROR) << "OpenGL Error(%s): %s\n" << s.c_str();
+        case GL_INVALID_ENUM:
+            s = "GL_INVALID_ENUM";
+            break;
+        case GL_INVALID_VALUE:
+            s = "GL_INVALID_VALUE";
+            break;
+        case GL_INVALID_OPERATION:
+            s = "GL_INVALID_OPERATION";
+            break;
+        case GL_INVALID_FRAMEBUFFER_OPERATION:
+            s = "GL_INVALID_FRAMEBUFFER_OPERATION";
+            break;
+        case GL_OUT_OF_MEMORY:
+            s = "GL_OUT_OF_MEMORY";
+            break;
+        default:
+            s = "UNKNOWN";
+            break;
         }
-        return error == GL_NO_ERROR;
+        DLOG(ERROR) << "OpenGL Error(%s): %s\n" << s.c_str();
+        throw OpenGLError();
     }
+}
 
 #include <bullet/btBulletDynamicsCommon.h>
 

@@ -1,15 +1,15 @@
 #version 330
 
 // Corresponds to gamefw::RenderJob::indices.
-#define POSITION 0
-#define NORMAL 1
-#define TEXCOORD 2
-#define MATERIAL_IDX 3
+#define ATTR_POSITION 0
+#define ATTR_NORMAL 1
+#define ATTR_TEXCOORD 2
+#define ATTR_MATERIAL_IDX 3
 
-layout (location = POSITION) in vec4 in_position;
-layout (location = NORMAL) in vec4 in_normal;
-layout (location = TEXCOORD) in vec2 in_texcoord;
-layout (location = MATERIAL_IDX) in unsigned int in_material_idx;
+layout (location = ATTR_POSITION) in vec4 in_position;
+layout (location = ATTR_NORMAL) in vec4 in_normal;
+layout (location = ATTR_TEXCOORD) in vec2 in_texcoord;
+layout (location = ATTR_MATERIAL_IDX) in unsigned int in_material_idx;
 
 mat4 view_frustum(
     float angle_of_view,

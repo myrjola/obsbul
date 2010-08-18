@@ -1,7 +1,3 @@
-/*
-Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
-
-*/
 
 #ifndef COMMON_H
 #define COMMON_H
@@ -11,11 +7,10 @@ Copyright (c) 2010 Martin Yrjölä <martin.yrjola@gmail.com>
 #include <cstring>
 #include <vector>
 #include <exception>
+#include <memory>
 
 using namespace std;
 
-#include <boost/shared_ptr.hpp>
-using boost::shared_ptr;
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
