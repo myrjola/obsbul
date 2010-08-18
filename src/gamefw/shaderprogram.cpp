@@ -62,18 +62,24 @@ GLuint ShaderProgram::compileShader(GLenum type, set<string>& defines, char* sou
     glShaderSource(shader, compiler_input.size(), (const GLchar**) &compiler_input[0], NULL);
     glCompileShader(shader);
 
-    compiler_input.pop_back(); // Remove shader source so it isn't deleted.
-    foreach (char* s, compiler_input) {
-        delete [] s; // Delete allocated strings.
-    }
-
-
     GLint status_ok;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status_ok);
     if (!status_ok) {
+        int line_number = 0;
+        // TODO: Show line numbers.
+        DLOG(ERROR) << "Shader source:\n";
+        foreach (GLchar* line, compiler_input) {
+            DLOG(ERROR) << line;
+        }
         logErrors(shader, glGetShaderiv, glGetShaderInfoLog);
         glDeleteShader(shader);
         throw ShaderProgramCreationError();
+    }
+
+    compiler_input.pop_back(); // Remove shader source so it isn't deleted.
+
+    foreach (char* s, compiler_input) {
+        delete [] s; // Delete allocated strings.
     }
     return shader;
 }

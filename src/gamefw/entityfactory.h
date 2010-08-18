@@ -89,6 +89,8 @@ private:
 
     void createMaterials(shared_ptr<RenderJob> renderjob, GLMmodel* model);
 
+    string attribDefine(const char* attrib_name, int index);
+
     TiXmlDocument* m_current_entityfile;
 };
 

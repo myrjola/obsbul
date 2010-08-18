@@ -32,15 +32,15 @@ int main(int argc, char* argv[])
     glUseProgram(renderjob->m_shaderprogram);
     glBindVertexArray(renderjob->m_buffer_objects.vertex_buffer);
 
-    glEnableVertexAttribArray(RenderJob::POSITION);
-    glEnableVertexAttribArray(RenderJob::NORMAL);
-    glEnableVertexAttribArray(RenderJob::TEXCOORD);
-    glEnableVertexAttribArray(RenderJob::MATERIAL_IDX);
+    glEnableVertexAttribArray(renderjob_enums::POSITION);
+    glEnableVertexAttribArray(renderjob_enums::NORMAL);
+    glEnableVertexAttribArray(renderjob_enums::TEXCOORD);
+    glEnableVertexAttribArray(renderjob_enums::MATERIAL_IDX);
     glDrawElements(GL_TRIANGLES, renderjob->m_vertex_count, GL_UNSIGNED_SHORT, 0);
-    glDisableVertexAttribArray(RenderJob::POSITION);
-    glDisableVertexAttribArray(RenderJob::NORMAL);
-    glDisableVertexAttribArray(RenderJob::TEXCOORD);
-    glDisableVertexAttribArray(RenderJob::MATERIAL_IDX);
+    glDisableVertexAttribArray(renderjob_enums::POSITION);
+    glDisableVertexAttribArray(renderjob_enums::NORMAL);
+    glDisableVertexAttribArray(renderjob_enums::TEXCOORD);
+    glDisableVertexAttribArray(renderjob_enums::MATERIAL_IDX);
 
     sf::Window* main_window = game->getMainWindow();
 

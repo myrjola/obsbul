@@ -71,7 +71,22 @@ Entity& EntityFactory::createEntity(string path)
         }
     }
     
-    // Load shaders.
+    GLMmodel* model;
+
+    // Load model and check number of materials.
+    {
+        TiXmlElement* model_element =
+            dochandle.FirstChild("gfx").FirstChild("model").ToElement();
+        if (!model_element) {
+            DLOG(ERROR) << "No model element in entity file " << path;
+            throw EntityCreationError();
+        }
+        string modelpath = "assets/models/" + string(model_element->GetText()) + ".obj";
+        string absolute_path(Locator::getFileService().getRealPath(modelpath));
+        model = glmReadOBJ(absolute_path.c_str());
+    }
+
+     // Load shaders.
     {
         TiXmlElement* shader_defines_element =
             dochandle.FirstChild("gfx").FirstChild("shader_defines").ToElement();
@@ -88,24 +103,27 @@ Entity& EntityFactory::createEntity(string path)
         foreach(string define, tokens) {
             defines.insert(define);
         }
-        
-        // Load model and check number of materials.
-        TiXmlElement* model_element =
-            dochandle.FirstChild("gfx").FirstChild("model").ToElement();
-        if (!model_element) {
-            DLOG(ERROR) << "No model element in entity file " << path;
-            throw EntityCreationError();
-        }
-        string modelpath = "assets/models/" + string(model_element->GetText()) + ".obj";
-        string absolute_path(Locator::getFileService().getRealPath(modelpath));
-        GLMmodel* model = glmReadOBJ(absolute_path.c_str());
-        GLuint num_materials = model->nummaterials;
+               GLuint num_materials = model->nummaterials;
         string materials_define("MATERIALS");
         if (defines.find(materials_define) != defines.end()) { // If materials define found.
             defines.erase(materials_define);
             stringstream materials_define_stream;
             materials_define_stream << materials_define << " " << num_materials;
             defines.insert(materials_define_stream.str());
+        }
+
+        // Insert vertex attrib indices.
+        int i = 0;
+        foreach(const char* enum_name, renderjob_enums::vertex_strings) {
+            defines.insert(attribDefine(enum_name, i++));
+        }
+        i = 0;
+        foreach(const char* enum_name, renderjob_enums::vertex_extra_strings) {
+            defines.insert(attribDefine(enum_name, i++));
+        }
+        i = 0;
+        foreach(const char* enum_name, renderjob_enums::uniform_block_strings) {
+            defines.insert(attribDefine(enum_name, i++));
         }
 
         ShaderFactory& shaderfactory = Locator::getShaderFactory();
@@ -176,6 +194,17 @@ void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob
     glmDelete(model);
 }
 
+string EntityFactory::attribDefine(const char* attrib_name, int index)
+{
+    stringstream attrib_define;
+    attrib_define << "ATTR_";
+    attrib_define << attrib_name;
+    attrib_define << " ";
+    attrib_define << index;
+    return attrib_define.str();
+}
+
+
 void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
         t_vertex* vertex_buffer, size_t vertex_buffer_length,
         GLushort* element_buffer, size_t element_buffer_length)
@@ -190,26 +219,27 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
         glBufferData(GL_ARRAY_BUFFER, vertex_buffer_length * sizeof(t_vertex),
             vertex_buffer, GL_STATIC_DRAW);
 
+
         glVertexAttribPointer(
-            RenderJob::POSITION,
+            renderjob_enums::POSITION,
             4, GL_FLOAT, GL_FALSE, sizeof(t_vertex),
             (void*) offsetof(t_vertex, position)
         );
 
         glVertexAttribPointer(
-            RenderJob::NORMAL,
+            renderjob_enums::NORMAL,
             4, GL_FLOAT, GL_FALSE, sizeof(t_vertex),
             (void*) offsetof(t_vertex, normal)
         );
 
         glVertexAttribPointer(
-            RenderJob::TEXCOORD,
+            renderjob_enums::TEXCOORD,
             2, GL_FLOAT, GL_FALSE, sizeof(t_vertex),
             (void*) offsetof(t_vertex, texcoord)
         );
 
         glVertexAttribIPointer(
-            RenderJob::MATERIAL_IDX,
+            renderjob_enums::MATERIAL_IDX,
             1, GL_UNSIGNED_INT, sizeof(t_vertex),
             (void*) offsetof(t_vertex, material_idx)
         );
@@ -258,9 +288,10 @@ void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob, GLMmodel* m
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     // Attach the UBO to RenderJob::MATERIAL index.
-    glBindBufferBase(GL_UNIFORM_BUFFER, RenderJob::MATERIAL, renderjob->m_uniforms.materials);
+    glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL,
+            renderjob->m_uniforms.materials);
     // Associate the block in the GLSL source to this index.
-    glUniformBlockBinding(program_id, material_location, RenderJob::MATERIAL);
+    glUniformBlockBinding(program_id, material_location, renderjob_enums::MATERIAL);
 
 }
 
