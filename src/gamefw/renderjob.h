@@ -51,7 +51,7 @@ public:
         GLuint transforms;
     } m_uniforms;
 
-    GLuint m_shaderprogram;
+    shared_ptr<ShaderProgram> m_shaderprogram;
     
     int m_vertex_count;
 };

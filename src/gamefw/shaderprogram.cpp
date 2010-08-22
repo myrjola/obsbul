@@ -28,13 +28,36 @@ GLuint ShaderProgram::getProgramID()
 
 ShaderProgram::~ShaderProgram()
 {
+    deleteShaders();
+    glDeleteProgram(m_program_id);
+}
+
+void ShaderProgram::deleteShaders()
+{
     glDetachShader(m_program_id, m_vertex_shader);
     glDetachShader(m_program_id, m_fragment_shader);
     // TODO: Detach & delete geometry shader.
     glDeleteShader(m_vertex_shader);
     glDeleteShader(m_fragment_shader);
-    glDeleteProgram(m_program_id);
 }
+
+void ShaderProgram::reloadProgram(char* vertex_source, char* geometry_source, char* fragment_source)
+{
+    m_vertex_source = vertex_source;
+    m_geometry_source = geometry_source;
+    m_fragment_source = fragment_source;
+    GLuint new_program_id = glCreateProgram();
+    try {
+        makeProgram(new_program_id);
+    } catch (ShaderProgramCreationError) {
+        DLOG(ERROR) << "Failure when reloading shader program";
+        return; // Don't switch to new program if creation failed.
+    }
+    deleteShaders();
+    glDeleteProgram(m_program_id);
+    m_program_id = new_program_id;
+}
+
 
 set< string >& ShaderProgram::getDefines()
 {
@@ -86,15 +109,15 @@ GLuint ShaderProgram::compileShader(GLenum type, set<string>& defines, char* sou
 
 void ShaderProgram::makeProgram(GLuint program_id)
 {
-    m_vertex_shader = compileShader(GL_VERTEX_SHADER, m_defines, m_vertex_source);
-    m_fragment_shader = compileShader(GL_FRAGMENT_SHADER, m_defines, m_fragment_source);
+    GLuint vertex_shader = compileShader(GL_VERTEX_SHADER, m_defines, m_vertex_source);
+    GLuint fragment_shader = compileShader(GL_FRAGMENT_SHADER, m_defines, m_fragment_source);
 
     // TODO: Make geometry shader compilation optional.
 //     geometry_shader = compileShader(GL_GEOMETRY_SHADER, defines, fragment_source);
 //     glAttachShader(program_id, geometry_shader);
 
-    glAttachShader(program_id, m_vertex_shader);
-    glAttachShader(program_id, m_fragment_shader);
+    glAttachShader(program_id, vertex_shader);
+    glAttachShader(program_id, fragment_shader);
     glLinkProgram(program_id);
 
     GLint status_ok;
@@ -104,6 +127,8 @@ void ShaderProgram::makeProgram(GLuint program_id)
         glDeleteProgram(program_id);
         throw ShaderProgramCreationError();
     }
+    m_vertex_shader = vertex_shader;
+    m_fragment_shader = fragment_shader;
 }
 
 

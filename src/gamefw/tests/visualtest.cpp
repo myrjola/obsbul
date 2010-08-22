@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 
     checkOpenGLError();
     
-    glUseProgram(renderjob->m_shaderprogram);
+    glUseProgram(renderjob->m_shaderprogram->getProgramID());
     glBindVertexArray(renderjob->m_buffer_objects.vertex_buffer);
 
     glEnableVertexAttribArray(renderjob_enums::POSITION);

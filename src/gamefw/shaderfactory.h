@@ -23,13 +23,19 @@ public:
      */
     ShaderFactory();
 
-    /** Creates a ShaderProgram made from an übershader.
+    /**
+     * Creates a ShaderProgram made from an übershader.
      *
      * @param defines Set of defines used in the compilation.
      *
      * @return The compiled ShaderProgram.
      */
     ShaderProgram& makeShader(set< string > defines);
+
+    /**
+     * Reloads shader sources and updates the shader programs.
+     */
+    void reloadShaders();
 
     /**
      * Destructor.
@@ -41,6 +47,8 @@ private:
     map< GLuint, ShaderProgram* >*  m_program_table;
 
     char* m_vertex_source, *m_geometry_source, *m_fragment_source;
+    void loadSources();
+    void deallocateSources();
 };
 
 }

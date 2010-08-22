@@ -14,10 +14,7 @@ ShaderFactory::ShaderFactory()
 {
     m_program_table = new map< GLuint, ShaderProgram* >();
     m_define_table = new map< string, vector<GLuint>* >();
-    FileService& fileservice = Locator::getFileService();
-    m_vertex_source = fileservice.fileToBuffer(VERTEX_PATH);
-    m_geometry_source = fileservice.fileToBuffer(GEOMETRY_PATH);
-    m_fragment_source = fileservice.fileToBuffer(FRAGMENT_PATH);
+    loadSources();
     DLOG(INFO) << "ShaderFactory created";
 }
 
@@ -34,9 +31,35 @@ ShaderFactory::~ShaderFactory()
         delete define_table_pair.second;
     }
     delete m_define_table;
-    delete [] m_vertex_source;
-    delete [] m_geometry_source;
-    delete [] m_fragment_source;
+    deallocateSources();
+}
+
+void ShaderFactory::deallocateSources()
+{
+    delete[] m_vertex_source;
+    delete[] m_geometry_source;
+    delete[] m_fragment_source;
+}
+
+void ShaderFactory::loadSources()
+{
+    FileService& fileservice = Locator::getFileService();
+    m_vertex_source = fileservice.fileToBuffer(VERTEX_PATH);
+    m_geometry_source = fileservice.fileToBuffer(GEOMETRY_PATH);
+    m_fragment_source = fileservice.fileToBuffer(FRAGMENT_PATH);
+}
+
+void ShaderFactory::reloadShaders()
+{
+    deallocateSources();
+    loadSources();
+    
+    typedef map< GLuint, ShaderProgram* >  map_type;
+    
+    foreach(map_type::value_type& key_value_pair, *m_program_table) {
+        key_value_pair.second->reloadProgram(m_vertex_source, m_geometry_source,
+                                             m_fragment_source);
+    }
 }
 
 ShaderProgram& ShaderFactory::makeShader(set< string > defines)
@@ -75,5 +98,5 @@ ShaderProgram& ShaderFactory::makeShader(set< string > defines)
         m_define_table->at(current_define)->push_back(id);
     }
     m_program_table->insert(make_pair(id, program));
-    return *m_program_table->at(id);
+    return *program;
 }

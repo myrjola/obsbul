@@ -53,11 +53,20 @@ public:
     set<string>& getDefines();
 
     /**
+     * @brief Reloads shader program with the new source files.
+     */
+    void reloadProgram(char* vertex_source, char* geometry_source,
+                       char* fragment_source);
+    
+    /**
      * Detaches shaders and deletes them and the program.
      */
     ~ShaderProgram();
 
 private:
+
+    void deleteShaders();
+    
     GLuint compileShader(GLenum type, set< string >& defines, char* source);
 
     void makeProgram(GLuint program_id);
