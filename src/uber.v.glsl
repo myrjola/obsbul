@@ -1,9 +1,12 @@
 #version 330
 
+#ifdef ATTR_POSITION
+// Attribute indexes automatically defined in EntityFactory.
 layout (location = ATTR_POSITION) in vec4 in_position;
 layout (location = ATTR_NORMAL) in vec4 in_normal;
 layout (location = ATTR_TEXCOORD) in vec2 in_texcoord;
 layout (location = ATTR_MATERIAL_IDX) in unsigned int in_material_idx;
+#endif // ATTR_POSITION
 
 mat4 view_frustum(
     float angle_of_view,
@@ -77,9 +80,11 @@ layout(std140) uniform materials {
 
 #endif // MATERIALS
 
+
 void main(void)
 {
     mat4 rotation = mat4(1.0);
+    #ifdef ATTR_POSITION
 //     mat4 rotation = rotate_x(radians(20.0)) * rotate_y(radians(70.0));
     gl_Position = view_frustum(radians(45.0), 1, 1.0, 10.0)
                 * translate(0.0, 0.0, 5.5)
@@ -92,4 +97,6 @@ void main(void)
     #ifdef MATERIALS
     frag_diffuse = Materials[in_material_idx].diffuse;
     #endif // MATERIALS
+    #endif ATTR_POSITION
 }
+

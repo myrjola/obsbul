@@ -37,6 +37,8 @@ public:
     RenderJob();
     ~RenderJob();
 
+    void setShaderProgram(shared_ptr<ShaderProgram> m_shaderprogram);
+    GLuint getShaderProgramID();
    
     struct {
         GLuint vao, vertex_buffer,
@@ -51,9 +53,11 @@ public:
         GLuint transforms;
     } m_uniforms;
 
-    shared_ptr<ShaderProgram> m_shaderprogram;
     
     int m_vertex_count;
+    
+private:
+    shared_ptr<ShaderProgram> m_shaderprogram;
 };
 
 }

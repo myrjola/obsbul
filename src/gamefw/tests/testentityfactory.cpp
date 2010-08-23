@@ -25,9 +25,10 @@ struct EntityFactoryFixture
 
 TEST_FIXTURE(EntityFactoryFixture, TestCreateEntity)
 {
-    Entity entity = Locator::getFileService().createEntity("sphere");
+    Entity& entity = Locator::getFileService().createEntity("sphere");
     CHECK_EQUAL("Sphere", entity.getName());
     CHECK_EQUAL("A sphere using albedo and normal textures with phong shading",
                 entity.getDesc());
+    delete &entity;
     
 }

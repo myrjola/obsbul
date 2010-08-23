@@ -127,8 +127,8 @@ Entity& EntityFactory::createEntity(string path)
         }
 
         ShaderFactory& shaderfactory = Locator::getShaderFactory();
-        shared_ptr<ShaderProgram> shaderprogram(&shaderfactory.makeShader(defines));
-        renderjob->m_shaderprogram = shaderprogram;
+        shared_ptr<ShaderProgram> shaderprogram = shaderfactory.makeShader(defines);
+        renderjob->setShaderProgram(shaderprogram);
     }
 
     // Load model after shader creation because uniform blocks
@@ -253,7 +253,7 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
 
 void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob, GLMmodel* model)
 {
-    int program_id = renderjob->m_shaderprogram->getProgramID();
+    int program_id = renderjob->getShaderProgramID();
     int num_materials = model->nummaterials;
 
     // Create materials and bind them to uniform block.

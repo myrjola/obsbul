@@ -30,7 +30,7 @@ public:
      *
      * @return The compiled ShaderProgram.
      */
-    ShaderProgram& makeShader(set< string > defines);
+    shared_ptr<ShaderProgram> makeShader(set< string > defines);
 
     /**
      * Reloads shader sources and updates the shader programs.
@@ -44,7 +44,7 @@ public:
 
 private:
     map< string, vector<GLuint>* >* m_define_table;
-    map< GLuint, ShaderProgram* >*  m_program_table;
+    map< GLuint, shared_ptr<ShaderProgram> >*  m_program_table;
 
     char* m_vertex_source, *m_geometry_source, *m_fragment_source;
     void loadSources();

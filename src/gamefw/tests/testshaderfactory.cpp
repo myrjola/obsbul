@@ -33,9 +33,9 @@ TEST_FIXTURE(ShaderFactoryFixture, TestMakeShader)
     set<string> d2;
     d2.insert("DUMMY3");
     
-    ShaderProgram& p1 = factory->makeShader(d1);
-    ShaderProgram& also_p1 = factory->makeShader(d1);
-    ShaderProgram& p2 = factory->makeShader(d2);
+    ShaderProgram& p1 = *factory->makeShader(d1);
+    ShaderProgram& also_p1 = *factory->makeShader(d1);
+    ShaderProgram& p2 = *factory->makeShader(d2);
     
     CHECK_EQUAL(p1.getProgramID(), also_p1.getProgramID());
 

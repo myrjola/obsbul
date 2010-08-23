@@ -29,13 +29,15 @@ int main(int argc, char* argv[])
 
     checkOpenGLError();
     
-    glUseProgram(renderjob->m_shaderprogram->getProgramID());
+    glUseProgram(renderjob->getShaderProgramID());
     glBindVertexArray(renderjob->m_buffer_objects.vertex_buffer);
 
     glEnableVertexAttribArray(renderjob_enums::POSITION);
     glEnableVertexAttribArray(renderjob_enums::NORMAL);
     glEnableVertexAttribArray(renderjob_enums::TEXCOORD);
     glEnableVertexAttribArray(renderjob_enums::MATERIAL_IDX);
+    glDrawElements(GL_TRIANGLES, renderjob->m_vertex_count, GL_UNSIGNED_SHORT, 0);
+    shaderfactory->reloadShaders();
     glDrawElements(GL_TRIANGLES, renderjob->m_vertex_count, GL_UNSIGNED_SHORT, 0);
     glDisableVertexAttribArray(renderjob_enums::POSITION);
     glDisableVertexAttribArray(renderjob_enums::NORMAL);

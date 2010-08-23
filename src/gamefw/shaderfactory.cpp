@@ -12,7 +12,7 @@ using namespace gamefw;
 
 ShaderFactory::ShaderFactory()
 {
-    m_program_table = new map< GLuint, ShaderProgram* >();
+    m_program_table = new map< GLuint, shared_ptr<ShaderProgram> >();
     m_define_table = new map< string, vector<GLuint>* >();
     loadSources();
     DLOG(INFO) << "ShaderFactory created";
@@ -20,10 +20,7 @@ ShaderFactory::ShaderFactory()
 
 ShaderFactory::~ShaderFactory()
 {
-    pair<GLuint, ShaderProgram*> program_table_pair;
-    foreach (program_table_pair, *m_program_table) {
-        delete program_table_pair.second;
-    }
+    pair<GLuint, shared_ptr<ShaderProgram>> program_table_pair;
     delete m_program_table;
 
     pair<string, vector<GLuint>* > define_table_pair;
@@ -54,7 +51,7 @@ void ShaderFactory::reloadShaders()
     deallocateSources();
     loadSources();
     
-    typedef map< GLuint, ShaderProgram* >  map_type;
+    typedef map< GLuint, shared_ptr<ShaderProgram> >  map_type;
     
     foreach(map_type::value_type& key_value_pair, *m_program_table) {
         key_value_pair.second->reloadProgram(m_vertex_source, m_geometry_source,
@@ -62,7 +59,7 @@ void ShaderFactory::reloadShaders()
     }
 }
 
-ShaderProgram& ShaderFactory::makeShader(set< string > defines)
+shared_ptr<ShaderProgram> ShaderFactory::makeShader(set< string > defines)
 {
     vector<GLuint> possible_programs;
 
@@ -77,18 +74,18 @@ ShaderProgram& ShaderFactory::makeShader(set< string > defines)
         possible_programs = *result->second;
     }
     foreach (GLuint id, possible_programs) {
-        ShaderProgram& candidate = *m_program_table->at(id);
-        if (candidate.getDefines() == defines) { // If matching program.
+        shared_ptr<ShaderProgram> candidate =m_program_table->at(id);
+        if (candidate->getDefines() == defines) { // If matching program.
             return candidate;
         }
     }
     // No matching programs found.
 
     // Create new shader program and assign it to the map.
-    ShaderProgram* program =  new ShaderProgram(m_vertex_source,
+    shared_ptr<ShaderProgram> program(new ShaderProgram(m_vertex_source,
             m_geometry_source,
             m_fragment_source,
-            defines);
+            defines));
     GLuint id = program->getProgramID();
     foreach (string current_define, defines) {
         if (m_define_table->find(current_define) == m_define_table->end()) {
@@ -98,5 +95,5 @@ ShaderProgram& ShaderFactory::makeShader(set< string > defines)
         m_define_table->at(current_define)->push_back(id);
     }
     m_program_table->insert(make_pair(id, program));
-    return *program;
+    return program;
 }
