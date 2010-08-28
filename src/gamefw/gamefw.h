@@ -4,7 +4,7 @@
 
 #include "../common.h"
 
-#define GL3_PROTOTYPES 1
+#define GL3_PROTOTYPES
 #include <GL3/gl3.h>
 
 
@@ -45,7 +45,7 @@ inline void checkOpenGLError()
             s = "UNKNOWN";
             break;
         }
-        DLOG(ERROR) << "OpenGL Error(%s): %s\n" << s.c_str();
+        DLOG(ERROR) << "OpenGL Error: " << s.c_str();
         throw OpenGLError();
     }
 }

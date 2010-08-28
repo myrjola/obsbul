@@ -7,6 +7,9 @@ namespace gamefw {
 
 class RenderJob;
 
+/**
+ * @brief Game object.
+ */
 class Entity
 {
 public:

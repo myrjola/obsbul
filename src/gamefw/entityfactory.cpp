@@ -65,8 +65,11 @@ Entity& EntityFactory::createEntity(string path)
             created_textures.push_back(Locator::getFileService().makeTexture(texname));
         }
 
-        renderjob->m_textures = new GLuint[created_textures.size()];
-        for (int i = 0; i < created_textures.size(); i++) {
+        int num_textures = created_textures.size();
+
+        renderjob->m_textures = new GLuint[num_textures];
+        renderjob->m_num_textures = num_textures;;
+        for (int i = 0; i < num_textures; i++) {
             renderjob->m_textures[i] = created_textures[i];
         }
     }
@@ -86,7 +89,8 @@ Entity& EntityFactory::createEntity(string path)
         model = glmReadOBJ(absolute_path.c_str());
     }
 
-     // Load shaders.
+    // Load shaders.
+    bool materials_defined = false; // Needed to determine whether uniform blocks are created.
     {
         TiXmlElement* shader_defines_element =
             dochandle.FirstChild("gfx").FirstChild("shader_defines").ToElement();
@@ -103,9 +107,10 @@ Entity& EntityFactory::createEntity(string path)
         foreach(string define, tokens) {
             defines.insert(define);
         }
-               GLuint num_materials = model->nummaterials;
+        GLuint num_materials = model->nummaterials;
         string materials_define("MATERIALS");
         if (defines.find(materials_define) != defines.end()) { // If materials define found.
+            materials_defined = true;
             defines.erase(materials_define);
             stringstream materials_define_stream;
             materials_define_stream << materials_define << " " << num_materials;
@@ -115,15 +120,23 @@ Entity& EntityFactory::createEntity(string path)
         // Insert vertex attrib indices.
         int i = 0;
         foreach(const char* enum_name, renderjob_enums::vertex_strings) {
-            defines.insert(attribDefine(enum_name, i++));
+            defines.insert(makeDefineFromEnum(enum_name, i++));
         }
         i = 0;
         foreach(const char* enum_name, renderjob_enums::vertex_extra_strings) {
-            defines.insert(attribDefine(enum_name, i++));
+            defines.insert(makeDefineFromEnum(enum_name, i++));
         }
         i = 0;
         foreach(const char* enum_name, renderjob_enums::uniform_block_strings) {
-            defines.insert(attribDefine(enum_name, i++));
+            defines.insert(makeDefineFromEnum(enum_name, i++));
+        }
+        i = 0;
+        foreach(const char* enum_name, renderjob_enums::out_gbuffers_strings) {
+            defines.insert(makeDefineFromEnum(enum_name, i++));
+        }
+        i = 0;
+        foreach(const char* enum_name, renderjob_enums::out_pbuffers_strings) {
+            defines.insert(makeDefineFromEnum(enum_name, i++));
         }
 
         ShaderFactory& shaderfactory = Locator::getShaderFactory();
@@ -135,15 +148,22 @@ Entity& EntityFactory::createEntity(string path)
     // needs a working shader program.
     loadModel(model, renderjob);
 
+    if (materials_defined) {
+        createMaterials(renderjob, model);
+        checkOpenGLError();
+    }
+    
+    glmDelete(model);
+    
     DLOG(INFO) << "Entity "
                   << (name_element ? name_element->GetText() : "*UnNamed*")
                   << " created from " << path;
+    checkOpenGLError();
     return *entity;
 }
 
 void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob)
 {
-
     vector<t_vertex> vertex_buffer;
     vector<GLushort> element_buffer;
     //  tuple<vertex, normal, texcoord, material_idx>
@@ -186,22 +206,16 @@ void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob
 
     genVertexBuffers(renderjob, &vertex_buffer[0], vertex_buffer.size(),
             &element_buffer[0], element_buffer.size());
-
-    createMaterials(renderjob, model);
-
-
     checkOpenGLError();
-    glmDelete(model);
 }
 
-string EntityFactory::attribDefine(const char* attrib_name, int index)
+string EntityFactory::makeDefineFromEnum(const char* enum_name, int index)
 {
-    stringstream attrib_define;
-    attrib_define << "ATTR_";
-    attrib_define << attrib_name;
-    attrib_define << " ";
-    attrib_define << index;
-    return attrib_define.str();
+    stringstream enum_define;
+    enum_define << enum_name;
+    enum_define << " ";
+    enum_define << index;
+    return enum_define.str();
 }
 
 
@@ -218,6 +232,7 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
         glBindBuffer(GL_ARRAY_BUFFER, renderjob->m_buffer_objects.vertex_buffer);
         glBufferData(GL_ARRAY_BUFFER, vertex_buffer_length * sizeof(t_vertex),
             vertex_buffer, GL_STATIC_DRAW);
+        checkOpenGLError();
 
 
         glVertexAttribPointer(
@@ -243,6 +258,7 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
             1, GL_UNSIGNED_INT, sizeof(t_vertex),
             (void*) offsetof(t_vertex, material_idx)
         );
+        checkOpenGLError();
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderjob->m_buffer_objects.element_buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, element_buffer_length * sizeof(GLushort),

@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone=yes>
+<entity>
+    <name>Sphere</name>
+    <desc>A sphere using albedo and normal textures with phong shading</desc>
+    <gfx>
+        <textures>
+            <albedo>spheretex</albedo>
+            <normal>spherenorm</normal>
+        </textures>
+
+        <model>sphere</model>
+
+   <!-- Shader defines separated with comma -->
+        <shader_defines>
+            DIFFUSE,
+            ALBEDO_TEX,
+            SPECULAR,
+            MATERIALS,
+            FRUSTUM
+        </shader_defines>
+    </gfx>
+</entity>

@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone=yes>
+<entity>
+    <name>gbuffer</name>
+    <desc> G-buffer stage for the renderer. </desc>
+    <gfx>
+        <model>screen</model>
+
+   <!-- Shader defines separated with comma -->
+        <shader_defines>
+            GBUFFER,
+            ORTHO
+        </shader_defines>
+    </gfx>
+</entity>

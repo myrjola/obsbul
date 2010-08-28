@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone=yes>
+<entity>
+    <name>pbuffer</name>
+    <desc>A representation of the P-buffer stage used in the renderer.</desc>
+    <gfx>
+        <model>screen</model>
+
+   <!-- Shader defines separated with comma -->
+        <shader_defines>
+            PBUFFER,
+            ALBEDO_TEX,
+            NORMAL_TEX,
+            DIFFUSE,
+            SPECULAR,
+        </shader_defines>
+    </gfx>
+</entity>

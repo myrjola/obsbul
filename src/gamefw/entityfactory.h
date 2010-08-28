@@ -42,9 +42,13 @@ typedef struct {
  * @brief Mesh material properties.
  */
 typedef struct {
+    /// Diffuse color.
     GLfloat diffuse[4];
+    /// Specular color.
     GLfloat specular[4];
+    /// Shininess coefficient.
     GLfloat shininess;
+    /// Padding needed for std140 layout to align properly.
     GLfloat padding[3]; // Needed for std140 layout.
 } t_material;
  
@@ -89,7 +93,7 @@ private:
 
     void createMaterials(shared_ptr<RenderJob> renderjob, GLMmodel* model);
 
-    string attribDefine(const char* attrib_name, int index);
+    string makeDefineFromEnum(const char* attrib_name, int index);
 
     TiXmlDocument* m_current_entityfile;
 };

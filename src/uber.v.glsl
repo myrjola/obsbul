@@ -1,12 +1,12 @@
 #version 330
 
-#ifdef ATTR_POSITION
+#ifdef POSITION
 // Attribute indexes automatically defined in EntityFactory.
-layout (location = ATTR_POSITION) in vec4 in_position;
-layout (location = ATTR_NORMAL) in vec4 in_normal;
-layout (location = ATTR_TEXCOORD) in vec2 in_texcoord;
-layout (location = ATTR_MATERIAL_IDX) in unsigned int in_material_idx;
-#endif // ATTR_POSITION
+layout (location = POSITION) in vec4 in_position;
+layout (location = NORMAL) in vec4 in_normal;
+layout (location = TEXCOORD) in vec2 in_texcoord;
+layout (location = MATERIAL_IDX) in unsigned int in_material_idx;
+#endif // POSITION
 
 mat4 view_frustum(
     float angle_of_view,
@@ -63,8 +63,11 @@ mat4 translate(float x, float y, float z)
 }
 
 out vec4 frag_diffuse;
-out vec3 frag_pos_to_viewer;
+out vec4 frag_specular;
+out float frag_shininess;
+out vec3 frag_worldview_pos;
 out vec3 frag_normal;
+out vec2 frag_texcoord;
 
 #ifdef MATERIALS
 
@@ -84,19 +87,26 @@ layout(std140) uniform materials {
 void main(void)
 {
     mat4 rotation = mat4(1.0);
-    #ifdef ATTR_POSITION
 //     mat4 rotation = rotate_x(radians(20.0)) * rotate_y(radians(70.0));
+    #ifdef FRUSTUM
     gl_Position = view_frustum(radians(45.0), 1, 1.0, 10.0)
                 * translate(0.0, 0.0, 5.5)
                 * rotation
                 * in_position;
+    #endif // FRUSTUM
+    
+    #ifdef ORTHO
+    gl_Position = in_position;
+    #endif ORTHO
 //     frag_normal = in_normal.xyz;
     frag_normal = (rotation * in_normal).xyz;
-    frag_pos_to_viewer = -(translate(0.0, 0.0, 1.5) * in_position).xyz;
-//     frag_diffuse = vec4(0.8, 0.0, 0.0, 1.0);
+    frag_texcoord = in_texcoord;
+    frag_worldview_pos = (translate(0.0, 0.0, 5.5) * in_position).xyz;
+    frag_diffuse = vec4(0.8, 0.0, 0.0, 1.0);
     #ifdef MATERIALS
     frag_diffuse = Materials[in_material_idx].diffuse;
+    frag_specular = Materials[in_material_idx].specular;
+    frag_shininess = Materials[in_material_idx].shininess;
     #endif // MATERIALS
-    #endif ATTR_POSITION
 }
 

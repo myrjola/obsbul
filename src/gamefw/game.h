@@ -7,6 +7,9 @@
 
 namespace gamefw {
 
+/**
+ * @brief Main game class. Provides the main window and performs input processing.
+ */
 class Game
 {
 public:
@@ -16,6 +19,9 @@ public:
 
     sf::Window* getMainWindow();
 
+    /**
+     * Draws the screen and performs input processing.
+     */
     void update();
 
 private:

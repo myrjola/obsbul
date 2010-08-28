@@ -4,11 +4,16 @@
 
 using namespace gamefw;
 
-RenderJob::RenderJob() : m_buffer_objects{0, 0, 0, 0}
+RenderJob::RenderJob() : m_buffer_objects{0, 0, 0, 0}, m_num_textures(0)
 {}
 
 RenderJob::~RenderJob()
-{}
+{
+    if (m_num_textures > 0) {
+        glDeleteTextures(m_num_textures, m_textures);
+        delete m_textures;
+    }
+}
 
 
 GLuint RenderJob::getShaderProgramID()
