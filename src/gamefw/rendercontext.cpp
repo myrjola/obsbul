@@ -182,7 +182,14 @@ void RenderContext::renderEntity(Entity& entity)
         glUniform1i(location, i);
     }
 
+    // Bind material uniform block.
+    if (renderjob->m_uniforms.materials != 0) {
+        glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL,
+                renderjob->m_uniforms.materials);
+    }
+
     glBindVertexArray(renderjob->m_buffer_objects.vao);
+    
     glEnableVertexAttribArray(renderjob_enums::POSITION);
     glEnableVertexAttribArray(renderjob_enums::NORMAL);
     glEnableVertexAttribArray(renderjob_enums::TEXCOORD);
@@ -192,14 +199,19 @@ void RenderContext::renderEntity(Entity& entity)
     glDisableVertexAttribArray(renderjob_enums::NORMAL);
     glDisableVertexAttribArray(renderjob_enums::TEXCOORD);
     glDisableVertexAttribArray(renderjob_enums::MATERIAL_IDX);
+
+    // Cleanup.
+    glBindVertexArray(0);
+    glUseProgram(0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL, 0);
 }
 
 void RenderContext::renderGBuffers()
 {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.gbuffers);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     while (!m_render_queue.empty()) {
-        glClearColor(0.0, 0.0, 0.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         Entity* current_entity = m_render_queue.front();
         m_render_queue.pop();
         renderEntity(*current_entity);

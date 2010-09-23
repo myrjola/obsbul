@@ -18,11 +18,11 @@ int main(int argc, char* argv[])
     
     int status= glewInit();
     if (GLEW_OK != status) {
-        // Problem: glewInit failed, something is seriously wrong.
         DLOG(ERROR) << "Error:" << glewGetErrorString(status) << "\n";
     }
 
-    // The reason why I imported glew: arb_debug_output. Doesn't yet work on nvidias' drivers.
+    // The reason why I imported glew: arb_debug_output.
+    // Doesn't yet work on nvidias' drivers.
     //     glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL,
     //                              GL_TRUE);
     //     glDebugMessageCallbackARB(&checkOpenGLError, NULL);
@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
     Locator::registerShaderFactory(*shaderfactory);
 
     Entity entity = Locator::getFileService().createEntity("flatsmooth");
+    Entity entity2 = Locator::getFileService().createEntity("sphere");
 
     RenderContext* render_context = new RenderContext();
 
@@ -42,6 +43,7 @@ int main(int argc, char* argv[])
     while (true) {
         game->update();
         render_context->addToRenderQueue(entity);
+        render_context->addToRenderQueue(entity2);
         render_context->render();
         main_window->Display();
     }
