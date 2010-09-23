@@ -42,5 +42,10 @@ void Game::update()
         if (event.Type == sf::Event::Closed) {
             m_main_window.Close();
         }
+        if (event.Type == sf::Event::KeyPressed) {
+            if (event.Key.Code == sf::Key::R) {
+                Locator::getShaderFactory().reloadShaders();
+            }
+        }
     }
 }
