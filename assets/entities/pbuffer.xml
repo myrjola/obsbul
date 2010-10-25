@@ -8,6 +8,7 @@
    <!-- Shader defines separated with comma -->
         <shader_defines>
             PBUFFER,
+            ORTHO,
             ALBEDO_TEX,
             NORMAL_TEX,
             DIFFUSE,

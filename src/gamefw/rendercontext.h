@@ -52,6 +52,7 @@ private:
     void texParametersForRenderTargets();
     bool checkFramebuffer();
     void createDepthStencilBuffer(GLuint* buffer, GLuint width, GLuint height);
+    void renderPBuffers();
 };
 
 }

@@ -140,6 +140,8 @@ void RenderContext::initBuffers(GLuint width, GLuint height)
                                 GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
         glDrawBuffers(4, draw_buffers);
 
+        
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
     
@@ -147,18 +149,62 @@ void RenderContext::initBuffers(GLuint width, GLuint height)
 
     {
         pbuffer = Locator::getFileService().createEntity("pbuffer");
+
+        glGenFramebuffers(1, &m_fbo.pbuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.pbuffer);
+
+        glActiveTexture(GL_TEXTURE0);
+        shared_ptr<RenderJob> pbuffer_renderjob = pbuffer.getRenderJob();
+        pbuffer_renderjob->m_textures = new GLuint[num_textures];
+        pbuffer_renderjob->m_num_textures = num_textures;
+        glGenTextures(num_textures, pbuffer_renderjob->m_textures);
+
+        for (int i = 0; i < num_textures; i++) {
+            glBindTexture(GL_TEXTURE_2D, pbuffer_renderjob->m_textures[i]);
+            
+            texParametersForRenderTargets();
+
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RGB8,
+                width,
+                height,
+                0,
+                GL_RGB,
+                GL_UNSIGNED_BYTE,
+                0
+            );
+
+            GLint attachment = GL_COLOR_ATTACHMENT0 + i;
+
+            glFramebufferTexture(GL_FRAMEBUFFER, attachment,
+                                pbuffer_renderjob->m_textures[i], 0);
+        }
+
+        createDepthStencilBuffer(&m_depth_stencil_buffers.pbuffer, width, height);
+
+        bool status = checkFramebuffer();
+        assert(status);
+
+        GLenum draw_buffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
+                                GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
+        glDrawBuffers(4, draw_buffers);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 }
 
 void RenderContext::render()
 {
     renderGBuffers();
-
+    
+    renderPBuffers();
+    
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // Bind main window's framebuffer.
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    
-    renderEntity(gbuffer);
+    renderEntity(pbuffer);
 }
 
 void RenderContext::addToRenderQueue(Entity& entity)
@@ -217,4 +263,18 @@ void RenderContext::renderGBuffers()
         renderEntity(*current_entity);
     }
 }
+
+void RenderContext::renderPBuffers()
+{
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.pbuffer);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    GLuint program_id = gbuffer.getRenderJob()->getShaderProgramID();
+    glm::vec3 viewer_position = glm::vec3(0.0, 0.0, 0.0);
+    glUniform3fv(glGetUniformLocation(program_id, "viewer_position"),
+            1, glm::value_ptr(viewer_position));
+    renderEntity(gbuffer);
+
+}
+
 

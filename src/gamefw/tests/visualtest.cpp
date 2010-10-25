@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     Locator::registerShaderFactory(*shaderfactory);
 
     Entity entity = Locator::getFileService().createEntity("flatsmooth");
-    Entity entity2 = Locator::getFileService().createEntity("sphere");
+//     Entity entity2 = Locator::getFileService().createEntity("sphere");
 
     RenderContext* render_context = new RenderContext();
 
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     while (true) {
         game->update();
         render_context->addToRenderQueue(entity);
-        render_context->addToRenderQueue(entity2);
+//         render_context->addToRenderQueue(entity2);
         render_context->render();
         main_window->Display();
     }

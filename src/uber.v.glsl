@@ -65,7 +65,7 @@ mat4 translate(float x, float y, float z)
 out vec4 frag_diffuse;
 out vec4 frag_specular;
 out float frag_shininess;
-out vec3 frag_worldview_pos;
+out vec3 frag_worldspace_pos;
 out vec3 frag_normal;
 out vec2 frag_texcoord;
 
@@ -82,7 +82,6 @@ layout(std140) uniform materials {
 };
 
 #endif // MATERIALS
-
 
 void main(void)
 {
@@ -101,7 +100,7 @@ void main(void)
 //     frag_normal = in_normal.xyz;
     frag_normal = (rotation * in_normal).xyz;
     frag_texcoord = in_texcoord;
-    frag_worldview_pos = (translate(0.0, 0.0, 5.5) * in_position).xyz;
+    frag_worldspace_pos = (translate(0.0, 0.0, 5.5) * in_position).xyz;
     frag_diffuse = vec4(0.8, 0.0, 0.0, 1.0);
     #ifdef MATERIALS
     frag_diffuse = Materials[in_material_idx].diffuse;
