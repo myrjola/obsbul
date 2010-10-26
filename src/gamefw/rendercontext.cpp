@@ -11,6 +11,7 @@ using namespace gamefw;
 
 RenderContext::RenderContext()
 {
+    viewer_position = 0.0;
     initBuffers(800, 600);
 }
 
@@ -85,8 +86,8 @@ void RenderContext::initBuffers(GLuint width, GLuint height)
     
     {
         gbuffer = Locator::getFileService().createEntity("gbuffer");
-        glGenFramebuffers(1, &m_fbo.gbuffers);
-        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.gbuffers);
+        glGenFramebuffers(1, &m_fbo.gbuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.gbuffer);
 
         glActiveTexture(GL_TEXTURE0);
         shared_ptr<RenderJob> gbuffer_renderjob = gbuffer.getRenderJob();
@@ -146,7 +147,6 @@ void RenderContext::initBuffers(GLuint width, GLuint height)
     }
     
     // PBUFFER STAGE.
-
     {
         pbuffer = Locator::getFileService().createEntity("pbuffer");
 
@@ -193,18 +193,35 @@ void RenderContext::initBuffers(GLuint width, GLuint height)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+
+    // POSTPROCESSING STAGE
+    {
+        ppbuffer = Locator::getFileService().createEntity("ppbuffer");
+        shared_ptr<RenderJob> ppbuffer_renderjob = ppbuffer.getRenderJob();
+
+        // Use gbuffers diffuse and specular textures.
+        m_fbo.ppbuffer = m_fbo.gbuffer;
+        ppbuffer_renderjob->m_textures = gbuffer.getRenderJob()->m_textures;
+        ppbuffer_renderjob->m_num_textures = 2;
+    }
 }
 
 void RenderContext::render()
 {
+    glEnable(GL_DEPTH_TEST);
+    
     renderGBuffers();
+
+    glDisable(GL_DEPTH_TEST);
     
     renderPBuffers();
+
+    renderPPBuffers();
     
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // Bind main window's framebuffer.
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    renderEntity(pbuffer);
+    renderEntity(ppbuffer);
 }
 
 void RenderContext::addToRenderQueue(Entity& entity)
@@ -254,7 +271,7 @@ void RenderContext::renderEntity(Entity& entity)
 
 void RenderContext::renderGBuffers()
 {
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.gbuffers);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.gbuffer);
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     while (!m_render_queue.empty()) {
@@ -270,11 +287,20 @@ void RenderContext::renderPBuffers()
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     GLuint program_id = gbuffer.getRenderJob()->getShaderProgramID();
-    glm::vec3 viewer_position = glm::vec3(0.0, 0.0, 0.0);
+    glUseProgram(program_id);
+    viewer_position += 0.01;
+    float viewer[] = {0.0, viewer_position, 0.0};
     glUniform3fv(glGetUniformLocation(program_id, "viewer_position"),
-            1, glm::value_ptr(viewer_position));
+            1, viewer);
     renderEntity(gbuffer);
 
 }
 
 
+void gamefw::RenderContext::renderPPBuffers()
+{
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.ppbuffer);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    renderEntity(pbuffer);
+}

@@ -138,6 +138,10 @@ Entity& EntityFactory::createEntity(string path)
         foreach(const char* enum_name, renderjob_enums::out_pbuffers_strings) {
             defines.insert(makeDefineFromEnum(enum_name, i++));
         }
+        i = 0;
+        foreach(const char* enum_name, renderjob_enums::out_ppbuffers_strings) {
+            defines.insert(makeDefineFromEnum(enum_name, i++));
+        }
 
         ShaderFactory& shaderfactory = Locator::getShaderFactory();
         shared_ptr<ShaderProgram> shaderprogram = shaderfactory.makeShader(defines);

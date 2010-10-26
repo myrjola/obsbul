@@ -16,6 +16,7 @@ namespace gamefw {
 #define UNIFORM_BLOCKS (MATERIAL)(GLOBAL)(TRANSFORM)
 #define OUT_GBUFFERS (OUTG_DIFFUSE)(OUTG_SPECULAR)(OUTG_NORMAL)(OUTG_POSITION)
 #define OUT_PBUFFERS (OUTP_DIFFUSE)(OUTP_SPECULAR)(OUTP_EDGES)(OUTP_BLOOM)
+#define OUT_POSTPROCBUFFERS (OUTPP_DIFFUSE)(OUTPP_SPECULAR)
 
 #define TO_STR(unused,data,elem) BOOST_PP_STRINGIZE(elem) ,
 
@@ -26,11 +27,13 @@ namespace renderjob_enums {
     enum uniform_blocks { BOOST_PP_SEQ_ENUM(UNIFORM_BLOCKS) };
     enum out_gbuffers { BOOST_PP_SEQ_ENUM(OUT_GBUFFERS) };
     enum out_pbuffers { BOOST_PP_SEQ_ENUM(OUT_PBUFFERS) };
+    enum out_ppbuffers { BOOST_PP_SEQ_ENUM(OUT_POSTPROCBUFFERS) };
     static const char* vertex_strings[] = { BOOST_PP_SEQ_FOR_EACH(TO_STR,~,T_VERTEX) };
     static const char* vertex_extra_strings[] = {BOOST_PP_SEQ_FOR_EACH(TO_STR,~,T_VERTEX_EXTRA)};
     static const char* uniform_block_strings[] = {BOOST_PP_SEQ_FOR_EACH(TO_STR,~,UNIFORM_BLOCKS)};
     static const char* out_gbuffers_strings[] = {BOOST_PP_SEQ_FOR_EACH(TO_STR,~,OUT_GBUFFERS)};
     static const char* out_pbuffers_strings[] = {BOOST_PP_SEQ_FOR_EACH(TO_STR,~,OUT_PBUFFERS)};
+    static const char* out_ppbuffers_strings[] = {BOOST_PP_SEQ_FOR_EACH(TO_STR,~,OUT_POSTPROCBUFFERS)};
 }
 
 #undef T_VERTEX 

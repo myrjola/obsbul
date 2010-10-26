@@ -16,8 +16,9 @@ uniform sampler2D texture5;
 uniform sampler2D texture6;
 uniform sampler2D texture7;
 
-vec2 delta[8];
-#define INIT_DELTA delta[0] = vec2(-1.0,1.0);\
+
+#define INIT_DELTA vec2 delta[8];\
+delta[0] = vec2(-1.0,1.0);\
 delta[1] = vec2(1.0,-1.0);\
 delta[2] = vec2(-1.0,1.0);\
 delta[3] = vec2(1.0,1.0);\
@@ -46,23 +47,50 @@ float detect_edges(
     factor = min(1.0,factor) * weight;
     return factor;
 }
-#endif //GBUFFER
+#endif // GBUFFER
+
+#ifdef BLUR
+// Blur used with bloom.
+vec3 blur(vec2 pixel_size)
+{
+    float pi = 3.14;
+    float sigma = 10.0;
+    vec3 color = vec3(0.0, 0.0, 0.0);
+    int w = 7;
+    for(int i = 0; i < w; i++) {
+        #ifdef PBUFFER
+        vec2 coord = vec2(i, 0.0);
+        #endif // PBUFFER
+        #ifdef POSTPROC
+        vec2 coord = vec2(0.0, i);
+        #endif // POSTPROC
+        vec3 t_pos = texture(texture1, frag_texcoord + coord * pixel_size).rgb;
+        vec3 t_neg = texture(texture1, frag_texcoord - coord * pixel_size).rgb;
+//         color += (t_pos + t_neg) * exp(-(i * i) / (2.0 * sigma * sigma));
+        color += (t_pos + t_neg) *
+            (exp(-(i*i)/(2*sigma*sigma)) - exp(-(w*w)/(2*sigma*sigma)));
+    }
+//     color *= 1.0 / (sigma * sigma) / sqrt(2 * pi);
+    return color;
+}
+#endif // BLUR
 
 #ifdef PBUFFER
-layout(location = 0) out vec4 out_color;
+layout(location = OUTP_DIFFUSE) out vec4 out_diffuse;
+layout(location = OUTP_SPECULAR) out vec4 out_specular;
 
 // Antialiasing using the edge detection factor.
-vec4 antialias(vec2 pixel_size,
+vec3 antialias(vec2 pixel_size,
                float factor)
 {
     INIT_DELTA
 
-    vec4 color = vec4(0.0, 0.0, 0.0, 0.0);
+    vec3 color = vec3(0.0, 0.0, 0.0);
     for(int i = 0; i < 8; i++) {
         color += texture(texture0,
-                         frag_texcoord + delta[i] * pixel_size * factor);
+                         frag_texcoord + delta[i] * pixel_size * factor).rgb;
     }
-    color += texture(texture0, frag_texcoord);
+    color += texture(texture0, frag_texcoord).rgb;
     color *= 1.0/9.0; // 8 + 1 terms.
     return color;
 }
@@ -78,57 +106,73 @@ layout(location = OUTP_EDGES) out vec4 out_edges;
 layout(location = OUTP_BLOOM) out vec4 out_bloom;
 #endif // GBUFFER
 
+#ifdef POSTPROC
+layout(location = 0) out vec4 out_color;
+#endif // POSTPROC
 
 
 void main(void)
 {
     float shin_encoder = 25.0;
     vec2 pixel_size = vec2(1.0/800.0, 1.0/400.0); // TODO: width and height uniforms
-    vec4 diffuse;
-    #ifdef ALBEDO_TEX
-    diffuse = texture(texture0, frag_texcoord);
-    #endif // ALBEDO_TEX
-    #ifndef ALBEDO_TEX
-    diffuse = frag_diffuse;
-    #endif // not ALBEDO_TEX
     
     #ifdef GBUFFER
-    vec4 normal = texture(texture2, frag_texcoord);
-    diffuse = texture(texture0, frag_texcoord);
-    vec4 spec_rgb_shininess = texture(texture1, frag_texcoord);
-    vec4 specular = vec4(spec_rgb_shininess.rgb, 1.0);
-    float shininess = spec_rgb_shininess.a * shin_encoder;
-    vec4 position = texture(texture3, frag_texcoord);
-    vec3 to_light = vec3(5.0, 0.0, 0.0) - position.xyz;
-    vec3 to_viewer = viewer_position - position.xyz;
-    vec3 half_vector = to_viewer + to_light;
-    float norm_dot_half = clamp(dot(normal.xyz, normalize(half_vector)), 0.0, 1.0);
-    float cos_theta = dot(normalize(normal.xyz), normalize(to_light));
-    float factor = detect_edges(pixel_size, 0.5);
-    // Kd and Ks from the book Real-time rendering by Akenine Möller et al.
-    float pi = 3.14;
-    vec3 Kd = diffuse.rgb / pi;
-    vec3 Ks = specular.rgb * (shininess + 8) / (8 * pi);
-//     out_diffuse = vec4(Kd * cos_theta, 1.0);
-//     out_specular = vec4(Ks * pow(norm_dot_half, shininess), 1.0);
-    out_diffuse = diffuse * cos_theta;
-    out_specular = specular * pow(norm_dot_half, shininess);
-    out_edges = vec4(factor, factor, factor, 1.0);
+    {
+        vec4 normal = texture(texture2, frag_texcoord);
+        vec4 diffuse = texture(texture0, frag_texcoord);
+        vec4 spec_rgb_shininess = texture(texture1, frag_texcoord);
+        vec4 specular = vec4(spec_rgb_shininess.rgb, 1.0);
+        float shininess = spec_rgb_shininess.a * shin_encoder;
+        vec4 position = texture(texture3, frag_texcoord);
+        vec3 to_light = vec3(5.0, 0.0, 0.0) - position.xyz;
+        vec3 to_viewer = viewer_position - position.xyz;
+        vec3 half_vector = to_viewer + to_light;
+        float norm_dot_half = clamp(dot(normal.xyz, normalize(half_vector)), 0.0, 1.0);
+        float cos_theta = dot(normalize(normal.xyz), normalize(to_light));
+        float factor = detect_edges(pixel_size, 0.5);
+        out_diffuse = diffuse * cos_theta;
+        out_specular = specular * pow(norm_dot_half, shininess);
+        out_edges = vec4(factor, factor, factor, 1.0);
+    }
     #endif // GBUFFER
 
     #ifdef PBUFFER
-    diffuse = texture(texture0, frag_texcoord);
-    vec4 specular = texture(texture1, frag_texcoord);
-    float factor = texture(texture2, frag_texcoord).r;
-    out_color = vec4(antialias(pixel_size, factor).rgb + specular.rgb, 1.0);
+    {
+        out_specular = vec4(blur(pixel_size), 1.0);
+//         out_specular = texture(texture1, frag_texcoord);
+        float factor = texture(texture2, frag_texcoord).r;
+        out_diffuse =
+//            texture(texture0, frag_texcoord);
+            vec4(antialias(pixel_size, factor), 1.0);
+    }
     #endif // PBUFFER
+
+    #ifdef POSTPROC
+    {
+        vec3 diffuse = texture(texture0, frag_texcoord).rgb;
+        vec3 specular = blur(pixel_size);
+//         vec3 specular = texture(texture1, frag_texcoord).rgb;
+        out_color = vec4(diffuse + specular, 1.0);
+    }
+    #endif // POSTPROC
     
     #ifndef GBUFFER
     #ifndef PBUFFER
-    out_diffuse = diffuse;
-    out_specular = vec4(frag_specular.rgb, frag_shininess / shin_encoder);
-    out_normal = vec4(normalize(frag_normal), 1.0);
-    out_position = vec4(frag_worldspace_pos, 1.0);
+    #ifndef POSTPROC
+    {
+        vec4 diffuse;
+        #ifdef ALBEDO_TEX
+        diffuse = texture(texture0, frag_texcoord);
+        #endif ALBEDO_TEX
+        #ifndef ALBEDO_TEX
+        diffuse = frag_diffuse;
+        #endif // not ALBEDO_TEX
+        out_diffuse = diffuse;
+        out_specular = vec4(frag_specular.rgb, frag_shininess / shin_encoder);
+        out_normal = vec4(normalize(frag_normal), 1.0);
+        out_position = vec4(frag_worldspace_pos, 1.0);
+    }
+    #endif // not POSTPROC
     #endif // not PBUFFER
     #endif // not GBUFFER
 }

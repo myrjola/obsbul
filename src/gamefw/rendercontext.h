@@ -35,7 +35,7 @@ public:
     
 private:
     struct {
-        GLuint gbuffers, pbuffer;
+        GLuint gbuffer, pbuffer, ppbuffer;
     } m_fbo;
 
     struct {
@@ -45,6 +45,9 @@ private:
     std::queue<Entity*> m_render_queue;
     Entity gbuffer;
     Entity pbuffer;
+    Entity ppbuffer;
+
+    float viewer_position;
     
     void initBuffers(GLuint width, GLuint height);
     void renderGBuffers();
@@ -53,6 +56,7 @@ private:
     bool checkFramebuffer();
     void createDepthStencilBuffer(GLuint* buffer, GLuint width, GLuint height);
     void renderPBuffers();
+    void renderPPBuffers();
 };
 
 }

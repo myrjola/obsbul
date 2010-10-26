@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     Locator::registerShaderFactory(*shaderfactory);
 
     Entity entity = Locator::getFileService().createEntity("flatsmooth");
-//     Entity entity2 = Locator::getFileService().createEntity("sphere");
+    Entity entity2 = Locator::getFileService().createEntity("sphere");
 
     RenderContext* render_context = new RenderContext();
 

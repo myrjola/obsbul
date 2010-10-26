@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone=yes>
 <entity>
-    <name>Sphere</name>
+    <name>Flatsmooth</name>
     <desc>A sphere using albedo and normal textures with phong shading</desc>
     <gfx>
         <textures>
