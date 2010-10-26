@@ -36,15 +36,15 @@ int main(int argc, char* argv[])
     Entity entity = Locator::getFileService().createEntity("flatsmooth");
     Entity entity2 = Locator::getFileService().createEntity("sphere");
 
-    RenderContext* render_context = new RenderContext();
+    Renderer* renderer = new Renderer();
 
     sf::Window* main_window = game->getMainWindow();
 
     while (true) {
         game->update();
-        render_context->addToRenderQueue(entity);
+        renderer->addToRenderQueue(entity);
 //         render_context->addToRenderQueue(entity2);
-        render_context->render();
+        renderer->render();
         main_window->Display();
     }
         

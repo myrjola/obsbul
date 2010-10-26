@@ -1,27 +1,22 @@
 
 #include "../common.h"
-#include "rendercontext.h"
-
-#include "renderjob.h"
-#include "locator.h"
-#include "fileservice.h"
 #include "gamefw.h"
 
 using namespace gamefw;
 
-RenderContext::RenderContext()
+Renderer::Renderer()
 {
     viewer_position = 0.0;
     initBuffers(800, 600);
 }
 
-RenderContext::~RenderContext()
+Renderer::~Renderer()
 {
     glDeleteRenderbuffers(1, &m_depth_stencil_buffers.gbuffer);
     glDeleteRenderbuffers(1, &m_depth_stencil_buffers.pbuffer);
 }
 
-void RenderContext::createDepthStencilBuffer(GLuint* buffer, GLuint width, GLuint height)
+void Renderer::createDepthStencilBuffer(GLuint* buffer, GLuint width, GLuint height)
 {
     glGenRenderbuffers(1, buffer);
     glBindRenderbuffer(GL_RENDERBUFFER, m_depth_stencil_buffers.gbuffer);
@@ -31,7 +26,7 @@ void RenderContext::createDepthStencilBuffer(GLuint* buffer, GLuint width, GLuin
                               GL_RENDERBUFFER, m_depth_stencil_buffers.gbuffer);
 }
 
-void RenderContext::texParametersForRenderTargets()
+void Renderer::texParametersForRenderTargets()
 {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -41,7 +36,7 @@ void RenderContext::texParametersForRenderTargets()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1000);
 }
 
-bool RenderContext::checkFramebuffer()
+bool Renderer::checkFramebuffer()
 {
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     string error = "Framebuffer object error: ";
@@ -78,7 +73,7 @@ bool RenderContext::checkFramebuffer()
 }
 
 
-void RenderContext::initBuffers(GLuint width, GLuint height)
+void Renderer::initBuffers(GLuint width, GLuint height)
 {
     int num_textures = 8;
 
@@ -206,7 +201,7 @@ void RenderContext::initBuffers(GLuint width, GLuint height)
     }
 }
 
-void RenderContext::render()
+void Renderer::render()
 {
     glEnable(GL_DEPTH_TEST);
     
@@ -224,12 +219,12 @@ void RenderContext::render()
     renderEntity(ppbuffer);
 }
 
-void RenderContext::addToRenderQueue(Entity& entity)
+void Renderer::addToRenderQueue(Entity& entity)
 {
     m_render_queue.push(&entity);
 }
 
-void RenderContext::renderEntity(Entity& entity)
+void Renderer::renderEntity(Entity& entity)
 {
     shared_ptr<RenderJob> renderjob = entity.getRenderJob();
     GLuint program_id = renderjob->getShaderProgramID();
@@ -269,7 +264,7 @@ void RenderContext::renderEntity(Entity& entity)
     glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL, 0);
 }
 
-void RenderContext::renderGBuffers()
+void Renderer::renderGBuffers()
 {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.gbuffer);
     glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -281,7 +276,7 @@ void RenderContext::renderGBuffers()
     }
 }
 
-void RenderContext::renderPBuffers()
+void Renderer::renderPBuffers()
 {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.pbuffer);
     glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -297,7 +292,7 @@ void RenderContext::renderPBuffers()
 }
 
 
-void gamefw::RenderContext::renderPPBuffers()
+void gamefw::Renderer::renderPPBuffers()
 {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.ppbuffer);
     glClearColor(0.0, 0.0, 0.0, 1.0);

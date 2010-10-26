@@ -1,6 +1,6 @@
 
-#ifndef RENDERCONTEXT_H
-#define RENDERCONTEXT_H
+#ifndef RENDERER_H
+#define RENDERER_H
 
 #include <queue>
 
@@ -15,11 +15,11 @@ class RenderJob;
 /**
  * @brief Practically where the rendering happens.
  */
-class RenderContext
+class Renderer
 {
 public:
-    RenderContext();
-    ~RenderContext();
+    Renderer();
+    ~Renderer();
     
     /**
      * @brief Adds entity to the rendering pipeline.
@@ -61,4 +61,4 @@ private:
 
 }
 
-#endif // RENDERCONTEXT_H
+#endif // RENDERER

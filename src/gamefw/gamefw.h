@@ -54,7 +54,7 @@ inline void checkOpenGLError()
 
 #include "game.h"
 #include "gamestate.h"
-#include "rendercontext.h"
+#include "renderer.h"
 #include "shaderfactory.h"
 #include "shaderprogram.h"
 #include "renderjob.h"
