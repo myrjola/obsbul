@@ -50,9 +50,9 @@ void ShaderFactory::reloadShaders()
 {
     deallocateSources();
     loadSources();
-    
+
     typedef map< GLuint, shared_ptr<ShaderProgram> >  map_type;
-    
+
     foreach(map_type::value_type& key_value_pair, *m_program_table) {
         key_value_pair.second->reloadProgram(m_vertex_source, m_geometry_source,
                                              m_fragment_source);
@@ -67,7 +67,7 @@ shared_ptr<ShaderProgram> ShaderFactory::makeShader(set< string > defines)
         DLOG(ERROR) << "ShaderFactory::makeShader passed an empty defines set.";
         throw ShaderProgramCreationError();
     }
-    
+
     map< string, vector<GLuint>* >::iterator result;
     result = m_define_table->find(*defines.begin());
     if (result != m_define_table->end()) { // If first define found in map.
@@ -83,9 +83,9 @@ shared_ptr<ShaderProgram> ShaderFactory::makeShader(set< string > defines)
 
     // Create new shader program and assign it to the map.
     shared_ptr<ShaderProgram> program(new ShaderProgram(m_vertex_source,
-            m_geometry_source,
-            m_fragment_source,
-            defines));
+                                      m_geometry_source,
+                                      m_fragment_source,
+                                      defines));
     GLuint id = program->getProgramID();
     foreach (string current_define, defines) {
         if (m_define_table->find(current_define) == m_define_table->end()) {

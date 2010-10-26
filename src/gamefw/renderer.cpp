@@ -28,20 +28,20 @@ void Renderer::createDepthStencilBuffer(GLuint* buffer, GLuint width, GLuint hei
 
 void Renderer::texParametersForRenderTargets()
 {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1000);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1000);
 }
 
 bool Renderer::checkFramebuffer()
 {
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     string error = "Framebuffer object error: ";
-    
-    switch(status)
+
+    switch (status)
     {
     case GL_FRAMEBUFFER_UNDEFINED:
         DLOG(ERROR) << error << "GL_FRAMEBUFFER_UNDEFINED";
@@ -78,7 +78,7 @@ void Renderer::initBuffers(GLuint width, GLuint height)
     int num_textures = 8;
 
     // GBUFFER STAGE
-    
+
     {
         gbuffer = Locator::getFileService().createEntity("gbuffer");
         glGenFramebuffers(1, &m_fbo.gbuffer);
@@ -94,20 +94,23 @@ void Renderer::initBuffers(GLuint width, GLuint height)
             glBindTexture(GL_TEXTURE_2D, gbuffer_renderjob->m_textures[i]);
 
             texParametersForRenderTargets();
-            
+
             GLenum internalformat, type;
             switch (i) {
-                case(renderjob_enums::OUTG_NORMAL):
-                    internalformat = GL_RGB16F;
-                    type = GL_FLOAT; break;
+            case(renderjob_enums::OUTG_NORMAL):
+                internalformat = GL_RGB16F;
+                type = GL_FLOAT;
+                break;
 
-                case(renderjob_enums::OUTG_POSITION):
-                    internalformat = GL_RGB32F;
-                    type = GL_FLOAT; break;
+            case(renderjob_enums::OUTG_POSITION):
+                internalformat = GL_RGB32F;
+                type = GL_FLOAT;
+                break;
 
-                default:
-                    internalformat = GL_RGB8;
-                    type = GL_UNSIGNED_BYTE; break;
+            default:
+                internalformat = GL_RGB8;
+                type = GL_UNSIGNED_BYTE;
+                break;
             }
             glTexImage2D(
                 GL_TEXTURE_2D,
@@ -122,9 +125,9 @@ void Renderer::initBuffers(GLuint width, GLuint height)
             );
 
             GLint attachment = GL_COLOR_ATTACHMENT0 + i;
-            
+
             glFramebufferTexture(GL_FRAMEBUFFER, attachment,
-                                gbuffer_renderjob->m_textures[i], 0);
+                                 gbuffer_renderjob->m_textures[i], 0);
         }
 
         createDepthStencilBuffer(&m_depth_stencil_buffers.gbuffer, width, height);
@@ -133,14 +136,15 @@ void Renderer::initBuffers(GLuint width, GLuint height)
         assert(status);
 
         GLenum draw_buffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
-                                GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
+                                 GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3
+                                };
         glDrawBuffers(4, draw_buffers);
 
-        
+
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
-    
+
     // PBUFFER STAGE.
     {
         pbuffer = Locator::getFileService().createEntity("pbuffer");
@@ -156,7 +160,7 @@ void Renderer::initBuffers(GLuint width, GLuint height)
 
         for (int i = 0; i < num_textures; i++) {
             glBindTexture(GL_TEXTURE_2D, pbuffer_renderjob->m_textures[i]);
-            
+
             texParametersForRenderTargets();
 
             glTexImage2D(
@@ -174,7 +178,7 @@ void Renderer::initBuffers(GLuint width, GLuint height)
             GLint attachment = GL_COLOR_ATTACHMENT0 + i;
 
             glFramebufferTexture(GL_FRAMEBUFFER, attachment,
-                                pbuffer_renderjob->m_textures[i], 0);
+                                 pbuffer_renderjob->m_textures[i], 0);
         }
 
         createDepthStencilBuffer(&m_depth_stencil_buffers.pbuffer, width, height);
@@ -183,7 +187,8 @@ void Renderer::initBuffers(GLuint width, GLuint height)
         assert(status);
 
         GLenum draw_buffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
-                                GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
+                                 GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3
+                                };
         glDrawBuffers(4, draw_buffers);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -204,15 +209,15 @@ void Renderer::initBuffers(GLuint width, GLuint height)
 void Renderer::render()
 {
     glEnable(GL_DEPTH_TEST);
-    
+
     renderGBuffers();
 
     glDisable(GL_DEPTH_TEST);
-    
+
     renderPBuffers();
 
     renderPPBuffers();
-    
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // Bind main window's framebuffer.
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -243,11 +248,11 @@ void Renderer::renderEntity(Entity& entity)
     // Bind material uniform block.
     if (renderjob->m_uniforms.materials != 0) {
         glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL,
-                renderjob->m_uniforms.materials);
+                         renderjob->m_uniforms.materials);
     }
 
     glBindVertexArray(renderjob->m_buffer_objects.vao);
-    
+
     glEnableVertexAttribArray(renderjob_enums::POSITION);
     glEnableVertexAttribArray(renderjob_enums::NORMAL);
     glEnableVertexAttribArray(renderjob_enums::TEXCOORD);
@@ -286,7 +291,7 @@ void Renderer::renderPBuffers()
     viewer_position += 0.01;
     float viewer[] = {0.0, viewer_position, 0.0};
     glUniform3fv(glGetUniformLocation(program_id, "viewer_position"),
-            1, viewer);
+                 1, viewer);
     renderEntity(gbuffer);
 
 }

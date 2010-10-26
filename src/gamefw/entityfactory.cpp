@@ -22,7 +22,7 @@ Entity& EntityFactory::createEntity(string path)
     Entity* entity = new Entity();
     shared_ptr<RenderJob> renderjob(new RenderJob());
     entity->setRenderJob(renderjob);
-    
+
     m_current_entityfile = new TiXmlDocument(path);
     if (!m_current_entityfile->LoadFile()) { // If error when loading file.
         DLOG(ERROR) << "Error when loading entity file " << path <<
@@ -34,9 +34,9 @@ Entity& EntityFactory::createEntity(string path)
     TiXmlHandle dochandle = TiXmlHandle(m_current_entityfile).FirstChild("entity");
 
     // Set name and description.
-    
+
     TiXmlElement* name_element = dochandle.FirstChild("name").ToElement();
-    if (name_element) 
+    if (name_element)
         entity->setName(name_element->GetText());
     else
         DLOG(WARNING) << "No name element in entity file " << path;
@@ -73,7 +73,7 @@ Entity& EntityFactory::createEntity(string path)
             renderjob->m_textures[i] = created_textures[i];
         }
     }
-    
+
     GLMmodel* model;
 
     // Load model and check number of materials.
@@ -156,12 +156,12 @@ Entity& EntityFactory::createEntity(string path)
         createMaterials(renderjob, model);
         checkOpenGLError();
     }
-    
+
     glmDelete(model);
-    
+
     DLOG(INFO) << "Entity "
-                  << (name_element ? name_element->GetText() : "*UnNamed*")
-                  << " created from " << path;
+    << (name_element ? name_element->GetText() : "*UnNamed*")
+    << " created from " << path;
     checkOpenGLError();
     return *entity;
 }
@@ -187,7 +187,7 @@ void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob
             tex = triangle->tindices[j];
             vec_identifier id = boost::make_tuple(pos, nor, tex, material_idx);
             map<vec_identifier, int>::iterator result = vec_indexes.find(id);
-            
+
             if (result == vec_indexes.end()) { // If vertex not created.
                 t_vertex vertex;
                 memcpy(vertex.position, model->vertices + pos * 3, sizeof(GLfloat) * 3);
@@ -209,7 +209,7 @@ void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob
     renderjob->m_vertex_count = element_buffer.size();
 
     genVertexBuffers(renderjob, &vertex_buffer[0], vertex_buffer.size(),
-            &element_buffer[0], element_buffer.size());
+                     &element_buffer[0], element_buffer.size());
     checkOpenGLError();
 }
 
@@ -224,8 +224,8 @@ string EntityFactory::makeDefineFromEnum(const char* enum_name, int index)
 
 
 void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
-        t_vertex* vertex_buffer, size_t vertex_buffer_length,
-        GLushort* element_buffer, size_t element_buffer_length)
+                                     t_vertex* vertex_buffer, size_t vertex_buffer_length,
+                                     GLushort* element_buffer, size_t element_buffer_length)
 {
     glGenVertexArrays(1, &renderjob->m_buffer_objects.vao);
     glBindVertexArray(renderjob->m_buffer_objects.vao);
@@ -235,7 +235,7 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
 
         glBindBuffer(GL_ARRAY_BUFFER, renderjob->m_buffer_objects.vertex_buffer);
         glBufferData(GL_ARRAY_BUFFER, vertex_buffer_length * sizeof(t_vertex),
-            vertex_buffer, GL_STATIC_DRAW);
+                     vertex_buffer, GL_STATIC_DRAW);
         checkOpenGLError();
 
 
@@ -266,7 +266,7 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderjob->m_buffer_objects.element_buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, element_buffer_length * sizeof(GLushort),
-                    element_buffer, GL_STATIC_DRAW);
+                     element_buffer, GL_STATIC_DRAW);
     }
     glBindVertexArray(0);
 }
@@ -286,11 +286,11 @@ void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob, GLMmodel* m
                sizeof(GLfloat) * 4);
         materials[i].shininess = model->materials[i].shininess;
     }
-    
+
     GLuint material_location = glGetUniformBlockIndex(program_id,
-                                                      "materials");
+                               "materials");
     assert(material_location != GL_INVALID_INDEX);
-    
+
     GLint block_size = 0;
     glGetActiveUniformBlockiv(
         program_id,
@@ -309,7 +309,7 @@ void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob, GLMmodel* m
 
     // Attach the UBO to RenderJob::MATERIAL index.
     glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL,
-            renderjob->m_uniforms.materials);
+                     renderjob->m_uniforms.materials);
     // Associate the block in the GLSL source to this index.
     glUniformBlockBinding(program_id, material_location, renderjob_enums::MATERIAL);
 

@@ -13,7 +13,7 @@ namespace gamefw {
 class RenderJob;
 
 /**
- * @brief Practically where the rendering happens.
+ * @brief Where the magic happens.
  */
 class Renderer
 {

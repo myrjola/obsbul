@@ -23,7 +23,7 @@ ShaderFactory& Locator::getShaderFactory()
     assert(s_shader_factory != NULL);
     return *s_shader_factory;
 }
-    
+
 void Locator::registerShaderFactory(ShaderFactory& service)
 {
     s_shader_factory = &service;

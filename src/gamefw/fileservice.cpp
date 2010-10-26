@@ -19,12 +19,12 @@ FileService::FileService()
     PHYSFS_setSaneConfig("config", PROJECT_NAME, "ob", 0, 1);
 
     dirseparator.assign(PHYSFS_getDirSeparator());
-    
+
     // Find the project directory
     string basedir(PHYSFS_getBaseDir());
 
     string project_name(PROJECT_NAME);
-    
+
     int project_path_pos = basedir.find(project_name);
     if (project_path_pos == basedir.npos) {
         DLOG(FATAL) << "Project " << project_name <<
@@ -52,7 +52,7 @@ const char* FileNotFoundException::what() const throw()
 char* FileService::fileToBuffer( string filename )
 {
     string realpath(getRealPath(filename));
-    
+
     ifstream file( realpath.c_str(), ios::in | ios::ate );
     ifstream::pos_type size;
     char* buffer;

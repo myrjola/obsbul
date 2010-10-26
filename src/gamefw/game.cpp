@@ -11,7 +11,7 @@ enum Windows {
 };
 
 Game::Game() :
-    m_main_window_context(24, 8, 0, 3, 3)
+        m_main_window_context(24, 8, 0, 3, 3)
 {
     m_main_window.Create(sf::VideoMode(800, 600, 24), "Test", sf::Style::Default,
                          m_main_window_context);
