@@ -88,12 +88,27 @@ GLuint ShaderProgram::compileShader(GLenum type, set<string>& defines, char* sou
     GLint status_ok;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status_ok);
     if (!status_ok) {
-        int line_number = 0;
-        // TODO: Show line numbers.
+        // Output shader source with line number for convenience.
+        int line_number = 1;
+        stringstream shader_source;
+        shader_source << '\n';
+
+        int number_of_defines = compiler_input.size() - 1;
         DLOG(ERROR) << "Shader source:\n";
-        foreach (GLchar* line, compiler_input) {
-            DLOG(ERROR) << line;
+        for (int i = 0; i < number_of_defines; i++) {
+            shader_source << line_number++ << '\t';
+            shader_source << compiler_input[i];
         }
+        istringstream rest_of_source(string(compiler_input[compiler_input.size() - 1]));
+        string line;
+        while (!rest_of_source.eof()) {
+            getline(rest_of_source, line);
+            shader_source << line_number++ << '\t';
+            shader_source << line << '\n';
+        }
+
+        
+        DLOG(ERROR) << shader_source.str();
         logErrors(shader, glGetShaderiv, glGetShaderInfoLog);
         glDeleteShader(shader);
         throw ShaderProgramCreationError();
@@ -139,5 +154,5 @@ void ShaderProgram::logErrors(GLuint object_id, PFNGLGETSHADERIVPROC shader_iv, 
     shader_iv(object_id, GL_INFO_LOG_LENGTH, &log_length);
     char log[log_length];
     shader_infolog(object_id, log_length, NULL, log);
-    DLOG(ERROR) << log;
+    DLOG(ERROR) << '\n' << log;
 }
