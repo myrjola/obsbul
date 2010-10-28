@@ -6,6 +6,11 @@ layout (location = POSITION) in vec4 in_position;
 layout (location = NORMAL) in vec4 in_normal;
 layout (location = TEXCOORD) in vec2 in_texcoord;
 layout (location = MATERIAL_IDX) in unsigned int in_material_idx;
+
+uniform mat4 model;
+uniform mat4 normalmatrix;
+uniform mat4 mvp;
+
 #endif // POSITION
 
 mat4 view_frustum(
@@ -85,23 +90,17 @@ layout(std140) uniform materials {
 
 void main(void)
 {
-    mat4 rotation = mat4(1.0);
-//     mat4 rotation = rotate_x(radians(20.0)) * rotate_y(radians(70.0));
     #ifdef FRUSTUM
-    gl_Position = view_frustum(radians(45.0), 1, 1.0, 10.0)
-                * translate(0.0, 0.0, 5.5)
-                * rotation
-                * in_position;
+    gl_Position = mvp
+                * vec4(in_position.xyz, 1.0);
     #endif // FRUSTUM
     
     #ifdef ORTHO
     gl_Position = in_position;
     #endif ORTHO
-//     frag_normal = in_normal.xyz;
-    frag_normal = (rotation * in_normal).xyz;
+    frag_normal = (normalmatrix * vec4(in_normal.xyz, 0.0)).xyz;
     frag_texcoord = in_texcoord;
-    frag_worldspace_pos = (translate(0.0, 0.0, 5.5) * in_position).xyz;
-    frag_diffuse = vec4(0.8, 0.0, 0.0, 1.0);
+    frag_worldspace_pos = (model * in_position).xyz;
     #ifdef MATERIALS
     frag_diffuse = Materials[in_material_idx].diffuse;
     frag_specular = Materials[in_material_idx].specular;

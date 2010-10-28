@@ -68,7 +68,6 @@ public:
     /// The shader program uniforms.
     struct {
         GLuint materials;
-        GLuint transforms;
     } m_uniforms;
 
 

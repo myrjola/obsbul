@@ -5,7 +5,7 @@
 using namespace gamefw;
 
 RenderJob::RenderJob() : m_buffer_objects{0, 0, 0, 0}, m_num_textures(0),
-                         m_uniforms{0, 0}
+                         m_uniforms{0}
 {}
 
 RenderJob::~RenderJob()

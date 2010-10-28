@@ -4,8 +4,12 @@
 
 namespace gamefw {
 
+/**
+ * @brief Encapsulates an independent state ie. main menu, pause or ingame.
+ */
 class GameState
 {
+//     GameState GameState(Game game);
 };
 
 }

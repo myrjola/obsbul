@@ -26,7 +26,13 @@ public:
 
     shared_ptr<RenderJob> getRenderJob();
     void setRenderJob(shared_ptr<RenderJob> renderjob);
-    
+
+    /// Transforms.
+    glm::vec3 m_position;
+    struct {
+        float yaw, pitch, roll;
+    } m_orientation;
+
 private:
     shared_ptr<string> m_name;
     shared_ptr<string> m_desc;

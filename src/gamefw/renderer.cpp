@@ -2,12 +2,20 @@
 #include "../common.h"
 #include "gamefw.h"
 
+#include <glm/gtc/matrix_projection.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
+
 using namespace gamefw;
 
-Renderer::Renderer()
+
+Renderer::Renderer(uint display_width, uint display_height) :
+    m_display_width((float) display_width),
+    m_display_height((float) display_height),
+    m_aspect_ratio((float) display_width / (float) display_height),
+    m_camera(new Entity())
 {
-    viewer_position = 0.0;
-    initBuffers(800, 600);
+    initBuffers(display_width, display_height);
 }
 
 Renderer::~Renderer()
@@ -75,17 +83,17 @@ bool Renderer::checkFramebuffer()
 
 void Renderer::initBuffers(GLuint width, GLuint height)
 {
-    int num_textures = 8;
+    int num_textures = 4;
 
     // GBUFFER STAGE
 
     {
-        gbuffer = Locator::getFileService().createEntity("gbuffer");
+        m_gbuffer = Locator::getFileService().createEntity("gbuffer");
         glGenFramebuffers(1, &m_fbo.gbuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.gbuffer);
 
         glActiveTexture(GL_TEXTURE0);
-        shared_ptr<RenderJob> gbuffer_renderjob = gbuffer.getRenderJob();
+        shared_ptr<RenderJob> gbuffer_renderjob = m_gbuffer.getRenderJob();
         gbuffer_renderjob->m_textures = new GLuint[num_textures];
         gbuffer_renderjob->m_num_textures = num_textures;
         glGenTextures(num_textures, gbuffer_renderjob->m_textures);
@@ -147,13 +155,13 @@ void Renderer::initBuffers(GLuint width, GLuint height)
 
     // PBUFFER STAGE.
     {
-        pbuffer = Locator::getFileService().createEntity("pbuffer");
+        m_pbuffer = Locator::getFileService().createEntity("pbuffer");
 
         glGenFramebuffers(1, &m_fbo.pbuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.pbuffer);
 
         glActiveTexture(GL_TEXTURE0);
-        shared_ptr<RenderJob> pbuffer_renderjob = pbuffer.getRenderJob();
+        shared_ptr<RenderJob> pbuffer_renderjob = m_pbuffer.getRenderJob();
         pbuffer_renderjob->m_textures = new GLuint[num_textures];
         pbuffer_renderjob->m_num_textures = num_textures;
         glGenTextures(num_textures, pbuffer_renderjob->m_textures);
@@ -196,12 +204,12 @@ void Renderer::initBuffers(GLuint width, GLuint height)
 
     // POSTPROCESSING STAGE
     {
-        ppbuffer = Locator::getFileService().createEntity("ppbuffer");
-        shared_ptr<RenderJob> ppbuffer_renderjob = ppbuffer.getRenderJob();
+        m_ppbuffer = Locator::getFileService().createEntity("ppbuffer");
+        shared_ptr<RenderJob> ppbuffer_renderjob = m_ppbuffer.getRenderJob();
 
         // Use gbuffers diffuse and specular textures.
         m_fbo.ppbuffer = m_fbo.gbuffer;
-        ppbuffer_renderjob->m_textures = gbuffer.getRenderJob()->m_textures;
+        ppbuffer_renderjob->m_textures = m_gbuffer.getRenderJob()->m_textures;
         ppbuffer_renderjob->m_num_textures = 2;
     }
 }
@@ -221,7 +229,7 @@ void Renderer::render()
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // Bind main window's framebuffer.
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    renderEntity(ppbuffer);
+    renderEntity(m_ppbuffer);
 }
 
 void Renderer::addToRenderQueue(Entity& entity)
@@ -250,6 +258,42 @@ void Renderer::renderEntity(Entity& entity)
         glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL,
                          renderjob->m_uniforms.materials);
     }
+
+    // Calculate and bind mvp.
+
+    // Model orientation ...
+   glm::mat4 model(glm::yawPitchRoll(entity.m_orientation.yaw,
+                                    entity.m_orientation.pitch,
+                                    entity.m_orientation.roll));
+    // ... + translation
+    model[3] = glm::vec4(entity.m_position, 1.0);
+
+    // Normal transform.
+    glm::mat4 normalmatrix = glm::transpose(glm::inverse(model));
+
+    // View transform.
+    glm::vec3 view_pos(0.0f, 0.0f, 0.0f);
+    glm::mat4 view_orientation(glm::yawPitchRoll(0.0f, 0.0f, 0.0f));
+    glm::mat4 view(glm::translate(glm::mat4(1.0f), -view_pos) * view_orientation);
+
+    // Projection transform
+    glm::mat4 projection = glm::perspective(45.0f, m_aspect_ratio, 0.1f, 100.f);
+
+    glm::mat4 mvp = projection * view * model;
+
+    // Bind the matrices to uniforms.
+    GLint location_mvp = glGetUniformLocation(program_id, "mvp");
+    glUniformMatrix4fv(location_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
+    GLint location_model = glGetUniformLocation(program_id, "model");
+    glUniformMatrix4fv(location_model, 1, GL_FALSE, glm::value_ptr(model));
+    GLint location_normalmatrix = glGetUniformLocation(program_id, "normalmatrix");
+    glUniformMatrix4fv(location_normalmatrix, 1, GL_FALSE, glm::value_ptr(normalmatrix));
+
+    // Bind display height and width uniforms.
+    GLint location_width = glGetUniformLocation(program_id, "display_width");
+    glUniform1f(location_width, m_display_width);
+    GLint location_height = glGetUniformLocation(program_id, "display_height");
+    glUniform1f(location_height, m_display_height);
 
     glBindVertexArray(renderjob->m_buffer_objects.vao);
 
@@ -286,13 +330,11 @@ void Renderer::renderPBuffers()
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.pbuffer);
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    GLuint program_id = gbuffer.getRenderJob()->getShaderProgramID();
+    GLuint program_id = m_gbuffer.getRenderJob()->getShaderProgramID();
     glUseProgram(program_id);
-    viewer_position += 0.01;
-    float viewer[] = {0.0, viewer_position, 0.0};
     glUniform3fv(glGetUniformLocation(program_id, "viewer_position"),
-                 1, viewer);
-    renderEntity(gbuffer);
+                 1, glm::value_ptr(m_camera->m_position));
+    renderEntity(m_gbuffer);
 
 }
 
@@ -302,5 +344,5 @@ void gamefw::Renderer::renderPPBuffers()
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.ppbuffer);
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    renderEntity(pbuffer);
+    renderEntity(m_pbuffer);
 }

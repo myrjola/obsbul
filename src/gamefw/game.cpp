@@ -10,10 +10,11 @@ enum Windows {
     MAIN
 };
 
-Game::Game() :
+Game::Game(uint display_width, uint display_height) :
         m_main_window_context(24, 8, 0, 3, 3)
 {
-    m_main_window.Create(sf::VideoMode(800, 600, 24), "Test", sf::Style::Default,
+    m_main_window.Create(sf::VideoMode(display_width, display_height,
+                                       24), "Test", sf::Style::Default,
                          m_main_window_context);
     m_main_window.SetActive();
     glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -43,8 +44,10 @@ void Game::update()
             m_main_window.Close();
         }
         if (event.Type == sf::Event::KeyPressed) {
-            if (event.Key.Code == sf::Key::R) {
-                Locator::getShaderFactory().reloadShaders();
+            switch (event.Key.Code) {
+                case (sf::Key::R):
+                    Locator::getShaderFactory().reloadShaders();
+                    break;
             }
         }
     }

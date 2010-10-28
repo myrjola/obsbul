@@ -16,6 +16,8 @@ uniform sampler2D texture5;
 uniform sampler2D texture6;
 uniform sampler2D texture7;
 
+uniform float display_width, display_height;
+
 
 #define INIT_DELTA vec2 delta[8];\
 delta[0] = vec2(-1.0,1.0);\
@@ -113,8 +115,8 @@ layout(location = 0) out vec4 out_color;
 
 void main(void)
 {
-    float shin_encoder = 25.0;
-    vec2 pixel_size = vec2(1.0/800.0, 1.0/400.0); // TODO: width and height uniforms
+    float shin_encoder = 55.0;
+    vec2 pixel_size = vec2(1.0/display_width, 1.0/display_height);
     
     #ifdef GBUFFER
     {
@@ -124,12 +126,12 @@ void main(void)
         vec4 specular = vec4(spec_rgb_shininess.rgb, 1.0);
         float shininess = spec_rgb_shininess.a * shin_encoder;
         vec4 position = texture(texture3, frag_texcoord);
-        vec3 to_light = vec3(5.0, 0.0, 0.0) - position.xyz;
+        vec3 to_light =  vec3(0.0, 0.0, 0.0) - position.xyz;
         vec3 to_viewer = viewer_position - position.xyz;
         vec3 half_vector = to_viewer + to_light;
         float norm_dot_half = clamp(dot(normal.xyz, normalize(half_vector)), 0.0, 1.0);
         float cos_theta = dot(normalize(normal.xyz), normalize(to_light));
-        float factor = detect_edges(pixel_size, 0.5);
+        float factor = detect_edges(pixel_size, 1.0);
         out_diffuse = diffuse * cos_theta;
         out_specular = specular * pow(norm_dot_half, shininess);
         out_edges = vec4(factor, factor, factor, 1.0);

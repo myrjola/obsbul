@@ -13,7 +13,7 @@ namespace gamefw {
 class Game
 {
 public:
-    Game();
+    Game(uint display_width, uint display_height);
 
     ~Game();
 

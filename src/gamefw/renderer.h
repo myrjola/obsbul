@@ -18,7 +18,13 @@ class RenderJob;
 class Renderer
 {
 public:
-    Renderer();
+    /**
+     * @brief Creates renderer for screen with given dimensions.
+     *
+     * @param display_width Width of display in pixels.
+     * @param display_height Height of display in pixels.
+     */
+    Renderer(uint display_width, uint display_height);
     ~Renderer();
     
     /**
@@ -29,11 +35,20 @@ public:
     void addToRenderQueue(Entity& entity);
 
     /**
+     * @brief Change given Entity to active camera.
+     * 
+     * @param camera ditto.
+     */
+    void changeCamera(shared_ptr<Entity> camera);
+
+    /**
      * @brief Renders the scene consisting of everything in the render queue.
      */
     void render();
     
 private:
+    float m_display_width, m_display_height, m_aspect_ratio;
+    
     struct {
         GLuint gbuffer, pbuffer, ppbuffer;
     } m_fbo;
@@ -43,12 +58,12 @@ private:
     } m_depth_stencil_buffers;
 
     std::queue<Entity*> m_render_queue;
-    Entity gbuffer;
-    Entity pbuffer;
-    Entity ppbuffer;
+    Entity m_gbuffer;
+    Entity m_pbuffer;
+    Entity m_ppbuffer;
 
-    float viewer_position;
-    
+    shared_ptr<Entity> m_camera;
+
     void initBuffers(GLuint width, GLuint height);
     void renderGBuffers();
     void renderEntity(Entity& entity);
