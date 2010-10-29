@@ -92,13 +92,13 @@ void main(void)
 {
     #ifdef FRUSTUM
     gl_Position = mvp
-                * vec4(in_position.xyz, 1.0);
+                * in_position;
     #endif // FRUSTUM
     
     #ifdef ORTHO
     gl_Position = in_position;
     #endif ORTHO
-    frag_normal = (normalmatrix * vec4(in_normal.xyz, 0.0)).xyz;
+    frag_normal = (normalmatrix * in_normal).xyz;
     frag_texcoord = in_texcoord;
     frag_worldspace_pos = (model * in_position).xyz;
     #ifdef MATERIALS
