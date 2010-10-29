@@ -5,7 +5,10 @@
 #ifndef GAME_H
 #define GAME_H
 
+
 namespace gamefw {
+    
+class GameState;
 
 /**
  * @brief Main game class. Provides the main window and performs input processing.
@@ -20,13 +23,22 @@ public:
     sf::Window* getMainWindow();
 
     /**
-     * Draws the screen and performs input processing.
+     * @brief Draws the screen and performs input processing.
      */
-    void update();
+    int update();
+
+    /**
+     * @brief Changes the active GameState.
+     * 
+     * @param gamestate ditto.
+     */
+    void changeGameState(shared_ptr<GameState> gamestate);
 
 private:
     sf::ContextSettings m_main_window_context;
     sf::Window m_main_window;
+
+    shared_ptr<GameState> active_gamestate;
 };
 
 }

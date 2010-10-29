@@ -82,7 +82,7 @@ public:
      * @param path The absolute path to the Entity's file.
      * @return Reference to the constructed Entity.
      */
-    Entity& createEntity(string path);
+    Entity createEntity(string path);
 
 private:
     void loadModel(GLMmodel* path, shared_ptr<RenderJob> renderjob);

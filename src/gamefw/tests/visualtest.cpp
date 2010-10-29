@@ -6,7 +6,6 @@
 #include <GL/freeglut.h>
 #include <physfs.h>
 
-
 using namespace gamefw;
 
 int main(int argc, char* argv[])
@@ -46,21 +45,25 @@ int main(int argc, char* argv[])
     sf::Clock clock;
 
     sf::Window* main_window = game->getMainWindow();
+    main_window->ShowMouseCursor(false);
 
     while (true) {
         float time_since_draw = clock.GetElapsedTime();
         if (time_since_draw >= 1.0f/60) {
             clock.Reset();
-            game->update();
+            if (!game->update()) { // If window closing.
+                break;
+            }
             renderer->addToRenderQueue(entity);
             renderer->addToRenderQueue(entity2);
             renderer->render();
             main_window->Display();
         }
     }
-        
+    delete renderer;
+    delete game;
     delete fileservice;
     delete shaderfactory;
-    
+
     return 0;
 }

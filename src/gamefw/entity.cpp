@@ -4,13 +4,17 @@
 using namespace gamefw;
 
 Entity::Entity() : m_name(new string("")), m_desc(new string("")),
-m_position(glm::vec3(0.0f, 0.0f, 0.0f)), m_orientation{0.0f, 0.0f, 0.0f}
+        m_position(glm::vec3(0.0f, 0.0f, 0.0f)), m_orientation {0.0f, 0.0f, 0.0f}
 {
 }
 
 Entity::~Entity()
 {
 }
+
+// Entity::Entity(const gamefw::Entity& entity)
+// {
+// }
 
 string Entity::getDesc()
 {

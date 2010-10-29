@@ -9,7 +9,8 @@ namespace gamefw {
  */
 class GameState
 {
-//     GameState GameState(Game game);
+public:
+    GameState();
 };
 
 }

@@ -17,11 +17,11 @@ const char* EntityCreationError::what() const throw()
     return "Error when creating Entity.";
 }
 
-Entity& EntityFactory::createEntity(string path)
+Entity EntityFactory::createEntity(string path)
 {
-    Entity* entity = new Entity();
+    Entity entity;
     shared_ptr<RenderJob> renderjob(new RenderJob());
-    entity->setRenderJob(renderjob);
+    entity.setRenderJob(renderjob);
 
     TiXmlDocument current_entityfile(path);
     if (!current_entityfile.LoadFile()) { // If error when loading file.
@@ -37,12 +37,12 @@ Entity& EntityFactory::createEntity(string path)
 
     TiXmlElement* name_element = dochandle.FirstChild("name").ToElement();
     if (name_element)
-        entity->setName(name_element->GetText());
+        entity.setName(name_element->GetText());
     else
         DLOG(WARNING) << "No name element in entity file " << path;
     TiXmlElement* desc_element = dochandle.FirstChild("desc").ToElement();
     if (desc_element) {
-        entity->setDesc(desc_element->GetText());
+        entity.setDesc(desc_element->GetText());
     }
     else {
         DLOG(WARNING) << "No desc element in entity file " << path;
@@ -163,7 +163,7 @@ Entity& EntityFactory::createEntity(string path)
     << (name_element ? name_element->GetText() : "*UnNamed*")
     << " created from " << path;
     checkOpenGLError();
-    return *entity;
+    return entity;
 }
 
 void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob)
@@ -232,7 +232,7 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
     {
         glGenBuffers(1, &renderjob->m_buffer_objects.vertex_buffer);
         glGenBuffers(1, &renderjob->m_buffer_objects.element_buffer);
-
+        
         glBindBuffer(GL_ARRAY_BUFFER, renderjob->m_buffer_objects.vertex_buffer);
         glBufferData(GL_ARRAY_BUFFER, vertex_buffer_length * sizeof(t_vertex),
                      vertex_buffer, GL_STATIC_DRAW);

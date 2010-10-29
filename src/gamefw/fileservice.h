@@ -92,7 +92,7 @@ public:
      * @param name The name of the entity file without the ".xml".
      * @return A fully initialized Entity object.
      */
-    Entity& createEntity(string name);
+    Entity createEntity(string name);
 
     /**
      * Issues a search in the virtual filesystem and returns the absolute path
@@ -104,7 +104,7 @@ public:
     string getRealPath(string path);
 
 private:
-    const fipImage& readImage(string name);
+    fipImage* readImage(string name);
 
     string dirseparator;
 

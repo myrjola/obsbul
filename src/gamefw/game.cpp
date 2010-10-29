@@ -24,7 +24,7 @@ Game::Game(uint display_width, uint display_height) :
 
 Game::~Game()
 {
-
+    m_main_window.Close();
 }
 
 sf::Window* Game::getMainWindow()
@@ -33,15 +33,13 @@ sf::Window* Game::getMainWindow()
 }
 
 
-void Game::update()
+int Game::update()
 {
-    if (!m_main_window.IsOpened()) {
-        throw 1;
-    }
     sf::Event event;
     while (m_main_window.GetEvent(event)) {
         if (event.Type == sf::Event::Closed) {
             m_main_window.Close();
+            return 0;
         }
         if (event.Type == sf::Event::KeyPressed) {
             switch (event.Key.Code) {
@@ -51,4 +49,5 @@ void Game::update()
             }
         }
     }
+    return 1;
 }

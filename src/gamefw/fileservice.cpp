@@ -79,13 +79,13 @@ char* FileService::fileToBuffer( string filename )
 
 GLuint FileService::makeTexture( string name )
 {
-    fipImage image = readImage( name );
+    fipImage* image = readImage( name );
 
-    assert( image.isValid() );
+    assert( image->isValid() );
 
-    int width = image.getWidth();
-    int height = image.getHeight();
-    void* pixels = (void*) image.accessPixels();
+    int width = image->getWidth();
+    int height = image->getHeight();
+    void* pixels = (void*) image->accessPixels();
     GLuint texture;
 
     glGenTextures( 1, &texture );
@@ -102,14 +102,14 @@ GLuint FileService::makeTexture( string name )
         pixels                      // pixels
     );
 
-    image.clear();
+    image->clear();
     delete image;
 
     return texture;
 
 }
 
-const fipImage& FileService::readImage( string name )
+fipImage* FileService::readImage( string name )
 {
     string filename = "assets/images/" + name + ".png";
 
@@ -123,7 +123,7 @@ const fipImage& FileService::readImage( string name )
     image->convertTo24Bits();
 
     DLOG( INFO ) << filename << " loaded to texture.";
-    return *image;
+    return image;
 }
 
 string FileService::getRealPath(string path)
@@ -137,7 +137,7 @@ string FileService::getRealPath(string path)
     return realpath;
 }
 
-Entity& FileService::createEntity(string name)
+Entity FileService::createEntity(string name)
 {
     string path = "assets/entities/" + name + ".xml";
     string realpath(getRealPath(path));

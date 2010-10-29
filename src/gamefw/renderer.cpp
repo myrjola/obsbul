@@ -16,12 +16,33 @@ Renderer::Renderer(uint display_width, uint display_height) :
     m_camera(new Entity())
 {
     initBuffers(display_width, display_height);
+    m_camera->setName("Camera");
 }
 
 Renderer::~Renderer()
 {
     glDeleteRenderbuffers(1, &m_depth_stencil_buffers.gbuffer);
     glDeleteRenderbuffers(1, &m_depth_stencil_buffers.pbuffer);
+    glDeleteFramebuffers(1, &m_fbo.gbuffer);
+    glDeleteFramebuffers(1, &m_fbo.pbuffer);
+    glDeleteFramebuffers(1, &m_fbo.ppbuffer);
+
+    // Delete manually allocated textures.
+    shared_ptr<RenderJob> gbuffer_renderjob = m_gbuffer.getRenderJob();
+    glDeleteTextures(gbuffer_renderjob->m_num_textures,
+                     gbuffer_renderjob->m_textures);
+    delete [] gbuffer_renderjob->m_textures;
+    gbuffer_renderjob->m_num_textures = 0;
+
+    shared_ptr<RenderJob> pbuffer_renderjob = m_pbuffer.getRenderJob();
+    glDeleteTextures(pbuffer_renderjob->m_num_textures,
+                     pbuffer_renderjob->m_textures);
+    delete [] pbuffer_renderjob->m_textures;
+    pbuffer_renderjob->m_num_textures = 0;
+
+    shared_ptr<RenderJob> ppbuffer_renderjob = m_ppbuffer.getRenderJob();
+    // Shared textures with gbuffer.
+    ppbuffer_renderjob->m_num_textures = 0;
 }
 
 void Renderer::createDepthStencilBuffer(GLuint* buffer, GLuint width, GLuint height)

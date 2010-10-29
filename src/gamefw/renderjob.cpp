@@ -11,9 +11,14 @@ RenderJob::RenderJob() : m_buffer_objects{0, 0, 0, 0}, m_num_textures(0),
 RenderJob::~RenderJob()
 {
     if (m_num_textures > 0) {
-        glDeleteTextures(m_num_textures, m_textures);
-        delete m_textures;
+//         glDeleteTextures(m_num_textures, m_textures);
+        delete [] m_textures;
     }
+    glDeleteVertexArrays(1, &m_buffer_objects.vao);
+    glDeleteBuffers(1, &m_buffer_objects.element_buffer);
+    glDeleteBuffers(1, &m_buffer_objects.vertex_buffer);
+    glDeleteBuffers(1, &m_buffer_objects.vertex_extra_buffer);
+    glDeleteBuffers(1, &m_uniforms.materials);
 }
 
 

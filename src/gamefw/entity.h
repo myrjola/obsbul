@@ -16,6 +16,8 @@ public:
     Entity();
 
     ~Entity();
+
+//     Entity(const Entity& entity);
      
     /// Getters and Setters
     string getName();
