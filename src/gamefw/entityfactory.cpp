@@ -23,15 +23,15 @@ Entity& EntityFactory::createEntity(string path)
     shared_ptr<RenderJob> renderjob(new RenderJob());
     entity->setRenderJob(renderjob);
 
-    m_current_entityfile = new TiXmlDocument(path);
-    if (!m_current_entityfile->LoadFile()) { // If error when loading file.
+    TiXmlDocument current_entityfile(path);
+    if (!current_entityfile.LoadFile()) { // If error when loading file.
         DLOG(ERROR) << "Error when loading entity file " << path <<
-        "\nError at line " << m_current_entityfile->ErrorRow() <<
-        "\nError description: " << m_current_entityfile->ErrorDesc();
+        "\nError at line " << current_entityfile.ErrorRow() <<
+        "\nError description: " << current_entityfile.ErrorDesc();
         throw EntityCreationError();
     }
 
-    TiXmlHandle dochandle = TiXmlHandle(m_current_entityfile).FirstChild("entity");
+    TiXmlHandle dochandle = TiXmlHandle(&current_entityfile).FirstChild("entity");
 
     // Set name and description.
 
