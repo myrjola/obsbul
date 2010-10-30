@@ -10,6 +10,48 @@
 #define MATERIAL_BY_FACE // To get material indices.
 #include <glm.h>
 
+
+/**
+ * @brief Vertex representation.
+ *
+ * GPU:s like 128-bit (4 floats) aligned buffers.
+ */
+typedef struct _vertex {
+    /// Vertex position.
+    GLfloat position[4];
+    /// Vertex surface normal.
+    GLfloat normal[4];
+    /// Vertex uv texture coordinate.
+    GLfloat texcoord[2];
+    /// Vertex material index.
+    GLuint material_idx;
+} t_vertex;
+
+/**
+ * @brief Extra buffers for the vertex representation.
+ */
+typedef struct _vertex_extra {
+    /// Vertex surface tangent.
+    GLfloat tangent[4];
+    /// Vertex surface bitangent.
+    GLfloat bitangent[4];
+} t_vertex_extra;
+
+/**
+ * @brief Mesh material properties.
+ */
+typedef struct _t_material {
+    /// Diffuse color.
+    GLfloat diffuse[4];
+    /// Specular color.
+    GLfloat specular[4];
+    /// Shininess coefficient.
+    GLfloat shininess;
+    /// Padding needed for std140 layout to align properly.
+    GLfloat padding[3]; // Needed for std140 layout.
+} t_material;
+ 
+
 using namespace gamefw;
 
 const char* EntityCreationError::what() const throw()
@@ -17,7 +59,7 @@ const char* EntityCreationError::what() const throw()
     return "Error when creating Entity.";
 }
 
-Entity EntityFactory::createEntity(string path)
+Entity EntityFactory::createEntity(const string& path)
 {
     Entity entity;
     shared_ptr<RenderJob> renderjob(new RenderJob());
@@ -150,10 +192,10 @@ Entity EntityFactory::createEntity(string path)
 
     // Load model after shader creation because uniform blocks
     // needs a working shader program.
-    loadModel(model, renderjob);
+    loadModel(*model, renderjob);
 
     if (materials_defined) {
-        createMaterials(renderjob, model);
+        createMaterials(renderjob, *model);
         checkOpenGLError();
     }
 
@@ -166,7 +208,7 @@ Entity EntityFactory::createEntity(string path)
     return entity;
 }
 
-void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob)
+void EntityFactory::loadModel(const GLMmodel& model, shared_ptr< RenderJob > renderjob)
 {
     vector<t_vertex> vertex_buffer;
     vector<GLushort> element_buffer;
@@ -174,7 +216,7 @@ void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob
     typedef boost::tuple<int, int, int, int> vec_identifier;
     map<vec_identifier, int> vec_indexes;
 
-    int numtriangles = model->numtriangles;
+    int numtriangles = model.numtriangles;
 
     // Create vertex- and element buffers.
     for (int i = 0; i < numtriangles; i++) {
@@ -190,11 +232,11 @@ void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob
 
             if (result == vec_indexes.end()) { // If vertex not created.
                 t_vertex vertex;
-                memcpy(vertex.position, model->vertices + pos * 3, sizeof(GLfloat) * 3);
+                memcpy(vertex.position, model.vertices + pos * 3, sizeof(GLfloat) * 3);
                 vertex.position[3] = 1.0;
-                memcpy(vertex.normal, model->normals + nor * 3, sizeof(GLfloat) * 3);
+                memcpy(vertex.normal, model.normals + nor * 3, sizeof(GLfloat) * 3);
                 vertex.normal[3] = 0.0;
-                memcpy(vertex.texcoord, model->texcoords + tex * 2, sizeof(GLfloat) * 2);
+                memcpy(vertex.texcoord, model.texcoords + tex * 2, sizeof(GLfloat) * 2);
                 vertex.material_idx = material_idx;
                 int vert_idx = vertex_buffer.size();
                 vertex_buffer.push_back(vertex);
@@ -213,7 +255,7 @@ void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob
     checkOpenGLError();
 }
 
-string EntityFactory::makeDefineFromEnum(const char* enum_name, int index)
+const string EntityFactory::makeDefineFromEnum(const char* enum_name, int index) const
 {
     stringstream enum_define;
     enum_define << enum_name;
@@ -224,8 +266,10 @@ string EntityFactory::makeDefineFromEnum(const char* enum_name, int index)
 
 
 void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
-                                     t_vertex* vertex_buffer, size_t vertex_buffer_length,
-                                     GLushort* element_buffer, size_t element_buffer_length)
+                                     const t_vertex* vertex_buffer,
+                                     size_t vertex_buffer_length,
+                                     const GLushort* element_buffer,
+                                     size_t element_buffer_length) const
 {
     glGenVertexArrays(1, &renderjob->m_buffer_objects.vao);
     glBindVertexArray(renderjob->m_buffer_objects.vao);
@@ -271,19 +315,20 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
     glBindVertexArray(0);
 }
 
-void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob, GLMmodel* model)
+void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob,
+                                    const GLMmodel& model) const
 {
     int program_id = renderjob->getShaderProgramID();
-    int num_materials = model->nummaterials;
+    int num_materials = model.nummaterials;
 
     // Create materials and bind them to uniform block.
     t_material materials[num_materials];
     for (int i = 0; i < num_materials; i++) {
-        memcpy(materials[i].diffuse, model->materials[i].diffuse,
+        memcpy(materials[i].diffuse, model.materials[i].diffuse,
                sizeof(GLfloat) * 4);
-        memcpy(materials[i].specular, model->materials[i].specular,
+        memcpy(materials[i].specular, model.materials[i].specular,
                sizeof(GLfloat) * 4);
-        materials[i].shininess = model->materials[i].shininess;
+        materials[i].shininess = model.materials[i].shininess;
     }
 
     GLuint material_location = glGetUniformBlockIndex(program_id,
