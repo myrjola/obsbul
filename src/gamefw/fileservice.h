@@ -69,7 +69,7 @@ public:
      * @param filename The path to the file.
      * @return New'd buffer of the files contents.
      */
-    char* fileToBuffer(string filename);
+    const char* fileToBuffer(const std::string& filename);
 
     /**
      * Creates an opengl texture from a PNG image.

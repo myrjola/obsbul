@@ -7,14 +7,14 @@ const char* ShaderProgramCreationError::what() const throw()
     return "Error when creating shader program.";
 }
 
-ShaderProgram::ShaderProgram(char* vertex_source,
-                             char* geometry_source,
-                             char* fragment_source,
-                             set< string >& defines)
-        :
-        m_defines(defines), m_vertex_source(vertex_source),
-        m_geometry_source(geometry_source),
-        m_fragment_source(fragment_source)
+ShaderProgram::ShaderProgram(char const* vertex_source,
+                             char const* geometry_source,
+                             char const* fragment_source,
+                             const set< string >& defines)
+:
+m_defines(defines), m_vertex_source(vertex_source),
+m_geometry_source(geometry_source),
+m_fragment_source(fragment_source)
 {
     m_program_id = glCreateProgram();
     makeProgram(m_program_id);
@@ -41,7 +41,7 @@ void ShaderProgram::deleteShaders()
     glDeleteShader(m_fragment_shader);
 }
 
-void ShaderProgram::reloadProgram(char* vertex_source, char* geometry_source, char* fragment_source)
+void ShaderProgram::reloadProgram(const char* vertex_source, const char* geometry_source, const char* fragment_source)
 {
     m_vertex_source = vertex_source;
     m_geometry_source = geometry_source;
@@ -64,12 +64,13 @@ set< string >& ShaderProgram::getDefines()
     return m_defines;
 }
 
-GLuint ShaderProgram::compileShader(GLenum type, set<string>& defines, char* source)
+GLuint ShaderProgram::compileShader(GLenum type, const set<string>& defines,
+                                    char const* source)
 {
     GLuint shader = glCreateShader(type);
 
     // Create char** consisting of given defines and lastly the shader source.
-    vector<char*> compiler_input;
+    vector<char const*> compiler_input;
 
     foreach (string define, defines) {
         string s = "#define ";
@@ -116,7 +117,7 @@ GLuint ShaderProgram::compileShader(GLenum type, set<string>& defines, char* sou
 
     compiler_input.pop_back(); // Remove shader source so it isn't deleted.
 
-    foreach (char* s, compiler_input) {
+    foreach (char const* s, compiler_input) {
         delete [] s; // Delete allocated strings.
     }
     return shader;

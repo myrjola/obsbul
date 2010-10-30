@@ -19,7 +19,7 @@ TEST(TestFileToBufferEquals)
     std::string data = "Hello,\nWorld!";
     testdata << data;
     testdata.close();
-    char* buffer = fileservice.fileToBuffer(filename);
+    char const* buffer = fileservice.fileToBuffer(filename);
     CHECK_EQUAL(data.c_str(), buffer);
     remove(filename.c_str());
     delete[] buffer;
@@ -28,7 +28,7 @@ TEST(TestFileToBufferEquals)
 TEST(TestFileToBufferNoFile)
 {
     FileService fileservice;
-    char* buffer;
+    char const* buffer;
     CHECK_THROW(buffer = fileservice.fileToBuffer("nonexistent.txt"),
                  FileNotFoundException);
 }

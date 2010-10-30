@@ -37,10 +37,10 @@ public:
      * @param fragment_source Buffer to fragment shader source.
      * @param defines Set of defines used when compiling. Empty set not allowed.
      */
-    ShaderProgram(char* vertex_source,
-                  char* geometry_source,
-                  char* fragment_source,
-                  set<string>& defines);
+    ShaderProgram(char const* vertex_source,
+                  char const* geometry_source,
+                  char const* fragment_source,
+                  const set<string>& defines);
 
     /**
      * @return The object ID of the shader program.
@@ -55,8 +55,8 @@ public:
     /**
      * @brief Reloads shader program with the new source files.
      */
-    void reloadProgram(char* vertex_source, char* geometry_source,
-                       char* fragment_source);
+    void reloadProgram(const char* vertex_source, const char* geometry_source,
+                       const char* fragment_source);
     
     /**
      * Detaches shaders and deletes them and the program.
@@ -67,7 +67,7 @@ private:
 
     void deleteShaders();
     
-    GLuint compileShader(GLenum type, set< string >& defines, char* source);
+    GLuint compileShader(GLenum type, const std::set< string >& defines, const char* source);
 
     void makeProgram(GLuint program_id);
 
@@ -76,7 +76,7 @@ private:
 
     GLuint m_vertex_shader, m_geometry_shader, m_fragment_shader, m_program_id;
 
-    char* m_vertex_source, *m_geometry_source, *m_fragment_source;
+    char const* m_vertex_source, *m_geometry_source, *m_fragment_source;
 
     set<string> m_defines;
 };
