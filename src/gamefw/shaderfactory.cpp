@@ -40,7 +40,7 @@ void ShaderFactory::deallocateSources()
 
 void ShaderFactory::loadSources()
 {
-    FileService& fileservice = Locator::getFileService();
+    const FileService& fileservice = Locator::getFileService();
     m_vertex_source = fileservice.fileToBuffer(VERTEX_PATH);
     m_geometry_source = fileservice.fileToBuffer(GEOMETRY_PATH);
     m_fragment_source = fileservice.fileToBuffer(FRAGMENT_PATH);
