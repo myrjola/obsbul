@@ -106,7 +106,7 @@ public:
 private:
     fipImage* readImage(const std::string& name) const;
 
-    string dirseparator;
+    string m_dirseparator;
 
     EntityFactory* m_entity_factory;
 };
