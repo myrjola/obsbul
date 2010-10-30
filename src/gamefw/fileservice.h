@@ -69,7 +69,7 @@ public:
      * @param filename The path to the file.
      * @return New'd buffer of the files contents.
      */
-    const char* fileToBuffer(const std::string& filename);
+    const char* fileToBuffer(const std::string& filename) const;
 
     /**
      * Creates an opengl texture from a PNG image.
@@ -81,7 +81,7 @@ public:
      * @param name The name of the image without the path and extension.
      * @return The OpenGL object ID of the created texture.
      */
-    GLuint makeTexture(string name);
+    GLuint makeTexture(const std::string& name) const;
 
     /**
      * Creates Entity using all the assets needed. Searches in the path
@@ -92,7 +92,7 @@ public:
      * @param name The name of the entity file without the ".xml".
      * @return A fully initialized Entity object.
      */
-    Entity createEntity(string name);
+    Entity createEntity(const std::string& name) const;
 
     /**
      * Issues a search in the virtual filesystem and returns the absolute path
@@ -101,10 +101,10 @@ public:
      * @throw FileNotFoundException When file not found.
      * @return The absolute path to the searched file.
      */
-    string getRealPath(string path);
+    const std::string getRealPath(const std::string& path) const;
 
 private:
-    fipImage* readImage(string name);
+    fipImage* readImage(const std::string& name) const;
 
     string dirseparator;
 
