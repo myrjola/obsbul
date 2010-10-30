@@ -16,12 +16,12 @@ Entity::~Entity()
 // {
 // }
 
-string Entity::getDesc()
+const string Entity::getDesc() const
 {
     return *m_desc;
 }
 
-string Entity::getName()
+const string Entity::getName() const
 {
     return *m_name;
 }
@@ -31,7 +31,7 @@ void Entity::setRenderJob(shared_ptr< RenderJob > renderjob)
     m_renderjob = renderjob;
 }
 
-shared_ptr< RenderJob > Entity::getRenderJob()
+shared_ptr< RenderJob > Entity::getRenderJob() const
 {
     return m_renderjob;
 }
