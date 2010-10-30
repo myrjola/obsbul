@@ -21,7 +21,7 @@ m_fragment_source(fragment_source)
 }
 
 
-GLuint ShaderProgram::getProgramID()
+GLuint ShaderProgram::getProgramID() const
 {
     return m_program_id;
 }
@@ -59,7 +59,7 @@ void ShaderProgram::reloadProgram(const char* vertex_source, const char* geometr
 }
 
 
-set< string >& ShaderProgram::getDefines()
+const set< string >& ShaderProgram::getDefines() const
 {
     return m_defines;
 }
@@ -123,7 +123,7 @@ GLuint ShaderProgram::compileShader(GLenum type, const set<string>& defines,
     return shader;
 }
 
-void ShaderProgram::makeProgram(GLuint program_id)
+void ShaderProgram::makeProgram(const GLuint program_id)
 {
     GLuint vertex_shader = compileShader(GL_VERTEX_SHADER, m_defines, m_vertex_source);
     GLuint fragment_shader = compileShader(GL_FRAGMENT_SHADER, m_defines, m_fragment_source);
