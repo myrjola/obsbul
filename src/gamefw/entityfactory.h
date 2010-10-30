@@ -10,7 +10,7 @@
 #include <tinyxml.h>
 
 struct _GLMmodel;
-typedef _GLMmodel GLMmodel;
+typedef _GLMmodel t_obj_model;
 
 /**
  * @brief Vertex representation.
@@ -38,19 +38,7 @@ typedef struct {
     GLfloat bitangent[4];
 } t_vertex_extra;
 
-/**
- * @brief Mesh material properties.
- */
-typedef struct {
-    /// Diffuse color.
-    GLfloat diffuse[4];
-    /// Specular color.
-    GLfloat specular[4];
-    /// Shininess coefficient.
-    GLfloat shininess;
-    /// Padding needed for std140 layout to align properly.
-    GLfloat padding[3]; // Needed for std140 layout.
-} t_material;
+
  
 namespace gamefw {
 
@@ -85,13 +73,13 @@ public:
     Entity createEntity(string path);
 
 private:
-    void loadModel(GLMmodel* path, shared_ptr<RenderJob> renderjob);
+    void loadModel(t_obj_model* path, shared_ptr<RenderJob> renderjob);
     
     void genVertexBuffers(shared_ptr<RenderJob> renderjob,
             t_vertex* vertex_buffer, size_t vertex_buffer_length,
             GLushort* element_buffer, size_t element_buffer_length);
 
-    void createMaterials(shared_ptr<RenderJob> renderjob, GLMmodel* model);
+    void createMaterials(shared_ptr<RenderJob> renderjob, t_obj_model* model);
 
     string makeDefineFromEnum(const char* attrib_name, int index);
 };

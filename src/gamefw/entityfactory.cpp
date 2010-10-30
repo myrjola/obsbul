@@ -178,7 +178,7 @@ void EntityFactory::loadModel(GLMmodel* model, shared_ptr< RenderJob > renderjob
 
     // Create vertex- and element buffers.
     for (int i = 0; i < numtriangles; i++) {
-        GLMtriangle* triangle = model->triangles + i;
+        t_obj_triangle* triangle = model->triangles + i;
         GLuint material_idx = triangle->material;
         for (int j = 0; j < 3; j++) {
             int pos, nor, tex;
@@ -279,7 +279,6 @@ void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob, GLMmodel* m
     // Create materials and bind them to uniform block.
     t_material materials[num_materials];
     for (int i = 0; i < num_materials; i++) {
-        model->materials[i].diffuse;
         memcpy(materials[i].diffuse, model->materials[i].diffuse,
                sizeof(GLfloat) * 4);
         memcpy(materials[i].specular, model->materials[i].specular,

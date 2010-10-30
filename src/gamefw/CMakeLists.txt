@@ -10,3 +10,4 @@ target_link_libraries(gamefw glog freeimageplus ${OPENGL_LIBRARY} tinyxml
 message(${SFML_LIBRARIES})
 
 add_subdirectory(tests)
+add_subdirectory(util)
