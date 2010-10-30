@@ -1,12 +1,12 @@
 
 Dependencies:
 
+SFML2
 Boost
-Bullet
-OpenGL
-glog
+Bullet Physics
+OpenGL 3+
+glog - Google logging
 UnitTest++
 FreeImagePlus
 TinyXML
 GLM - OpenGL mathematics
-GLM - OBJ library

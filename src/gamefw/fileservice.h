@@ -103,12 +103,19 @@ public:
      */
     const std::string getRealPath(const std::string& path) const;
 
+    /**
+     * @brief Get platform specific directory separator.
+     *
+     * @return The separator as a string ie. for windows '\\'.
+     **/
+    const std::string getDirSeparator() const;
+
 private:
     fipImage* readImage(const std::string& name) const;
 
-    string m_dirseparator;
-
     EntityFactory* m_entity_factory;
+    
+    string m_dirseparator;
 };
 
 }

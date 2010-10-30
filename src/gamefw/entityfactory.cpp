@@ -34,21 +34,6 @@ typedef struct _vertex_extra {
     GLfloat bitangent[4];
 } t_vertex_extra;
 
-/**
- * @brief Mesh material properties.
- */
-typedef struct _t_material {
-    /// Diffuse color.
-    GLfloat diffuse[4];
-    /// Specular color.
-    GLfloat specular[4];
-    /// Shininess coefficient.
-    GLfloat shininess;
-    /// Padding needed for std140 layout to align properly.
-    GLfloat padding[3]; // Needed for std140 layout.
-} t_material;
- 
-
 using namespace gamefw;
 
 const char* EntityCreationError::what() const throw()
@@ -316,16 +301,6 @@ void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob,
     int program_id = renderjob->getShaderProgramID();
     int num_materials = model.getNumMaterials();
 
-    // Create materials and bind them to uniform block.
-    t_material materials[num_materials];
-    for (int i = 0; i < num_materials; i++) {
-        memcpy(materials[i].diffuse, model.getMaterials()[i].diffuse,
-               sizeof(GLfloat) * 4);
-        memcpy(materials[i].specular, model.getMaterials()[i].specular,
-               sizeof(GLfloat) * 4);
-        materials[i].shininess = model.getMaterials()[i].shininess;
-    }
-
     GLuint material_location = glGetUniformBlockIndex(program_id,
                                "materials");
     assert(material_location != GL_INVALID_INDEX);
@@ -338,12 +313,12 @@ void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob,
         &block_size);
 
     // Tests if the the uniform block is similarly aligned in the buffer and the shader source.
-    assert(block_size == sizeof(t_material) * num_materials);
+    assert(block_size == sizeof(t_obj_mtl) * num_materials);
 
     // Create Uniform Buffer Object and fill with material data.
     glGenBuffers(1, &renderjob->m_uniforms.materials);
     glBindBuffer(GL_UNIFORM_BUFFER, renderjob->m_uniforms.materials);
-    glBufferData(GL_UNIFORM_BUFFER, block_size, materials, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, block_size, model.getMaterials(), GL_STATIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     // Attach the UBO to RenderJob::MATERIAL index.

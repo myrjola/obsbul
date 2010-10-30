@@ -146,3 +146,7 @@ Entity FileService::createEntity(const string& name) const
     return m_entity_factory->createEntity(realpath);
 }
 
+const std::string gamefw::FileService::getDirSeparator() const
+{
+    return m_dirseparator;
+}

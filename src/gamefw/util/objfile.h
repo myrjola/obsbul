@@ -131,8 +131,8 @@ public:
     const t_obj_mtl* getMaterials() const;
 
 private:
-    void parseFile(ifstream* file);
-    void loadMaterials(string arg1);
+    void parseFile(ifstream& file);
+    void loadMaterials(string mtllib_name);
     
     void addTriangle(GLuint p1, GLuint n1, GLuint t1,
                      GLuint p2, GLuint n2, GLuint t2,
@@ -143,36 +143,33 @@ private:
     void addNormal(GLfloat x, GLfloat y, GLfloat z);
     void addTexcoord(GLfloat u, GLfloat v);
 
-    /// Number of vertex positions.
+    string extractNextWord(ifstream& stream);
+    
+    t_obj_mtl getDefaultMtl();
+
     GLuint m_num_positions;
-    /// std::vector of positions as vec3:s
+    // std::vector of positions as vec3:s
     vector<GLfloat> m_positions;
 
-    /// Number of vertex normals.
     GLuint m_num_normals;
-    /// std::vector of normals as vec3:s
+    // std::vector of normals as vec3:s
     vector<GLfloat> m_normals;
 
-    /// Number of vertex texcoords.
     GLuint m_num_texcoords;
-    /// std::vector of texcoords as vec2:s
+    // std::vector of texcoords as vec2:s
     vector<GLfloat> m_texcoords;
 
-    /// Number of triangles.
     GLuint m_num_triangles;
-    /// std::vector of triangles.
     vector<t_obj_triangle> m_triangles;
 
-    /// Number of materials.
     GLuint m_num_materials;
-    /// std::vector of materials.
     vector<t_obj_mtl> m_materials;
     
-    map<string, uint> mtl_table;
+    map<string, uint> m_mtl_table;
     string m_path;
 };
 
 
-#endif // OBJFILE_H
-
 }
+
+#endif // OBJFILE_H
