@@ -6,10 +6,10 @@
 
 #include "gamefw.h"
 
+#include "util/objfile.h"
+
 #define TIXML_USE_STL
 #include <tinyxml.h>
-
-typedef struct _GLMmodel GLMmodel;
 
 typedef struct _vertex t_vertex;
 
@@ -46,13 +46,13 @@ public:
     Entity createEntity(const std::string& path);
 
 private:
-    void loadModel(const GLMmodel& model, shared_ptr< RenderJob > renderjob);
+    void loadModel(const ObjFile& model, shared_ptr<RenderJob> renderjob);
     
     void genVertexBuffers(shared_ptr<RenderJob> renderjob,
             const t_vertex* vertex_buffer, size_t vertex_buffer_length,
             const GLushort* element_buffer, size_t element_buffer_length) const;
 
-    void createMaterials(shared_ptr< RenderJob > renderjob, const GLMmodel& model) const;
+    void createMaterials(shared_ptr<RenderJob> renderjob, const ObjFile& model) const;
 
     const std::string makeDefineFromEnum(const char* enum_name, int index) const;
 };

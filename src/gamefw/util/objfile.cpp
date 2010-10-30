@@ -5,7 +5,7 @@
 
 namespace gamefw {
 
-ObjFile::objFile(string path)
+ObjFile::ObjFile(const std::string& path)
 :
 m_path(path),
 m_num_positions(0),

@@ -3,7 +3,7 @@
 
 #include <GL3/gl3.h> // To get the typedefs, ie. GLfloat.
 
-#include <../common.h>
+#include "../../common.h"
 #include <map>
 
 namespace gamefw {
@@ -78,7 +78,7 @@ public:
      *
      * @param path Path to the file, including extensions.
      */
-    objFile(string path);
+    ObjFile(const string& path );
 
     /// Getter for the amount of vertex positions in the mesh.
     const GLuint getNumPositions() const;
@@ -89,8 +89,7 @@ public:
     /// Getter for the amount of triangles in the mesh.
     const GLuint getNumTriangles() const;
     /// Getter for the amount of materials in the mesh.
-    const GLuint getMaterials() const;
-
+    const GLuint getNumMaterials() const;
 
     /**
      * @brief Get the vertex positions.
@@ -98,7 +97,7 @@ public:
      * @return An array of length getNumPositions().
      *         Remember that the positions are vec3:s.
      **/
-    const GLfloat* getPositions();
+    const GLfloat* getPositions() const;
 
     /**
      * @brief Get the vertex normals.
@@ -106,7 +105,7 @@ public:
      * @return An array of length getNumNormals().
      *         Remember that the normals are vec3:s.
      **/
-    const GLfloat* getNormals();
+    const GLfloat* getNormals() const;
     
 
     /**
@@ -115,16 +114,21 @@ public:
      * @return An array of length getNumTexcoords().
      *         Remember that the texcoords are vec2:s.
      **/
-    const GLfloat* getPositions();
+    const GLfloat* getTexCoords() const;
 
     /**
      * @brief Get the triangles.
      *
      * @return An array of length getNumTriangles().
      **/
-    const t_obj_triangle* getTriangles();
+    const t_obj_triangle* getTriangles() const;
 
-    const t_obj_mtl
+    /**
+     * @brief Get the materials.
+     *
+     * @return An array of length getNumMaterials().
+     **/
+    const t_obj_mtl* getMaterials() const;
 
 private:
     void parseFile(ifstream* file);

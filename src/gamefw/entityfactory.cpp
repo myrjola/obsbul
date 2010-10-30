@@ -7,9 +7,6 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 
-#define MATERIAL_BY_FACE // To get material indices.
-#include <glm.h>
-
 
 /**
  * @brief Vertex representation.
@@ -116,20 +113,17 @@ Entity EntityFactory::createEntity(const string& path)
         }
     }
 
-    GLMmodel* model;
 
     // Load model and check number of materials.
-    {
-        TiXmlElement* model_element =
-            dochandle.FirstChild("gfx").FirstChild("model").ToElement();
-        if (!model_element) {
-            DLOG(ERROR) << "No model element in entity file " << path;
-            throw EntityCreationError();
-        }
-        string modelpath = "assets/models/" + string(model_element->GetText()) + ".obj";
-        string absolute_path(Locator::getFileService().getRealPath(modelpath));
-        model = glmReadOBJ(absolute_path.c_str());
+    TiXmlElement* model_element =
+        dochandle.FirstChild("gfx").FirstChild("model").ToElement();
+    if (!model_element) {
+        DLOG(ERROR) << "No model element in entity file " << path;
+        throw EntityCreationError();
     }
+    string modelpath = "assets/models/" + string(model_element->GetText()) + ".obj";
+    string absolute_path(Locator::getFileService().getRealPath(modelpath));
+    ObjFile model(absolute_path);
 
     // Load shaders.
     bool materials_defined = false; // Needed to determine whether uniform blocks are created.
@@ -149,7 +143,7 @@ Entity EntityFactory::createEntity(const string& path)
         foreach(string define, tokens) {
             defines.insert(define);
         }
-        GLuint num_materials = model->nummaterials;
+        GLuint num_materials = model.getNumMaterials();
         string materials_define("MATERIALS");
         if (defines.find(materials_define) != defines.end()) { // If materials define found.
             materials_defined = true;
@@ -192,14 +186,12 @@ Entity EntityFactory::createEntity(const string& path)
 
     // Load model after shader creation because uniform blocks
     // needs a working shader program.
-    loadModel(*model, renderjob);
+    loadModel(model, renderjob);
 
     if (materials_defined) {
-        createMaterials(renderjob, *model);
+        createMaterials(renderjob, model);
         checkOpenGLError();
     }
-
-    glmDelete(model);
 
     DLOG(INFO) << "Entity "
     << (name_element ? name_element->GetText() : "*UnNamed*")
@@ -208,7 +200,7 @@ Entity EntityFactory::createEntity(const string& path)
     return entity;
 }
 
-void EntityFactory::loadModel(const GLMmodel& model, shared_ptr< RenderJob > renderjob)
+void EntityFactory::loadModel(const ObjFile& model, shared_ptr< RenderJob > renderjob)
 {
     vector<t_vertex> vertex_buffer;
     vector<GLushort> element_buffer;
@@ -216,15 +208,15 @@ void EntityFactory::loadModel(const GLMmodel& model, shared_ptr< RenderJob > ren
     typedef boost::tuple<int, int, int, int> vec_identifier;
     map<vec_identifier, int> vec_indexes;
 
-    int numtriangles = model.numtriangles;
+    int numtriangles = model.getNumTriangles();
 
     // Create vertex- and element buffers.
     for (int i = 0; i < numtriangles; i++) {
-        t_obj_triangle* triangle = model->triangles + i;
+        const t_obj_triangle* triangle = model.getTriangles() + i;
         GLuint material_idx = triangle->material;
         for (int j = 0; j < 3; j++) {
             int pos, nor, tex;
-            pos = triangle->vindices[j];
+            pos = triangle->pindices[j];
             nor = triangle->nindices[j];
             tex = triangle->tindices[j];
             vec_identifier id = boost::make_tuple(pos, nor, tex, material_idx);
@@ -232,11 +224,14 @@ void EntityFactory::loadModel(const GLMmodel& model, shared_ptr< RenderJob > ren
 
             if (result == vec_indexes.end()) { // If vertex not created.
                 t_vertex vertex;
-                memcpy(vertex.position, model.vertices + pos * 3, sizeof(GLfloat) * 3);
+                memcpy(vertex.position, model.getPositions() + pos * 3,
+                       sizeof(GLfloat) * 3);
                 vertex.position[3] = 1.0;
-                memcpy(vertex.normal, model.normals + nor * 3, sizeof(GLfloat) * 3);
+                memcpy(vertex.normal, model.getNormals() + nor * 3,
+                       sizeof(GLfloat) * 3);
                 vertex.normal[3] = 0.0;
-                memcpy(vertex.texcoord, model.texcoords + tex * 2, sizeof(GLfloat) * 2);
+                memcpy(vertex.texcoord, model.getTexCoords() + tex * 2,
+                       sizeof(GLfloat) * 2);
                 vertex.material_idx = material_idx;
                 int vert_idx = vertex_buffer.size();
                 vertex_buffer.push_back(vertex);
@@ -316,19 +311,19 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
 }
 
 void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob,
-                                    const GLMmodel& model) const
+                                    const ObjFile& model) const
 {
     int program_id = renderjob->getShaderProgramID();
-    int num_materials = model.nummaterials;
+    int num_materials = model.getNumMaterials();
 
     // Create materials and bind them to uniform block.
     t_material materials[num_materials];
     for (int i = 0; i < num_materials; i++) {
-        memcpy(materials[i].diffuse, model.materials[i].diffuse,
+        memcpy(materials[i].diffuse, model.getMaterials()[i].diffuse,
                sizeof(GLfloat) * 4);
-        memcpy(materials[i].specular, model.materials[i].specular,
+        memcpy(materials[i].specular, model.getMaterials()[i].specular,
                sizeof(GLfloat) * 4);
-        materials[i].shininess = model.materials[i].shininess;
+        materials[i].shininess = model.getMaterials()[i].shininess;
     }
 
     GLuint material_location = glGetUniformBlockIndex(program_id,
