@@ -16,7 +16,7 @@ class GameState;
 class Game
 {
 public:
-    Game(uint display_width, uint display_height);
+    Game(const uint display_width, const uint display_height);
 
     ~Game();
 
