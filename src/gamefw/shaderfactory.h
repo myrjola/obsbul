@@ -46,7 +46,7 @@ private:
     map< string, vector<GLuint>* >* m_define_table;
     map< GLuint, shared_ptr<ShaderProgram> >*  m_program_table;
 
-    char* m_vertex_source, *m_geometry_source, *m_fragment_source;
+    char const* m_vertex_source, *m_geometry_source, *m_fragment_source;
     void loadSources();
     void deallocateSources();
 };

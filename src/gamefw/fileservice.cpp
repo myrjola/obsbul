@@ -49,7 +49,7 @@ const char* FileNotFoundException::what() const throw()
     return "File not found.";
 }
 
-char* FileService::fileToBuffer( string filename )
+const char* FileService::fileToBuffer(const string& filename )
 {
     string realpath(getRealPath(filename));
 
