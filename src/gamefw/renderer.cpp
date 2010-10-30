@@ -9,7 +9,7 @@
 using namespace gamefw;
 
 
-Renderer::Renderer(uint display_width, uint display_height) :
+Renderer::Renderer(const GLuint& display_width, const GLuint& display_height) :
     m_display_width((float) display_width),
     m_display_height((float) display_height),
     m_aspect_ratio((float) display_width / (float) display_height),
@@ -45,7 +45,8 @@ Renderer::~Renderer()
     ppbuffer_renderjob->m_num_textures = 0;
 }
 
-void Renderer::createDepthStencilBuffer(GLuint* buffer, GLuint width, GLuint height)
+void Renderer::createDepthStencilBuffer(GLuint* buffer, const GLuint& width,
+                                        const GLuint& height)
 {
     glGenRenderbuffers(1, buffer);
     glBindRenderbuffer(GL_RENDERBUFFER, m_depth_stencil_buffers.gbuffer);
@@ -55,7 +56,7 @@ void Renderer::createDepthStencilBuffer(GLuint* buffer, GLuint width, GLuint hei
                               GL_RENDERBUFFER, m_depth_stencil_buffers.gbuffer);
 }
 
-void Renderer::texParametersForRenderTargets()
+void Renderer::texParametersForRenderTargets() const
 {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -65,7 +66,7 @@ void Renderer::texParametersForRenderTargets()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1000);
 }
 
-bool Renderer::checkFramebuffer()
+bool Renderer::checkFramebuffer() const
 {
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     string error = "Framebuffer object error: ";
@@ -102,7 +103,7 @@ bool Renderer::checkFramebuffer()
 }
 
 
-void Renderer::initBuffers(GLuint width, GLuint height)
+void Renderer::initBuffers(const GLuint& width, const GLuint& height)
 {
     int num_textures = 4;
 
@@ -253,12 +254,12 @@ void Renderer::render()
     renderEntity(m_ppbuffer);
 }
 
-void Renderer::addToRenderQueue(Entity& entity)
+void Renderer::addToRenderQueue(const Entity& entity)
 {
     m_render_queue.push(&entity);
 }
 
-void Renderer::renderEntity(Entity& entity)
+void Renderer::renderEntity(const Entity& entity)
 {
     shared_ptr<RenderJob> renderjob = entity.getRenderJob();
     GLuint program_id = renderjob->getShaderProgramID();
@@ -340,7 +341,7 @@ void Renderer::renderGBuffers()
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     while (!m_render_queue.empty()) {
-        Entity* current_entity = m_render_queue.front();
+        const Entity* current_entity = m_render_queue.front();
         m_render_queue.pop();
         renderEntity(*current_entity);
     }

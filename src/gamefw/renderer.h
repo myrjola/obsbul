@@ -24,7 +24,7 @@ public:
      * @param display_width Width of display in pixels.
      * @param display_height Height of display in pixels.
      */
-    Renderer(uint display_width, uint display_height);
+    Renderer(const GLuint& display_width, const GLuint& display_height);
     ~Renderer();
     
     /**
@@ -32,7 +32,7 @@ public:
      *
      * @param entity ditto.
      */
-    void addToRenderQueue(Entity& entity);
+    void addToRenderQueue(const gamefw::Entity& entity);
 
     /**
      * @brief Change given Entity to active camera.
@@ -57,19 +57,20 @@ private:
         GLuint gbuffer, pbuffer;
     } m_depth_stencil_buffers;
 
-    std::queue<Entity*> m_render_queue;
+    std::queue<const Entity*> m_render_queue;
     Entity m_gbuffer;
     Entity m_pbuffer;
     Entity m_ppbuffer;
 
     shared_ptr<Entity> m_camera;
 
-    void initBuffers(GLuint width, GLuint height);
+    void initBuffers(const GLuint& width, const GLuint& height);
     void renderGBuffers();
-    void renderEntity(Entity& entity);
-    void texParametersForRenderTargets();
-    bool checkFramebuffer();
-    void createDepthStencilBuffer(GLuint* buffer, GLuint width, GLuint height);
+    void renderEntity(const gamefw::Entity& entity);
+    void texParametersForRenderTargets() const;
+    bool checkFramebuffer() const;
+    void createDepthStencilBuffer(GLuint* buffer, const GLuint& width,
+                                  const GLuint& height);
     void renderPBuffers();
     void renderPPBuffers();
 };
