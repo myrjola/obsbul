@@ -9,7 +9,7 @@
 using namespace gamefw;
 
 
-Renderer::Renderer(const GLuint& display_width, const GLuint& display_height) :
+Renderer::Renderer(const GLuint display_width, const GLuint display_height) :
     m_display_width((float) display_width),
     m_display_height((float) display_height),
     m_aspect_ratio((float) display_width / (float) display_height),
@@ -45,8 +45,8 @@ Renderer::~Renderer()
     ppbuffer_renderjob->m_num_textures = 0;
 }
 
-void Renderer::createDepthStencilBuffer(GLuint* buffer, const GLuint& width,
-                                        const GLuint& height)
+void Renderer::createDepthStencilBuffer(GLuint* buffer, const GLuint width,
+                                        const GLuint height)
 {
     glGenRenderbuffers(1, buffer);
     glBindRenderbuffer(GL_RENDERBUFFER, m_depth_stencil_buffers.gbuffer);
@@ -103,7 +103,7 @@ bool Renderer::checkFramebuffer() const
 }
 
 
-void Renderer::initBuffers(const GLuint& width, const GLuint& height)
+void Renderer::initBuffers(const GLuint width, const GLuint height)
 {
     int num_textures = 4;
 

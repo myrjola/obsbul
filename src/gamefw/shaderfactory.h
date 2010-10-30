@@ -30,7 +30,7 @@ public:
      *
      * @return The compiled ShaderProgram.
      */
-    shared_ptr<ShaderProgram> makeShader(set< string > defines);
+    shared_ptr<ShaderProgram> makeShader(const std::set< string >& defines);
 
     /**
      * Reloads shader sources and updates the shader programs.

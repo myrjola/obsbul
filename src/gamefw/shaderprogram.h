@@ -45,12 +45,12 @@ public:
     /**
      * @return The object ID of the shader program.
      */
-    GLuint getProgramID();
+    GLuint getProgramID() const;
 
     /**
      * @return The defines used in the compilation of the program.
      */
-    set<string>& getDefines();
+    const std::set< string >& getDefines() const;
 
     /**
      * @brief Reloads shader program with the new source files.
@@ -69,7 +69,7 @@ private:
     
     GLuint compileShader(GLenum type, const std::set< string >& defines, const char* source);
 
-    void makeProgram(GLuint program_id);
+    void makeProgram(const GLuint program_id);
 
     void logErrors(GLuint object_id, PFNGLGETSHADERIVPROC shader_iv,
                    PFNGLGETSHADERINFOLOGPROC shader_infolog);

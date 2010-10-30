@@ -59,7 +59,7 @@ void ShaderFactory::reloadShaders()
     }
 }
 
-shared_ptr<ShaderProgram> ShaderFactory::makeShader(set< string > defines)
+shared_ptr<ShaderProgram> ShaderFactory::makeShader(const set< string >& defines)
 {
     vector<GLuint> possible_programs;
 

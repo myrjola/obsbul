@@ -24,7 +24,7 @@ public:
      * @param display_width Width of display in pixels.
      * @param display_height Height of display in pixels.
      */
-    Renderer(const GLuint& display_width, const GLuint& display_height);
+    Renderer(const GLuint display_width, const GLuint display_height);
     ~Renderer();
     
     /**
@@ -64,13 +64,13 @@ private:
 
     shared_ptr<Entity> m_camera;
 
-    void initBuffers(const GLuint& width, const GLuint& height);
+    void initBuffers(const GLuint width, const GLuint height);
     void renderGBuffers();
     void renderEntity(const gamefw::Entity& entity);
     void texParametersForRenderTargets() const;
     bool checkFramebuffer() const;
-    void createDepthStencilBuffer(GLuint* buffer, const GLuint& width,
-                                  const GLuint& height);
+    void createDepthStencilBuffer(GLuint* buffer, const GLuint width,
+                                  const GLuint height);
     void renderPBuffers();
     void renderPPBuffers();
 };
