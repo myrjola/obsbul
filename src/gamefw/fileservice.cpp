@@ -49,9 +49,9 @@ const char* FileNotFoundException::what() const throw()
     return "File not found.";
 }
 
-const char* FileService::fileToBuffer(const string& filename )
+const char* FileService::fileToBuffer(const string& filename ) const
 {
-    string realpath(getRealPath(filename));
+    const string realpath(getRealPath(filename));
 
     ifstream file( realpath.c_str(), ios::in | ios::ate );
     ifstream::pos_type size;
@@ -77,7 +77,7 @@ const char* FileService::fileToBuffer(const string& filename )
     throw FileNotFoundException();
 }
 
-GLuint FileService::makeTexture( string name )
+GLuint FileService::makeTexture( const string& name ) const
 {
     fipImage* image = readImage( name );
 
@@ -109,7 +109,7 @@ GLuint FileService::makeTexture( string name )
 
 }
 
-fipImage* FileService::readImage( string name )
+fipImage* FileService::readImage( const string& name ) const
 {
     string filename = "assets/images/" + name + ".png";
 
@@ -126,7 +126,7 @@ fipImage* FileService::readImage( string name )
     return image;
 }
 
-string FileService::getRealPath(string path)
+const string FileService::getRealPath(const string& path) const
 {
     if (!PHYSFS_exists(path.c_str())) {
         DLOG( ERROR ) << path << " not found.";
@@ -137,7 +137,7 @@ string FileService::getRealPath(string path)
     return realpath;
 }
 
-Entity FileService::createEntity(string name)
+Entity FileService::createEntity(const string& name) const
 {
     string path = "assets/entities/" + name + ".xml";
     string realpath(getRealPath(path));
