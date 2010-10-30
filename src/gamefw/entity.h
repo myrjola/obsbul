@@ -20,13 +20,13 @@ public:
 //     Entity(const Entity& entity);
      
     /// Getters and Setters
-    string getName();
+    const std::string getName() const;
     void setName(const char* name);
     
-    string getDesc();
+    const std::string getDesc() const;
     void setDesc(const char* desc);
 
-    shared_ptr<RenderJob> getRenderJob();
+    shared_ptr<RenderJob> getRenderJob() const;
     void setRenderJob(shared_ptr<RenderJob> renderjob);
 
     /// Transforms.
