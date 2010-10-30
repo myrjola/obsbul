@@ -10,7 +10,7 @@ enum Windows {
     MAIN
 };
 
-Game::Game(uint display_width, uint display_height) :
+Game::Game(const uint display_width, const uint display_height) :
         m_main_window_context(24, 8, 0, 3, 3)
 {
     m_main_window.Create(sf::VideoMode(display_width, display_height,
