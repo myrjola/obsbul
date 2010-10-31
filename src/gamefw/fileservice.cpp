@@ -18,7 +18,7 @@ FileService::FileService()
         PHYSFS_init(NULL);
     PHYSFS_setSaneConfig("config", PROJECT_NAME, "ob", 0, 1);
 
-    dirseparator.assign(PHYSFS_getDirSeparator());
+    m_dirseparator.assign(PHYSFS_getDirSeparator());
 
     // Find the project directory
     string basedir(PHYSFS_getBaseDir());
@@ -111,7 +111,8 @@ GLuint FileService::makeTexture( const string& name ) const
 
 fipImage* FileService::readImage( const string& name ) const
 {
-    string filename = "assets/images/" + name + ".png";
+    string filename = "assets" + m_dirseparator + "images" +
+                                                m_dirseparator + name + ".png";
 
     string realpath(getRealPath(filename));
 
@@ -133,14 +134,19 @@ const string FileService::getRealPath(const string& path) const
         throw FileNotFoundException();
     }
     string realpath(PHYSFS_getRealDir(path.c_str()));
-    realpath += dirseparator + path;
+    realpath += m_dirseparator + path;
     return realpath;
 }
 
 Entity FileService::createEntity(const string& name) const
 {
-    string path = "assets/entities/" + name + ".xml";
+    string path = "assets" + m_dirseparator + "entities" +
+                                              m_dirseparator + name + ".xml";
     string realpath(getRealPath(path));
     return m_entity_factory->createEntity(realpath);
 }
 
+const std::string gamefw::FileService::getDirSeparator() const
+{
+    return m_dirseparator;
+}
