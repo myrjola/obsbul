@@ -1,5 +1,7 @@
 #include "shaderprogram.h"
 
+#include <sstream>
+
 using namespace gamefw;
 
 const char* ShaderProgramCreationError::what() const throw()
@@ -77,7 +79,7 @@ GLuint ShaderProgram::compileShader(GLenum type, const set<string>& defines,
         s += define;
         s += "\n";
         int length = s.length() + 1;
-        char* line = new char[length + 1];
+        char* line = new char[length];
         strcpy(line, s.c_str());
         compiler_input.push_back(line);
     }
@@ -100,7 +102,8 @@ GLuint ShaderProgram::compileShader(GLenum type, const set<string>& defines,
             shader_source << line_number++ << '\t';
             shader_source << compiler_input[i];
         }
-        istringstream rest_of_source(string(compiler_input[compiler_input.size() - 1]));
+		string rest_of_source_str(compiler_input[compiler_input.size() - 1]);
+		istringstream rest_of_source(rest_of_source_str);
         string line;
         while (!rest_of_source.eof()) {
             getline(rest_of_source, line);
@@ -153,7 +156,8 @@ void ShaderProgram::logErrors(GLuint object_id, PFNGLGETSHADERIVPROC shader_iv, 
     GLint log_length;
 
     shader_iv(object_id, GL_INFO_LOG_LENGTH, &log_length);
-    char log[log_length];
+    char log[10000]; // TODO: fix this
+    //char log[log_length]; // TODO: fix this
     shader_infolog(object_id, log_length, NULL, log);
     DLOG(ERROR) << '\n' << log;
 }

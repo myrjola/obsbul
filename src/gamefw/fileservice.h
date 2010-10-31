@@ -2,14 +2,13 @@
 #ifndef FILESERVICE_H
 #define FILESERVICE_H
 
+#include <GL/glew.h>
+
 #include "../common.h"
 
 #ifndef PROJECT_NAME
     #define PROJECT_NAME "ObscureBulldozer"
 #endif
-
-
-#include <GL/gl.h>
 
 class fipImage;
 

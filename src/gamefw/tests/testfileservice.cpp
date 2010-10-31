@@ -1,10 +1,10 @@
+#include <UnitTest++.h>
+
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
-
 #include <boost/filesystem.hpp>
 #include <FreeImagePlus.h>
-#include <UnitTest++.h>
 
 #include "../fileservice.h"
 
@@ -13,7 +13,7 @@ using namespace gamefw;
 TEST(TestFileToBufferEquals)
 {
     FileService fileservice;
-    ofstream testdata;
+    std::ofstream testdata;
     std::string filename = "temp.txt";
     testdata.open(filename.c_str());
     std::string data = "Hello,\nWorld!";

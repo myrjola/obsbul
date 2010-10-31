@@ -1,9 +1,9 @@
 #ifndef OBJFILE_H
 #define OBJFILE_H
 
-#include <GL3/gl3.h> // To get the typedefs, ie. GLfloat.
-
 #include "../../common.h"
+
+#include <GL/glew.h>
 #include <map>
 
 namespace gamefw {

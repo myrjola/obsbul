@@ -1,7 +1,7 @@
-#include "gamefw.h"
-
 #ifndef LOCATOR_H
 #define LOCATOR_H
+
+#include "gamefw.h"
 
 namespace gamefw {
 

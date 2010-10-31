@@ -107,4 +107,3 @@ void main(void)
     frag_shininess = Materials[in_material_idx].shininess;
     #endif // MATERIALS
 }
-

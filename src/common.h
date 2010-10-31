@@ -14,7 +14,16 @@ using namespace std;
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
-#include <glog/logging.h>
+#ifdef _WIN32
+    typedef unsigned int uint;
+//#	undef ERROR
+#endif
+
+#define DLOG(INFO) (cout << '\n')
+#define DLOG(ERROR) (cout << '\n')
+#define DLOG(FATAL) (cout << '\n')
+
+//#include <glog/logging.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

@@ -1,6 +1,6 @@
 include_directories(/usr/include/bullet)
 
 add_executable(testobjfile testobjfile.cpp)
-target_link_libraries(testobjfile gamefw UnitTest++)
+target_link_libraries(testobjfile gamefw UnitTest++ tinyxml)
 
 add_test(testObjFile testobjfile)

@@ -6,9 +6,6 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "../locator.h"
-#include "../fileservice.h"
-
 namespace gamefw {
 
 const char* CorruptObjFileException::what() const throw()
@@ -36,7 +33,7 @@ ObjFile::ObjFile(const std::string& path)
 
 void ObjFile::parseFile(ifstream& file)
 {
-    streamsize LARGE_NUMBER = std::numeric_limits<std::streamsize>::max();
+	streamsize LARGE_NUMBER = std::numeric_limits<std::streamsize>::max();
     uint line_number = 1;
     uint current_mtl = 0; // Default material.
     GLfloat v1, v2, v3;
@@ -154,7 +151,7 @@ string ObjFile::extractNextWord(ifstream& stream)
 void ObjFile::loadMaterials(string mtllib_name)
 {
     streamsize LARGE_NUMBER = std::numeric_limits<std::streamsize>::max();
-    string dirseparator(Locator::getFileService().getDirSeparator());
+    string dirseparator = "/";
     string mtllib_path(m_path);
     int directory_pos = mtllib_path.find_last_of(dirseparator);
     mtllib_path.resize(directory_pos + 1); // Snip filename.obj.

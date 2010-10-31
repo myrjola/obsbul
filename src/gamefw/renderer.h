@@ -4,8 +4,6 @@
 
 #include <queue>
 
-#define GL3_PROTOTYPES
-#include <GL3/gl3.h>
 #include "entity.h"
 
 namespace gamefw {

@@ -8,9 +8,6 @@
 
 #include "util/objfile.h"
 
-#define TIXML_USE_STL
-#include <tinyxml.h>
-
 typedef struct _vertex t_vertex;
 
 namespace gamefw {

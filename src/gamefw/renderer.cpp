@@ -266,7 +266,7 @@ void Renderer::renderEntity(const Entity& entity)
     glUseProgram(program_id);
 
     // Load textures.
-    for (int i = 0; i < renderjob->m_num_textures; i++) {
+    for (uint i = 0; i < renderjob->m_num_textures; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, renderjob->m_textures[i]);
         string uniform_name("texture");

@@ -1,16 +1,13 @@
-
-#include <GL/glew.h>
 #include "../../common.h"
 
 #include "../gamefw.h"
-#include <GL/freeglut.h>
+
 #include <physfs.h>
 
 using namespace gamefw;
 
 int main(int argc, char* argv[])
 {
-    google::InitGoogleLogging(argv[0]);
     PHYSFS_init(argv[0]);
 
     uint width = 800, height = 600;
@@ -38,7 +35,7 @@ int main(int argc, char* argv[])
     Entity entity2 = Locator::getFileService().createEntity("sphere");
 
     entity.m_position = glm::vec3(4.0f, 0.0f, -15.0f);
-    entity2.m_position = glm::vec3(-4.0f, 0.0f, -10.0f);
+	entity2.m_position = glm::vec3(-4.0f, 0.0f, -10.0f);
 
     Renderer* renderer = new Renderer(width, height);
 

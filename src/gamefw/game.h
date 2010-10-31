@@ -1,6 +1,7 @@
+#include "gamefw.h"
+
 #include <SFML/Window.hpp>
 
-#include "gamefw.h"
 
 #ifndef GAME_H
 #define GAME_H

@@ -4,9 +4,6 @@
 #include "../common.h"
 #include <boost/preprocessor.hpp>
 
-#define GL3_PROTOTYPES
-#include <GL3/gl3.h>
-
 #include "shaderprogram.h"
 
 namespace gamefw {

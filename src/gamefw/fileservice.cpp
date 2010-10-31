@@ -53,20 +53,24 @@ const char* FileService::fileToBuffer(const string& filename ) const
 {
     const string realpath(getRealPath(filename));
 
+	// Open file at end.
     ifstream file( realpath.c_str(), ios::in | ios::ate );
-    ifstream::pos_type size;
-    char* buffer;
 
     if ( file.is_open() ) {
-        size = file.tellg();
-        // The +1 in size fixes valgrind invalid read and write errors. Probably
-        // missing the '\0'.
-        buffer = new char[size + ( ifstream::pos_type ) 1];
-        file.seekg( 0, ios::beg );
-        file.read( buffer, size );
+        uint size = (uint) file.tellg(); // Get file size.
+        // The +1 is for '\0'.
+        char* buffer = new char[size + 1];
+        file.seekg( 0, ios::beg ); // Back to start.
+		char* c = buffer;
+        // Read the file to buffer.
+		while (file.good()) {
+            file.get(*c);
+			c++;
+		}
+
         file.close();
 
-        buffer[size] = '\0'; // Delete EOF.
+        *(c - 1) = '\0'; // Delete EOF.
 
         DLOG( INFO ) << filename << " loaded into buffer.";
 
@@ -111,8 +115,7 @@ GLuint FileService::makeTexture( const string& name ) const
 
 fipImage* FileService::readImage( const string& name ) const
 {
-    string filename = "assets" + m_dirseparator + "images" +
-                                                m_dirseparator + name + ".png";
+    string filename = "assets/images/" + name + ".png";
 
     string realpath(getRealPath(filename));
 
@@ -140,8 +143,7 @@ const string FileService::getRealPath(const string& path) const
 
 Entity FileService::createEntity(const string& name) const
 {
-    string path = "assets" + m_dirseparator + "entities" +
-                                              m_dirseparator + name + ".xml";
+    string path = "assets/entities/" + name + ".xml";
     string realpath(getRealPath(path));
     return m_entity_factory->createEntity(realpath);
 }

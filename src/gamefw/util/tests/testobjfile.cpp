@@ -79,7 +79,6 @@ TEST_FIXTURE(ObjFileFixture, TestLoadSimpleObj)
 
 int main(int argc, char* argv[])
 {
-    google::InitGoogleLogging(argv[0]);
     PHYSFS_init(argv[0]);
 
     return UnitTest::RunAllTests();

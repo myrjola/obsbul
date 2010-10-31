@@ -7,33 +7,8 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 
-
-/**
- * @brief Vertex representation.
- *
- * GPU:s like 128-bit (4 floats) aligned buffers.
- */
-typedef struct _vertex {
-    /// Vertex position.
-    GLfloat position[4];
-    /// Vertex surface normal.
-    GLfloat normal[4];
-    /// Vertex uv texture coordinate.
-    GLfloat texcoord[2];
-    /// Vertex material index.
-    GLuint material_idx;
-} t_vertex;
-
-/**
- * @brief Extra buffers for the vertex representation.
- */
-typedef struct _vertex_extra {
-    /// Vertex surface tangent.
-    GLfloat tangent[4];
-    /// Vertex surface bitangent.
-    GLfloat bitangent[4];
-} t_vertex_extra;
-
+#define TIXML_USE_STL
+#include "tinyxml.h"
 
 /**
  * @brief Vertex representation.
@@ -213,10 +188,10 @@ Entity EntityFactory::createEntity(const string& path)
 
     // Load model after shader creation because uniform blocks
     // needs a working shader program.
-    loadModel(*model, renderjob);
+    loadModel(model, renderjob);
 
     if (materials_defined) {
-        createMaterials(renderjob, *model);
+        createMaterials(renderjob, model);
         checkOpenGLError();
     }
 
