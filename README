@@ -3,9 +3,8 @@ Dependencies:
 
 SFML2
 Boost
-Bullet Physics
 OpenGL 3+
-glog - Google logging
+GLEW
 UnitTest++
 FreeImagePlus
 TinyXML

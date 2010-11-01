@@ -16,13 +16,7 @@ using namespace std;
 
 #ifdef _WIN32
     typedef unsigned int uint;
-//#	undef ERROR
 #endif
-#ifndef _WIN32
-#define DLOG(ARG) (cout << '\n')
-#endif
-
-//#include <glog/logging.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
