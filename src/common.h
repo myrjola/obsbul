@@ -18,10 +18,9 @@ using namespace std;
     typedef unsigned int uint;
 //#	undef ERROR
 #endif
-
-#define DLOG(INFO) (cout << '\n')
-#define DLOG(ERROR) (cout << '\n')
-#define DLOG(FATAL) (cout << '\n')
+#ifndef _WIN32
+#define DLOG(ARG) (cout << '\n')
+#endif
 
 //#include <glog/logging.h>
 
