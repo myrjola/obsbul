@@ -3,9 +3,9 @@ set(GAMEFW_HDRS entityfactory.h entity.h fileservice.h locator.h shaderprogram.h
 
 add_library(gamefw ${GAMEFW_SRCS} ${GAMEFW_HDRS})
 
-target_link_libraries(gamefw ${OPENGL_LIBRARY} tinyxml
-                     ${SFML_LIBS} ${PHYSFS_LIBRARY}
-                     objfile ${GLEW_LIBS} ${FreeImagePlus_LIBRARY})
+target_link_libraries(gamefw objfile ${OPENGL_LIBRARY} tinyxml
+                     ${SFML2_LIBRARIES} ${PHYSFS_LIBRARY}
+                     ${GLEW_LIBRARIES} ${FreeImagePlus_LIBRARY})
 
 add_subdirectory(tests)
 add_subdirectory(util)

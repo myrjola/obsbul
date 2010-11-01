@@ -9,19 +9,13 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(PhysFS REQUIRED)
 find_package(FreeImagePlus REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(SFML2 REQUIRED)
 
 set(Boost_USE_STATIC_LIBS   ON)
 set(Boost_USE_MULTITHREADED ON)
 find_package(Boost REQUIRED COMPONENTS filesystem system)
 set(Boost_LIBRARIES ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
-
-set(SFML_LIBS sfml2-audio sfml2-graphics sfml2-window sfml2-system)
-
-set (GLEW_LIBS GLEW)
-if(WIN32)
-    set (GLEW_LIBS glew32s)
-endif(WIN32)
-
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     ADD_DEFINITIONS(-std=c++0x) #Enable C++0x mode for gcc.
