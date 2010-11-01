@@ -8,4 +8,3 @@ target_link_libraries(gamefw objfile ${OPENGL_LIBRARY} ${TinyXML_LIBRARIES}
                      ${GLEW_LIBRARIES} ${FreeImagePlus_LIBRARY})
 
 add_subdirectory(tests)
-add_subdirectory(util)

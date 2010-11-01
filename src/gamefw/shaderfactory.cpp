@@ -15,7 +15,7 @@ ShaderFactory::ShaderFactory()
     m_program_table = new map< GLuint, shared_ptr<ShaderProgram> >();
     m_define_table = new map< string, vector<GLuint>* >();
     loadSources();
-    DLOG(INFO) << "ShaderFactory created";
+    LOG(logINFO) << "ShaderFactory created";
 }
 
 ShaderFactory::~ShaderFactory()
@@ -64,7 +64,7 @@ shared_ptr<ShaderProgram> ShaderFactory::makeShader(const set< string >& defines
     vector<GLuint> possible_programs;
 
     if (defines.empty()) { // Defines not allowed to be empty.
-        DLOG(ERROR) << "ShaderFactory::makeShader passed an empty defines set.";
+        LOG(logERROR) << "ShaderFactory::makeShader passed an empty defines set.";
         throw ShaderProgramCreationError();
     }
 

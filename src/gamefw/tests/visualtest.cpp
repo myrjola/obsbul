@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
     
     int status= glewInit();
     if (GLEW_OK != status) {
-        DLOG(ERROR) << "Error:" << glewGetErrorString(status) << "\n";
+        LOG(logERROR) << "Error:" << glewGetErrorString(status) << "\n";
     }
 
     // The reason why I imported glew: arb_debug_output.

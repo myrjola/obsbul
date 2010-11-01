@@ -6,7 +6,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-namespace gamefw {
+namespace util {
 
 const char* CorruptObjFileException::what() const throw()
 {
@@ -50,8 +50,8 @@ void ObjFile::parseFile(ifstream& file)
             
             // Bail out if incorrect format.
             if (file.bad()) {
-                DLOG(ERROR) << "Incorrect format in " <<
-                m_path << ":" << line_number;
+                LOG(logERROR) << "Incorrect format in " <<
+                    m_path << ":" << line_number;
                 throw CorruptObjFileException();
             }
 
@@ -72,7 +72,7 @@ void ObjFile::parseFile(ifstream& file)
             try {
                 current_mtl = m_mtl_table.at(mtl_name);
             } catch (std::out_of_range) {
-                DLOG(ERROR) << "Unknown material in " <<
+                LOG(logERROR) << "Unknown material in " <<
                 m_path << ":" << line_number;
                 throw CorruptObjFileException();
             }
@@ -202,7 +202,7 @@ void ObjFile::loadMaterials(string mtllib_name)
 
         // Error checking.
         if (file.bad()) {
-            DLOG(ERROR) << "Invalid format in " <<
+            LOG(logERROR) << "Invalid format in " <<
             m_path << ":" << line_number;
             throw CorruptObjFileException();
         }

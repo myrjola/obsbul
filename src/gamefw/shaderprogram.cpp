@@ -52,7 +52,7 @@ void ShaderProgram::reloadProgram(const char* vertex_source, const char* geometr
     try {
         makeProgram(new_program_id);
     } catch (ShaderProgramCreationError) {
-        DLOG(ERROR) << "Failure when reloading shader program";
+        LOG(logERROR) << "Failure when reloading shader program";
         return; // Don't switch to new program if creation failed.
     }
     deleteShaders();
@@ -97,7 +97,7 @@ GLuint ShaderProgram::compileShader(GLenum type, const set<string>& defines,
         shader_source << '\n';
 
         int number_of_defines = compiler_input.size() - 1;
-        DLOG(ERROR) << "Shader source:\n";
+        LOG(logERROR) << "Shader source:\n";
         for (int i = 0; i < number_of_defines; i++) {
             shader_source << line_number++ << '\t';
             shader_source << compiler_input[i];
@@ -112,7 +112,7 @@ GLuint ShaderProgram::compileShader(GLenum type, const set<string>& defines,
         }
 
         
-        DLOG(ERROR) << shader_source.str();
+        LOG(logERROR) << shader_source.str();
         logErrors(shader, glGetShaderiv, glGetShaderInfoLog);
         glDeleteShader(shader);
         throw ShaderProgramCreationError();
@@ -159,5 +159,5 @@ void ShaderProgram::logErrors(GLuint object_id, PFNGLGETSHADERIVPROC shader_iv, 
     char log[10000]; // TODO: fix this
     //char log[log_length]; // TODO: fix this
     shader_infolog(object_id, log_length, NULL, log);
-    DLOG(ERROR) << '\n' << log;
+    LOG(logERROR) << '\n' << log;
 }

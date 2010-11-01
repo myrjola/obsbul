@@ -1,12 +1,13 @@
 #ifndef OBJFILE_H
 #define OBJFILE_H
 
-#include "../../common.h"
-
 #include <GL/glew.h>
+
+#include "../common.h"
+
 #include <map>
 
-namespace gamefw {
+namespace util {
 
 /**
  * @brief Exception thrown when the obj-file is corrupt.

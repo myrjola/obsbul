@@ -56,7 +56,7 @@ inline void checkOpenGLError()
             s = "UNKNOWN";
             break;
         }
-        DLOG(ERROR) << "OpenGL Error: " << s.c_str();
+        LOG(logERROR) << "OpenGL Error: " << s.c_str();
         throw OpenGLError();
     }
 }

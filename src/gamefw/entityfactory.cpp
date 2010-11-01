@@ -66,7 +66,7 @@ Entity EntityFactory::createEntity(const string& path)
 
     TiXmlDocument current_entityfile(path);
     if (!current_entityfile.LoadFile()) { // If error when loading file.
-        DLOG(ERROR) << "Error when loading entity file " << path <<
+        LOG(logERROR) << "Error when loading entity file " << path <<
         "\nError at line " << current_entityfile.ErrorRow() <<
         "\nError description: " << current_entityfile.ErrorDesc();
         throw EntityCreationError();
@@ -80,13 +80,13 @@ Entity EntityFactory::createEntity(const string& path)
     if (name_element)
         entity.setName(name_element->GetText());
     else
-        DLOG(WARNING) << "No name element in entity file " << path;
+        LOG(logWARNING) << "No name element in entity file " << path;
     TiXmlElement* desc_element = dochandle.FirstChild("desc").ToElement();
     if (desc_element) {
         entity.setDesc(desc_element->GetText());
     }
     else {
-        DLOG(WARNING) << "No desc element in entity file " << path;
+        LOG(logWARNING) << "No desc element in entity file " << path;
     }
 
     /*
@@ -120,7 +120,7 @@ Entity EntityFactory::createEntity(const string& path)
     TiXmlElement* model_element =
         dochandle.FirstChild("gfx").FirstChild("model").ToElement();
     if (!model_element) {
-        DLOG(ERROR) << "No model element in entity file " << path;
+        LOG(logERROR) << "No model element in entity file " << path;
         throw EntityCreationError();
     }
     string modelpath = "assets/models/" + string(model_element->GetText()) + ".obj";
@@ -133,7 +133,7 @@ Entity EntityFactory::createEntity(const string& path)
         TiXmlElement* shader_defines_element =
             dochandle.FirstChild("gfx").FirstChild("shader_defines").ToElement();
         if (!shader_defines_element) {
-            DLOG(ERROR) << "No shader_defines element in entity file " << path;
+            LOG(logERROR) << "No shader_defines element in entity file " << path;
             throw EntityCreationError();
         }
         set<string> defines;
@@ -195,7 +195,7 @@ Entity EntityFactory::createEntity(const string& path)
         checkOpenGLError();
     }
 
-    DLOG(INFO) << "Entity "
+    LOG(logINFO) << "Entity "
     << (name_element ? name_element->GetText() : "*UnNamed*")
     << " created from " << path;
     checkOpenGLError();

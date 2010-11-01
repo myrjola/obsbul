@@ -1,7 +1,7 @@
 #include <UnitTest++.h>
 
-#include "../../../common.h"
-#include "../../gamefw.h"
+#include "../../common.h"
+#include "../../gamefw/gamefw.h"
 #include "../objfile.h"
 
 #include <physfs.h>
@@ -26,7 +26,6 @@ struct ObjFileFixture
 
 TEST_FIXTURE(ObjFileFixture, TestLoadSimpleObj)
 {
-    string separator = Locator::getFileService().getDirSeparator();
     string path = Locator::getFileService().getRealPath("src/gamefw/util/tests/simple.obj");
     ObjFile model(path);
     CHECK_EQUAL(model.getNumMaterials(), 2); // +1 for the default mtl.

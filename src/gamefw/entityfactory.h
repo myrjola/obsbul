@@ -6,7 +6,7 @@
 
 #include "gamefw.h"
 
-#include "util/objfile.h"
+#include "../util/objfile.h"
 
 typedef struct _vertex t_vertex;
 

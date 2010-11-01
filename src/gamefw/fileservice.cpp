@@ -27,7 +27,7 @@ FileService::FileService()
 
     int project_path_pos = basedir.find(project_name);
     if (project_path_pos == basedir.npos) {
-        DLOG(FATAL) << "Project " << project_name <<
+        LOG(logFATAL) << "Project " << project_name <<
         " root directory not found from " << basedir;
     }
     basedir.erase(project_path_pos + project_name.length());
@@ -72,12 +72,12 @@ const char* FileService::fileToBuffer(const string& filename ) const
 
         *(c - 1) = '\0'; // Delete EOF.
 
-        DLOG( INFO ) << filename << " loaded into buffer.";
+        LOG( logINFO ) << filename << " loaded into buffer.";
 
         return buffer;
     }
 
-    DLOG( ERROR ) << filename << " not found.";
+    LOG( logERROR ) << filename << " not found.";
     throw FileNotFoundException();
 }
 
@@ -126,14 +126,14 @@ fipImage* FileService::readImage( const string& name ) const
     }
     image->convertTo24Bits();
 
-    DLOG( INFO ) << filename << " loaded to texture.";
+    LOG( logINFO ) << filename << " loaded to texture.";
     return image;
 }
 
 const string FileService::getRealPath(const string& path) const
 {
     if (!PHYSFS_exists(path.c_str())) {
-        DLOG( ERROR ) << path << " not found.";
+        LOG( logERROR ) << path << " not found.";
         throw FileNotFoundException();
     }
     string realpath(PHYSFS_getRealDir(path.c_str()));
