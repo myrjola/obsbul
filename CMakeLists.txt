@@ -11,6 +11,8 @@ find_package(PhysFS REQUIRED)
 find_package(FreeImagePlus REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(SFML2 REQUIRED)
+find_package(TinyXML REQUIRED)
+find_package(UnitTest++ REQUIRED)
 
 set(Boost_USE_STATIC_LIBS   ON)
 set(Boost_USE_MULTITHREADED ON)

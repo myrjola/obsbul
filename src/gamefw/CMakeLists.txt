@@ -3,7 +3,7 @@ set(GAMEFW_HDRS entityfactory.h entity.h fileservice.h locator.h shaderprogram.h
 
 add_library(gamefw ${GAMEFW_SRCS} ${GAMEFW_HDRS})
 
-target_link_libraries(gamefw objfile ${OPENGL_LIBRARY} tinyxml
+target_link_libraries(gamefw objfile ${OPENGL_LIBRARY} ${TinyXML_LIBRARIES}
                      ${SFML2_LIBRARIES} ${PHYSFS_LIBRARY}
                      ${GLEW_LIBRARIES} ${FreeImagePlus_LIBRARY})
 
