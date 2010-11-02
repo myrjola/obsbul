@@ -26,7 +26,7 @@ struct ObjFileFixture
 
 TEST_FIXTURE(ObjFileFixture, TestLoadSimpleObj)
 {
-    string path = Locator::getFileService().getRealPath("src/gamefw/util/tests/simple.obj");
+    string path = Locator::getFileService().getRealPath("src/util/tests/simple.obj");
     ObjFile model(path);
     CHECK_EQUAL(model.getNumMaterials(), 2); // +1 for the default mtl.
     CHECK_EQUAL(model.getNumNormals(), 1);
@@ -47,12 +47,13 @@ TEST_FIXTURE(ObjFileFixture, TestLoadSimpleObj)
     CHECK_ARRAY_CLOSE(model.getPositions(), positions, 9, 0.00);
     CHECK_ARRAY_CLOSE(model.getNormals(), normals, 3, 0.00);
     CHECK_ARRAY_CLOSE(model.getTexCoords(), texcoords, 6, 0.00);
-    
+
+    // Indexes should be -1 from the .obj.
     t_obj_triangle triangle1 = {
-        {1, 2, 3},
-        {1, 2, 3},
-        {1, 1, 1},
-        1
+        {0, 1, 2},
+        {0, 0, 0},
+        {0, 1, 2},
+        1 // Except for the material, because there's a default one on index 0.
     };
 
     t_obj_triangle triangle2 = *model.getTriangles();
