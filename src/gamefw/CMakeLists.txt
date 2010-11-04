@@ -5,6 +5,6 @@ add_library(gamefw ${GAMEFW_SRCS} ${GAMEFW_HDRS})
 
 target_link_libraries(gamefw objfile ${OPENGL_LIBRARY} ${TinyXML_LIBRARIES}
                      ${SFML2_LIBRARIES} ${PHYSFS_LIBRARY}
-                     ${GLEW_LIBRARIES} ${FreeImagePlus_LIBRARY})
+                     ${GLEW_LIBRARIES} ${FreeImagePlus_LIBRARIES})
 
 add_subdirectory(tests)
