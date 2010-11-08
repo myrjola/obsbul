@@ -17,7 +17,7 @@ set(SFML_MODULES audio graphics window system)
 # Library
 foreach(module ${SFML_MODULES})
     find_library(SFML2_${module}_LIBRARY
-    NAMES sfml2-${module}
+    NAMES sfml-${module} sfml2-${module}
     )
     set(SFML2_LIBS ${SFML2_LIBS} ${SFML2_${module}_LIBRARY})
 endforeach(module)
