@@ -148,65 +148,30 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
         glGenFramebuffers(1, &m_fbo.gbuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.gbuffer);
 
+        const GLenum internalformats[] = {
+            GL_RGB8,
+            GL_RGB8,
+            GL_RGB16F,
+            GL_RGB32F
+        };
+        const GLuint size_divisor[] = {1, 1, 1, 1};
+        const GLenum types[] = {
+            GL_UNSIGNED_BYTE,
+            GL_UNSIGNED_BYTE,
+            GL_FLOAT,
+            GL_FLOAT
+        };
+        
         glActiveTexture(GL_TEXTURE0);
         shared_ptr<RenderJob> gbuffer_renderjob = m_gbuffer.getRenderJob();
-        gbuffer_renderjob->m_textures = new GLuint[num_textures];
-        gbuffer_renderjob->m_num_textures = num_textures;
-        glGenTextures(num_textures, gbuffer_renderjob->m_textures);
-
-        for (int i = 0; i < num_textures; i++) {
-            glBindTexture(GL_TEXTURE_2D, gbuffer_renderjob->m_textures[i]);
-
-            texParametersForRenderTargets();
-
-            GLenum internalformat, type;
-            switch (i) {
-            case(renderjob_enums::OUTG_NORMAL):
-                internalformat = GL_RGB16F;
-                type = GL_FLOAT;
-                break;
-
-            case(renderjob_enums::OUTG_POSITION):
-                internalformat = GL_RGB32F;
-                type = GL_FLOAT;
-                break;
-
-            default:
-                internalformat = GL_RGB8;
-                type = GL_UNSIGNED_BYTE;
-                break;
-            }
-            glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                internalformat,
-                width,
-                height,
-                0,
-                GL_RGB,
-                type,
-                0
-            );
-
-            GLint attachment = GL_COLOR_ATTACHMENT0 + i;
-
-            glFramebufferTexture(GL_FRAMEBUFFER, attachment,
-                                 gbuffer_renderjob->m_textures[i], 0);
-        }
+        
+        createTexturesForFBO(gbuffer_renderjob, num_textures, internalformats,
+                             size_divisor, types);
 
         createDepthStencilBuffer(&m_depth_stencil_buffers.gbuffer, width, height);
 
         bool status = checkFramebuffer();
         assert(status);
-
-        GLenum draw_buffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
-                                 GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3
-                                };
-        glDrawBuffers(4, draw_buffers);
-
-
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     // PBUFFER STAGE.
@@ -218,44 +183,30 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
 
         glActiveTexture(GL_TEXTURE0);
         shared_ptr<RenderJob> pbuffer_renderjob = m_pbuffer.getRenderJob();
-        pbuffer_renderjob->m_textures = new GLuint[num_textures];
-        pbuffer_renderjob->m_num_textures = num_textures;
-        glGenTextures(num_textures, pbuffer_renderjob->m_textures);
 
-        for (int i = 0; i < num_textures; i++) {
-            glBindTexture(GL_TEXTURE_2D, pbuffer_renderjob->m_textures[i]);
+        const GLenum internalformats[] = {
+            GL_RGB8,
+            GL_RGB8,
+            GL_RGB8,
+            GL_RGB8
+        };
+        const GLuint size_divisors[] = {1, 1, 1, 1};
+        const GLenum types[] = {
+            GL_UNSIGNED_BYTE,
+            GL_UNSIGNED_BYTE,
+            GL_UNSIGNED_BYTE,
+            GL_UNSIGNED_BYTE
+        };
 
-            texParametersForRenderTargets();
-
-            glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RGB8,
-                width,
-                height,
-                0,
-                GL_RGB,
-                GL_UNSIGNED_BYTE,
-                0
-            );
-
-            GLint attachment = GL_COLOR_ATTACHMENT0 + i;
-
-            glFramebufferTexture(GL_FRAMEBUFFER, attachment,
-                                 pbuffer_renderjob->m_textures[i], 0);
-        }
-
+        createTexturesForFBO(pbuffer_renderjob, num_textures, internalformats,
+            size_divisors, types
+        );
+    
         createDepthStencilBuffer(&m_depth_stencil_buffers.pbuffer, width, height);
 
         bool status = checkFramebuffer();
         assert(status);
 
-        GLenum draw_buffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
-                                 GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3
-                                };
-        glDrawBuffers(4, draw_buffers);
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     // POSTPROCESSING STAGE
@@ -268,6 +219,19 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
         ppbuffer_renderjob->m_textures = m_gbuffer.getRenderJob()->m_textures;
         ppbuffer_renderjob->m_num_textures = 2;
     }
+
+    // Assign draw buffers.
+    GLenum draw_buffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
+                             GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3
+    };
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.gbuffer);
+    glDrawBuffers(4, draw_buffers);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.pbuffer);
+    glDrawBuffers(4, draw_buffers);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.ppbuffer);
+    glDrawBuffers(4, draw_buffers);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Renderer::render()
