@@ -102,6 +102,40 @@ bool Renderer::checkFramebuffer() const
     return status == GL_FRAMEBUFFER_COMPLETE;
 }
 
+void Renderer::createTexturesForFBO(shared_ptr<RenderJob> renderjob,
+                                    const GLuint num_textures,
+                                    const GLenum internalformats[],
+                                    const GLuint size_divisor[],
+                                    const GLenum types[])
+{
+    renderjob->m_textures = new GLuint[num_textures];
+    renderjob->m_num_textures = num_textures;
+    glGenTextures(num_textures, renderjob->m_textures);
+
+    for (int i = 0; i < num_textures; i++) {
+        glBindTexture(GL_TEXTURE_2D, renderjob->m_textures[i]);
+
+        texParametersForRenderTargets();
+
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            internalformats[i],
+            m_display_width / size_divisor[i],
+            m_display_height / size_divisor[i],
+            0,
+            GL_RGB,
+            types[i],
+            0
+        );
+
+        GLint attachment = GL_COLOR_ATTACHMENT0 + i;
+
+        glFramebufferTexture(GL_FRAMEBUFFER, attachment,
+                             renderjob->m_textures[i], 0);
+    }
+}
+
 
 void Renderer::initBuffers(const GLuint width, const GLuint height)
 {

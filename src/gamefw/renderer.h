@@ -69,6 +69,11 @@ private:
     bool checkFramebuffer() const;
     void createDepthStencilBuffer(GLuint* buffer, const GLuint width,
                                   const GLuint height);
+    void createTexturesForFBO(shared_ptr<RenderJob> renderjob,
+                              const GLuint num_textures,
+                              const GLenum internalformats[],
+                              const GLuint size_divisor[],
+                              const GLenum types[]);
     void renderPBuffers();
     void renderPPBuffers();
 };
