@@ -2,6 +2,8 @@
 
 #include "../gamefw.h"
 
+#include "../convenience/defaultfirstpersoncontroller.h"
+
 #include <physfs.h>
 
 using namespace gamefw;
@@ -38,6 +40,10 @@ int main(int argc, char* argv[])
 
     sf::Window* main_window = game->getMainWindow();
     main_window->ShowMouseCursor(false);
+
+    shared_ptr<Entity> camera;
+    DefaultFirstPersonController controller(camera);
+    renderer->changeCamera(camera);
 
 	float timer = 0.0f;
     while (true) {

@@ -71,5 +71,6 @@ inline void checkOpenGLError()
 #include "entityfactory.h"
 #include "fileservice.h"
 #include "locator.h"
+#include "icontroller.h"
 
 #endif

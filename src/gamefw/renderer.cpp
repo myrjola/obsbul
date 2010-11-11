@@ -366,3 +366,8 @@ void gamefw::Renderer::renderPPBuffers()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     renderEntity(m_pbuffer);
 }
+
+void gamefw::Renderer::changeCamera(shared_ptr< Entity > camera)
+{
+    m_camera = camera;
+}
