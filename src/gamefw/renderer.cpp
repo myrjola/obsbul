@@ -303,11 +303,11 @@ void Renderer::renderEntity(const Entity& entity)
 
     // Bind the matrices to uniforms.
     GLint location_mvp = glGetUniformLocation(program_id, "mvp");
-    glUniformMatrix4fv(location_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
+    glUniformMatrix4fv(location_mvp, 1, GL_FALSE, &mvp[0][0]);
     GLint location_model = glGetUniformLocation(program_id, "model");
-    glUniformMatrix4fv(location_model, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(location_model, 1, GL_FALSE, &model[0][0]);
     GLint location_normalmatrix = glGetUniformLocation(program_id, "normalmatrix");
-    glUniformMatrix4fv(location_normalmatrix, 1, GL_FALSE, glm::value_ptr(normalmatrix));
+    glUniformMatrix4fv(location_normalmatrix, 1, GL_FALSE, &normalmatrix[0][0]);
 
     // Bind display height and width uniforms.
     GLint location_width = glGetUniformLocation(program_id, "display_width");
