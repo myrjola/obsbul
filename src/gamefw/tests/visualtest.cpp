@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 {
     PHYSFS_init(argv[0]);
 
-    uint width = 1200, height = 1024;
+    uint width = 1024, height = 768;
 
     Game* game = new Game(width, height);
     
@@ -18,13 +18,6 @@ int main(int argc, char* argv[])
     if (GLEW_OK != status) {
         LOG(logERROR) << "Error:" << glewGetErrorString(status) << "\n";
     }
-
-    // The reason why I imported glew: arb_debug_output.
-    // Doesn't yet work on nvidias' drivers.
-    //     glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL,
-    //                              GL_TRUE);
-    //     glDebugMessageCallbackARB(&checkOpenGLError, NULL);
-    
 
     FileService* fileservice = new FileService();
     Locator::registerFileService(*fileservice);

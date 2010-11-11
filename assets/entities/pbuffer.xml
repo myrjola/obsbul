@@ -8,7 +8,9 @@
    <!-- Shader defines separated with comma -->
         <shader_defines>
             ORTHO,
-            PBUFFER
+            PBUFFER,
+            ANTIALIAS,
+            BLOOM
         </shader_defines>
     </gfx>
 </entity>
