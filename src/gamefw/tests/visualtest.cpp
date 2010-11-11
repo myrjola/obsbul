@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 {
     PHYSFS_init(argv[0]);
 
-    uint width = 800, height = 600;
+    uint width = 1200, height = 1024;
 
     Game* game = new Game(width, height);
     

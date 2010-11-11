@@ -8,7 +8,6 @@
    <!-- Shader defines separated with comma -->
         <shader_defines>
             POSTPROC,
-            BLUR,
             ORTHO
         </shader_defines>
     </gfx>

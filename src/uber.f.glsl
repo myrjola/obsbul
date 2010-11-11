@@ -51,7 +51,7 @@ float detect_edges(
 }
 #endif // GBUFFER
 
-#ifdef BLUR
+#ifdef BLOOM
 // Blur used with bloom.
 vec3 blur(vec2 pixel_size)
 {
@@ -75,7 +75,7 @@ vec3 blur(vec2 pixel_size)
 //     color *= 1.0 / (sigma * sigma) / sqrt(2 * pi);
     return color;
 }
-#endif // BLUR
+#endif // BLOOM
 
 #ifdef PBUFFER
 layout(location = OUTP_DIFFUSE) out vec4 out_diffuse;
@@ -140,8 +140,11 @@ void main(void)
 
     #ifdef PBUFFER
     {
+        #ifdef BLOOM
         out_specular = vec4(blur(pixel_size), 1.0);
-//         out_specular = texture(texture1, frag_texcoord);
+        #else
+        out_specular = texture(texture1, frag_texcoord);
+        #endif // BLOOM
         float factor = texture(texture2, frag_texcoord).r;
         out_diffuse =
 //            texture(texture0, frag_texcoord);
@@ -152,8 +155,11 @@ void main(void)
     #ifdef POSTPROC
     {
         vec3 diffuse = texture(texture0, frag_texcoord).rgb;
+        #ifdef BLOOM
         vec3 specular = blur(pixel_size);
-//         vec3 specular = texture(texture1, frag_texcoord).rgb;
+        #else
+        vec3 specular = texture(texture1, frag_texcoord).rgb;
+        #endif // BLOOM
         out_color = vec4(diffuse + specular, 1.0);
     }
     #endif // POSTPROC
