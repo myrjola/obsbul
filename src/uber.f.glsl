@@ -131,10 +131,12 @@ void main(void)
         vec3 half_vector = to_viewer + to_light;
         float norm_dot_half = clamp(dot(normal.xyz, normalize(half_vector)), 0.0, 1.0);
         float cos_theta = dot(normalize(normal.xyz), normalize(to_light));
-        float factor = detect_edges(pixel_size, 1.0);
         out_diffuse = diffuse * cos_theta;
         out_specular = specular * pow(norm_dot_half, shininess);
+        #ifdef ANTIALIAS
+        float factor = detect_edges(pixel_size, 1.0);
         out_edges = vec4(factor, factor, factor, 1.0);
+        #endif // ANTIALIAS
     }
     #endif // GBUFFER
 
@@ -147,8 +149,11 @@ void main(void)
         #endif // BLOOM
         float factor = texture(texture2, frag_texcoord).r;
         out_diffuse =
-//            texture(texture0, frag_texcoord);
+            #ifdef ANTIALIAS
             vec4(antialias(pixel_size, factor), 1.0);
+            #else
+            texture(texture0, frag_texcoord);
+            #endif // ANTIALIAS
     }
     #endif // PBUFFER
 
