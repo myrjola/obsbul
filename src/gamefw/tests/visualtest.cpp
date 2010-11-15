@@ -39,16 +39,27 @@ int main(int argc, char* argv[])
     sf::Clock clock;
 
     sf::Window* main_window = game->getMainWindow();
-    main_window->ShowMouseCursor(false);
+//     main_window->ShowMouseCursor(false);
 
-    shared_ptr<Entity> camera;
-    DefaultFirstPersonController controller(camera);
+    shared_ptr<Entity> camera(new Entity);
+    DefaultFirstPersonController controller(camera, width, height);
     renderer->changeCamera(camera);
+    game->changeController(&controller);
 
 	float timer = 0.0f;
     while (true) {
         float time_since_draw = clock.GetElapsedTime();
         if (time_since_draw >= 1.0f/60) {
+            camera->m_orientation.yaw += camera->m_delta_orientation.yaw;
+            camera->m_position.x += camera->m_velocity_local.x *
+                                    glm::cos(camera->m_orientation.yaw) +
+                                    -camera->m_velocity_local.z *
+                                    glm::sin(camera->m_orientation.yaw);
+            camera->m_position.z += camera->m_velocity_local.x *
+                                    glm::sin(camera->m_orientation.yaw) +
+                                    camera->m_velocity_local.z *
+                                    glm::cos(camera->m_orientation.yaw);
+            camera->m_position.y += camera->m_velocity_local.y;
             clock.Reset();
             if (!game->update()) { // If window closing.
                 break;

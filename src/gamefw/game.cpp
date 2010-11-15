@@ -10,13 +10,16 @@ enum Windows {
     MAIN
 };
 
-Game::Game(const uint display_width, const uint display_height) :
-        m_main_window_context(24, 8, 0, 3, 3)
+Game::Game(const uint display_width, const uint display_height)
+:
+m_main_window_context(24, 8, 0, 3, 3),
+m_controller(NULL)
 {
     m_main_window.Create(sf::VideoMode(display_width, display_height,
                                        24), "Test", sf::Style::Default,
                          m_main_window_context);
     m_main_window.SetActive();
+    m_main_window.EnableKeyRepeat(false);
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -40,14 +43,28 @@ int Game::update()
         if (event.Type == sf::Event::Closed) {
             m_main_window.Close();
             return 0;
-        }
-        if (event.Type == sf::Event::KeyPressed) {
+        } else if (event.Type == sf::Event::KeyPressed) {
             switch (event.Key.Code) {
                 case (sf::Key::R):
                     Locator::getShaderFactory().reloadShaders();
                     break;
+                case (sf::Key::Escape):
+                    m_main_window.Close();
+                    return 0;
+                    
+                default:
+                    m_controller->keyPressed(event.Key);
             }
+        } else if (event.Type == sf::Event::KeyReleased) {
+            m_controller->keyReleased(event.Key);
+        } else if (event.Type == sf::Event::MouseMoved) {
+            m_controller->mouseMoved(event.MouseMove);
         }
     }
     return 1;
+}
+
+void gamefw::Game::changeController(IController* controller)
+{
+    m_controller = controller;
 }

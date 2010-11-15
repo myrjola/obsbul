@@ -10,11 +10,13 @@ class DefaultFirstPersonController : public IController
 {
 
 public:
-    DefaultFirstPersonController(shared_ptr<Entity> controllable);
+    DefaultFirstPersonController(const shared_ptr< Entity > controllable,
+                                 const uint display_width,
+                                 const uint display_height);
 
-    virtual void keyPressed(sf::Key::Code keycode);
+    virtual void keyPressed(sf::Event::KeyEvent& keyevent);
 
-    virtual void keyReleased(sf::Key::Code keycode);
+    virtual void keyReleased(sf::Event::KeyEvent& keyevent);
 
     virtual void mouseMoved(sf::Event::MouseMoveEvent event);   
 

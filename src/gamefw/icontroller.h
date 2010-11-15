@@ -8,9 +8,10 @@ namespace gamefw {
 class IController
 {
 public:
-    virtual void keyPressed(sf::Key::Code keycode) = 0;
-    virtual void keyReleased(sf::Key::Code keycode) = 0;
-    virtual void mouseMoved(sf::Event::MouseMoveEvent event) = 0;
+    virtual void keyPressed(sf::Event::KeyEvent& keyevent);
+    virtual void keyReleased(sf::Event::KeyEvent& keyevent);
+    virtual void mouseMoved(sf::Event::MouseMoveEvent event);
+
 };
 
 }

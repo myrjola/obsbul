@@ -1,10 +1,9 @@
+#ifndef GAME_H
+#define GAME_H
+
 #include "gamefw.h"
 
 #include <SFML/Window.hpp>
-
-
-#ifndef GAME_H
-#define GAME_H
 
 
 namespace gamefw {
@@ -35,11 +34,14 @@ public:
      */
     void changeGameState(shared_ptr<GameState> gamestate);
 
+    void changeController(gamefw::IController* controller);
+
 private:
     sf::ContextSettings m_main_window_context;
     sf::Window m_main_window;
 
-    shared_ptr<GameState> active_gamestate;
+    shared_ptr<GameState> m_active_gamestate;
+    IController* m_controller;
 };
 
 }

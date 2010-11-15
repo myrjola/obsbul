@@ -283,8 +283,8 @@ void Renderer::renderEntity(const Entity& entity)
 
     // Model orientation ...
    glm::mat4 model(glm::yawPitchRoll(entity.m_orientation.yaw,
-                                    entity.m_orientation.pitch,
-                                    entity.m_orientation.roll));
+                                     entity.m_orientation.pitch,
+                                     entity.m_orientation.roll));
     // ... + translation
     model[3] = glm::vec4(entity.m_position, 1.0);
 
@@ -292,9 +292,13 @@ void Renderer::renderEntity(const Entity& entity)
     glm::mat4 normalmatrix = glm::transpose(glm::inverse(model));
 
     // View transform.
-    glm::vec3 view_pos(0.0f, 0.0f, 0.0f);
-    glm::mat4 view_orientation(glm::yawPitchRoll(0.0f, 0.0f, 0.0f));
-    glm::mat4 view(glm::translate(glm::mat4(1.0f), -view_pos) * view_orientation);
+    glm::vec3 view_pos(m_camera->m_position);
+    glm::mat4 view_orientation(glm::yawPitchRoll(
+        m_camera->m_orientation.yaw,
+        m_camera->m_orientation.pitch,
+        m_camera->m_orientation.roll
+    ));
+    glm::mat4 view(glm::translate(view_orientation, -view_pos));
 
     // Projection transform
     glm::mat4 projection = glm::perspective(45.0f, m_aspect_ratio, 0.1f, 100.f);
@@ -353,7 +357,7 @@ void Renderer::renderPBuffers()
     GLuint program_id = m_gbuffer.getRenderJob()->getShaderProgramID();
     glUseProgram(program_id);
     glUniform3fv(glGetUniformLocation(program_id, "viewer_position"),
-                 1, glm::value_ptr(m_camera->m_position));
+                 1, &m_camera->m_position[0]);
     renderEntity(m_gbuffer);
 
 }

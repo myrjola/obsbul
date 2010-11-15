@@ -61,6 +61,7 @@ inline void checkOpenGLError()
     }
 }
 
+#include "icontroller.h"
 #include "game.h"
 #include "gamestate.h"
 #include "renderer.h"
@@ -71,6 +72,5 @@ inline void checkOpenGLError()
 #include "entityfactory.h"
 #include "fileservice.h"
 #include "locator.h"
-#include "icontroller.h"
 
 #endif
