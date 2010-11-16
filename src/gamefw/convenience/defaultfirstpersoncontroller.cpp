@@ -4,8 +4,7 @@ const float MOVEMENT_SPEED = 0.15;
 const float TURN_RATE = 0.01;
 
 DefaultFirstPersonController::DefaultFirstPersonController(
-    const shared_ptr< Entity > controllable, const uint display_width,
-    const uint display_height)
+    const shared_ptr< Entity > controllable)
 :
 m_controllable(controllable)
 {}

@@ -42,7 +42,8 @@ int main(int argc, char* argv[])
 //     main_window->ShowMouseCursor(false);
 
     shared_ptr<Entity> camera(new Entity);
-    DefaultFirstPersonController controller(camera, width, height);
+    DefaultFirstPersonController controller(camera);
+    
     renderer->changeCamera(camera);
     game->changeController(&controller);
 

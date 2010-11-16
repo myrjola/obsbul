@@ -6,13 +6,19 @@
 
 using namespace gamefw;
 
+/**
+ * @brief Controller providing simple first person camera control.
+ **/
 class DefaultFirstPersonController : public IController
 {
 
 public:
-    DefaultFirstPersonController(const shared_ptr< Entity > controllable,
-                                 const uint display_width,
-                                 const uint display_height);
+    /**
+     * @brief Construct a controller for the given Entity.
+     *
+     * @param controllable ditto.
+     **/
+    DefaultFirstPersonController(const shared_ptr< Entity > controllable);
 
     virtual void keyPressed(sf::Event::KeyEvent& keyevent);
 
