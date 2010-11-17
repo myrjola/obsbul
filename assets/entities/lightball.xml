@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone=yes>
+<entity>
+    <name>LightBall</name>
+    <desc>A glowing ball.</desc>
+    <gfx>
+        <model>sphere</model>
+
+   <!-- Shader defines separated with comma -->
+        <shader_defines>
+            DIFFUSE,
+            SPECULAR,
+            MATERIALS,
+            HALFSIZE,
+            FRUSTUM
+        </shader_defines>
+    </gfx>
+</entity>
