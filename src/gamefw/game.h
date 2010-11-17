@@ -5,6 +5,8 @@
 
 #include <SFML/Window.hpp>
 
+#include <OIS/OIS.h>
+
 
 namespace gamefw {
     
@@ -42,6 +44,7 @@ private:
 
     shared_ptr<GameState> m_active_gamestate;
     IController* m_controller;
+    OIS::InputManager* m_input_manager;
 };
 
 }

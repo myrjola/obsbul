@@ -12,6 +12,7 @@ find_package(GLEW REQUIRED)
 find_package(SFML2 REQUIRED)
 find_package(TinyXML REQUIRED)
 find_package(GLM REQUIRED)
+find_package(OIS REQUIRED)
 find_package(UnitTest++)
 
 set(SCRIPTS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts)
