@@ -92,6 +92,9 @@ void main(void)
 {
     #ifdef FRUSTUM
     gl_Position = mvp
+    #           ifdef HALFSIZE
+                * scale(0.5)
+                #endif // HALFSIZE
                 * in_position;
     #endif // FRUSTUM
     

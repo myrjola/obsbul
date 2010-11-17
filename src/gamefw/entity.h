@@ -29,8 +29,14 @@ public:
     shared_ptr<RenderJob> getRenderJob() const;
     void setRenderJob(shared_ptr<RenderJob> renderjob);
 
-    /// Transforms.
+    /**
+     * @brief World space position.
+     **/
     glm::vec3 m_position;
+    
+    /**
+     * @brief World space orientation in degrees.
+     **/
     struct {
         float yaw, pitch, roll;
     } m_orientation;

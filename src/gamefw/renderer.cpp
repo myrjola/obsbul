@@ -293,10 +293,10 @@ void Renderer::renderEntity(const Entity& entity)
 
     // View transform.
     glm::mat4 view_orientation_x(glm::rotate(glm::mat4(1.0f),
-                                             glm::degrees(m_camera->m_orientation.pitch),
+                                             m_camera->m_orientation.pitch,
                                              glm::vec3(-1.0f, 0.0f, 0.0f)));
     glm::mat4 view_orientation(glm::rotate(view_orientation_x,
-                               glm::degrees(m_camera->m_orientation.yaw),
+                               m_camera->m_orientation.yaw,
                                glm::vec3(0.0f, 1.0f, 0.0f)));
     glm::mat4 view(glm::translate(view_orientation, -m_camera->m_position));
 

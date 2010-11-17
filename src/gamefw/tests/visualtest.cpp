@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     Locator::registerShaderFactory(*shaderfactory);
 
     Entity entity = Locator::getFileService().createEntity("flatsmooth");
-    Entity entity2 = Locator::getFileService().createEntity("sphere");
+    Entity entity2 = Locator::getFileService().createEntity("lightball");
     Entity entity3 = Locator::getFileService().createEntity("flatsmooth");
 
     entity.m_position = glm::vec3(5.0f, 0.0f, -15.0f);
@@ -52,13 +52,13 @@ int main(int argc, char* argv[])
         float time_since_draw = clock.GetElapsedTime();
         if (time_since_draw >= 1.0f/60) {
             camera->m_position.x += camera->m_velocity_local.x *
-                                    glm::cos(camera->m_orientation.yaw) +
+                                    glm::cos(glm::radians(camera->m_orientation.yaw)) +
                                     -camera->m_velocity_local.z *
-                                    glm::sin(camera->m_orientation.yaw);
+                                    glm::sin(glm::radians(camera->m_orientation.yaw));
             camera->m_position.z += camera->m_velocity_local.x *
-                                    glm::sin(camera->m_orientation.yaw) +
+                                    glm::sin(glm::radians(camera->m_orientation.yaw)) +
                                     camera->m_velocity_local.z *
-                                    glm::cos(camera->m_orientation.yaw);
+                                    glm::cos(glm::radians(camera->m_orientation.yaw));
             camera->m_position.y += camera->m_velocity_local.y;
             clock.Reset();
             if (!game->update()) { // If window closing.
