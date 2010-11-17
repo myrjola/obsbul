@@ -24,10 +24,16 @@ public:
 
     virtual void keyReleased(sf::Event::KeyEvent& keyevent);
 
-    virtual void mouseMoved(sf::Event::MouseMoveEvent event);   
+    virtual void mouseMoved(const int x, const int y,
+                            const sf::Input& input_state);
+
+    virtual void newMousePosition(const int width, const int height);
 
 private:
     shared_ptr<Entity> m_controllable;
+
+    int m_last_mouse_x;
+    int m_last_mouse_y;
 };
 
 #endif // DEFAULTFIRSTPERSONCONTROLLER_H

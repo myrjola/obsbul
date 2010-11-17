@@ -12,9 +12,6 @@ m_velocity_local(glm::vec3(0.0f, 0.0f, 0.0f))
 	m_orientation.yaw = 0.0f;
 	m_orientation.pitch = 0.0f;
 	m_orientation.roll = 0.0f;
-    m_delta_orientation.yaw = 0.0f;
-    m_delta_orientation.pitch = 0.0f;
-    m_delta_orientation.roll = 0.0f;
 }
 
 Entity::~Entity()

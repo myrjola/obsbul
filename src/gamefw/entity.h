@@ -37,9 +37,6 @@ public:
 
     /// Movement.
     glm::vec3 m_velocity_local;
-    struct {
-        float yaw, pitch, roll;
-    } m_delta_orientation;
 
 private:
     shared_ptr<string> m_name;

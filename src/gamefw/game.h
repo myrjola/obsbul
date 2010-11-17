@@ -37,6 +37,8 @@ public:
     void changeController(gamefw::IController* controller);
 
 private:
+    const uint m_window_middle_x;
+    const uint m_window_middle_y;
     sf::ContextSettings m_main_window_context;
     sf::Window m_main_window;
 

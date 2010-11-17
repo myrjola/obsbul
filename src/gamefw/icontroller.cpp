@@ -10,7 +10,13 @@ void gamefw::IController::keyReleased(sf::Event::KeyEvent& keyevent)
 {
 
 }
-void gamefw::IController::mouseMoved(sf::Event::MouseMoveEvent event)
+
+void IController::mouseMoved(const int x, const int y, const sf::Input& input_state)
+{
+
+}
+
+void gamefw::IController::newMousePosition(const int width, const int height)
 {
 
 }

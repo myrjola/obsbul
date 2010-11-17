@@ -1,13 +1,17 @@
 #include "defaultfirstpersoncontroller.h"
 
+#include "SFML/System.hpp"
+
 const float MOVEMENT_SPEED = 0.15;
-const float TURN_RATE = 0.01;
 
 DefaultFirstPersonController::DefaultFirstPersonController(
     const shared_ptr< Entity > controllable)
 :
-m_controllable(controllable)
-{}
+m_controllable(controllable),
+m_last_mouse_x(0),
+m_last_mouse_y(0)
+{
+}
 
 void DefaultFirstPersonController::keyPressed(sf::Event::KeyEvent& keyevent)
 {
@@ -19,18 +23,10 @@ void DefaultFirstPersonController::keyPressed(sf::Event::KeyEvent& keyevent)
             m_controllable->m_velocity_local.z += MOVEMENT_SPEED;
             break;
         case sf::Key::A:
-            if (keyevent.Control) {
-                m_controllable->m_velocity_local.x = -MOVEMENT_SPEED;
-            } else {
-                m_controllable->m_delta_orientation.yaw -= TURN_RATE;
-            }
+            m_controllable->m_velocity_local.x = -MOVEMENT_SPEED;
             break;
         case sf::Key::D:
-            if (keyevent.Control) {
-                m_controllable->m_velocity_local.x = MOVEMENT_SPEED;
-            } else {
-                m_controllable->m_delta_orientation.yaw += TURN_RATE;
-            }
+            m_controllable->m_velocity_local.x = MOVEMENT_SPEED;
             break;
         case sf::Key::Space:
             m_controllable->m_velocity_local.y += MOVEMENT_SPEED;
@@ -45,14 +41,6 @@ void DefaultFirstPersonController::keyPressed(sf::Event::KeyEvent& keyevent)
 
 void DefaultFirstPersonController::keyReleased(sf::Event::KeyEvent& keyevent)
 {
-    if (keyevent.Control) {
-        float sign = 0.0f;
-        if (m_controllable->m_velocity_local.x != 0.0f) {
-            (m_controllable->m_velocity_local.x > 0.0f) ? sign = 1.0f : sign = -1.0f;
-        }
-        m_controllable->m_delta_orientation.yaw = sign * TURN_RATE;
-        m_controllable->m_velocity_local.x = 0.0f;
-    }
     switch (keyevent.Code) {
         case sf::Key::W:
             m_controllable->m_velocity_local.z += MOVEMENT_SPEED;
@@ -61,12 +49,10 @@ void DefaultFirstPersonController::keyReleased(sf::Event::KeyEvent& keyevent)
             m_controllable->m_velocity_local.z -= MOVEMENT_SPEED;
             break;
         case sf::Key::A:
-            if (m_controllable->m_delta_orientation.yaw < 0.0)
-                m_controllable->m_delta_orientation.yaw += TURN_RATE;
+            m_controllable->m_velocity_local.x += MOVEMENT_SPEED;
             break;
         case sf::Key::D:
-            if (m_controllable->m_delta_orientation.yaw > 0.0)
-                m_controllable->m_delta_orientation.yaw -= TURN_RATE;
+            m_controllable->m_velocity_local.x -= MOVEMENT_SPEED;
             break;
         case sf::Key::Space:
             m_controllable->m_velocity_local.y -= MOVEMENT_SPEED;
@@ -80,5 +66,18 @@ void DefaultFirstPersonController::keyReleased(sf::Event::KeyEvent& keyevent)
 }
 
 
-void DefaultFirstPersonController::mouseMoved(sf::Event::MouseMoveEvent event)
-{}
+void DefaultFirstPersonController::mouseMoved(const int x, const int y,
+                                              const sf::Input& input_state)
+{
+    m_controllable->m_orientation.yaw += (x - m_last_mouse_x) / 360.0f;
+    m_controllable->m_orientation.pitch -= (y - m_last_mouse_y) / 360.0f;
+    newMousePosition(x, y);
+}
+
+void DefaultFirstPersonController::newMousePosition(const int width,
+                                                    const int height)
+{
+    m_last_mouse_x = width;
+    m_last_mouse_y = height;
+}
+

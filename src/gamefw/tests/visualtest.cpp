@@ -51,7 +51,6 @@ int main(int argc, char* argv[])
     while (true) {
         float time_since_draw = clock.GetElapsedTime();
         if (time_since_draw >= 1.0f/60) {
-            camera->m_orientation.yaw += camera->m_delta_orientation.yaw;
             camera->m_position.x += camera->m_velocity_local.x *
                                     glm::cos(camera->m_orientation.yaw) +
                                     -camera->m_velocity_local.z *

@@ -35,7 +35,18 @@ public:
      * @param event The caught event.
      * @return void
      **/
-    virtual void mouseMoved(sf::Event::MouseMoveEvent event);
+    virtual void mouseMoved(const int x, const int y,
+                            const sf::Input& input_state);
+
+    
+    /**
+     * @brief Update mouse's last coordinates.
+     *
+     * @param width x coordinates from window's left border.
+     * @param height y coordinates from window's bottom border.
+     * @return void
+     **/
+    virtual void newMousePosition(const int width, const int height);
 
 };
 
