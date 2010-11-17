@@ -3,9 +3,6 @@
 #include "game.h"
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-
-#include <OIS/OIS.h>
 
 using namespace gamefw;
 
@@ -21,10 +18,6 @@ m_controller(NULL)
     m_main_window.Create(sf::VideoMode(display_width, display_height,
                                        24), "Test", sf::Style::Default,
                          m_main_window_context);
-    
-    sf::WindowHandle window_handle = m_main_window.GetSystemHandle();
-    m_input_manager = OIS::InputManager::createInputSystem(window_handle);
-    
     m_main_window.SetActive();
     m_main_window.EnableKeyRepeat(false);
     glClearColor(0.0, 0.0, 0.0, 1.0);
