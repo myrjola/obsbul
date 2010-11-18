@@ -50,8 +50,8 @@ float detect_edges(
     return factor;
 }
 
-#define POINTLIGHTS 1
-uniform uint num_pointlights;
+#define POINTLIGHTS 10
+uniform int num_pointlights;
 
 struct PointLight {
     vec4 position;
@@ -146,7 +146,7 @@ void main(void)
         vec3 diffuse_temp = vec3(0.0, 0.0, 0.0);
         vec3 specular_temp = vec3(0.0, 0.0, 0.0);
 
-        for (int i = 0; i < POINTLIGHTS; i++) {
+        for (int i = 0; i < num_pointlights; i++) {
             vec3 lightpos = PointLights[i].position.xyz;
             vec3 to_light = lightpos - position.xyz;
             vec3 half_vector = to_viewer + to_light;

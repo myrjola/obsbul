@@ -278,6 +278,11 @@ void Renderer::addToRenderQueue(const Entity& entity)
     m_render_queue.push(&entity);
 }
 
+void Renderer::addToPointLightQueue(const gamefw::PointLight& pointlight)
+{
+    m_pointlight_queue.push(&pointlight);
+}
+
 void Renderer::renderEntity(const Entity& entity)
 {
     shared_ptr<RenderJob> renderjob = entity.getRenderJob();
@@ -370,19 +375,38 @@ void Renderer::renderGBuffers()
     }
 }
 
-void Renderer::renderPBuffers()
+uint Renderer::loadLightsIntoUniformBlocks()
 {
-    // Load light sources into uniform blocks.
-    GLfloat pointlight[8];
-    memcpy(pointlight, &m_pointlight->m_position.x, sizeof(GLfloat) * 3);
-    glm::vec4 light_color(1.0f, 1.0f, 1.0f, 1.0f);
-    memcpy(pointlight + 4, &light_color.x, sizeof(GLfloat) * 4);
+    uint num_pointlights = 0;
+    vector<GLfloat> pointlight_buffer;
+    while (!m_pointlight_queue.empty()) {
+        const PointLight* pointlight = m_pointlight_queue.front();
+        m_pointlight_queue.pop();
+        pointlight_buffer.push_back(pointlight->m_position.x);
+        pointlight_buffer.push_back(pointlight->m_position.y);
+        pointlight_buffer.push_back(pointlight->m_position.z);
+        pointlight_buffer.push_back(0.0f); // padding.
+        pointlight_buffer.push_back(pointlight->m_color.r);
+        pointlight_buffer.push_back(pointlight->m_color.g);
+        pointlight_buffer.push_back(pointlight->m_color.b);
+        pointlight_buffer.push_back(0.0f); // padding.
+        num_pointlights++;
+    }
+    const int POINTLIGHTS_SIZE = sizeof(GLfloat) * 8;
+    
     glBindBuffer(GL_UNIFORM_BUFFER, m_uniform_blocks.pointlights);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLfloat) * 8, pointlight,
-                 GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, POINTLIGHTS_SIZE * pointlight_buffer.size(),
+                 &pointlight_buffer[0], GL_STATIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBindBufferBase(GL_UNIFORM_BUFFER, POINTLIGHTS_IDX,
                      m_uniform_blocks.pointlights);
+    return num_pointlights;
+}
+
+
+void Renderer::renderPBuffers()
+{
+    uint num_pointlights = loadLightsIntoUniformBlocks();
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.pbuffer);
     glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -391,6 +415,8 @@ void Renderer::renderPBuffers()
     glUseProgram(program_id);
     glUniform3fv(glGetUniformLocation(program_id, "viewer_position"),
                  1, &m_camera->m_position[0]);
+    glUniform1i(glGetUniformLocation(program_id, "num_pointlights"),
+                num_pointlights);
     renderEntity(m_gbuffer);
 
 }

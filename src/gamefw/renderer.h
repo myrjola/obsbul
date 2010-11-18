@@ -8,6 +8,9 @@
 
 namespace gamefw {
 
+class PointLight;
+
+
 class RenderJob;
 
 /**
@@ -16,8 +19,6 @@ class RenderJob;
 class Renderer
 {
 public:
-    shared_ptr<Entity> m_pointlight;
-    
     /**
      * @brief Creates renderer for screen with given dimensions.
      *
@@ -37,10 +38,10 @@ public:
     /**
      * @brief Adds pointlight to the rendering pipeline.
      *
-     * @param pointlight Entity representing a pointlight.
+     * @param pointlight ditto.
      * @return void
      **/
-    void addToPointLightQueue(const gamefw::Entity& pointlight);
+    void addToPointLightQueue(const gamefw::PointLight& pointlight);
 
     /**
      * @brief Change given Entity to active camera.
@@ -70,6 +71,8 @@ private:
     } m_uniform_blocks;
 
     std::queue<const Entity*> m_render_queue;
+    std::queue<const PointLight*> m_pointlight_queue;
+    
     Entity m_gbuffer;
     Entity m_pbuffer;
     Entity m_ppbuffer;
@@ -90,6 +93,7 @@ private:
                               const GLenum types[]);
     void renderPBuffers();
     void renderPPBuffers();
+    uint loadLightsIntoUniformBlocks();
 };
 
 }

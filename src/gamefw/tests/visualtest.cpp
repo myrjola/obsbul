@@ -46,7 +46,6 @@ int main(int argc, char* argv[])
     renderer->changeCamera(camera);
     game->changeController(&controller);
 
-    renderer->m_pointlight = shared_ptr<Entity>(&entity2);
 
 	float timer = 0.0f;
     while (true) {
@@ -75,6 +74,8 @@ int main(int argc, char* argv[])
             renderer->addToRenderQueue(entity);
             renderer->addToRenderQueue(entity2);
             renderer->addToRenderQueue(entity3);
+            renderer->addToPointLightQueue(entity2);
+            renderer->addToPointLightQueue(*camera);
             renderer->render();
             main_window->Display();
         }

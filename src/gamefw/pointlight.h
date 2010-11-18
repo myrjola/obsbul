@@ -12,7 +12,7 @@ public:
     PointLight();
     PointLight(const Entity& entity);
 
-    glm::vec3 color;
+    glm::vec3 m_color;
 };
     
 }
