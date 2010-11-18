@@ -328,7 +328,7 @@ void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob,
         material_location,
         GL_UNIFORM_BLOCK_DATA_SIZE,
         &block_size);
-
+    
     // Tests if the the uniform block is similarly aligned in the buffer and the shader source.
     assert(block_size == sizeof(t_obj_mtl) * num_materials);
 

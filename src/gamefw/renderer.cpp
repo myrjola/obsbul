@@ -8,6 +8,7 @@
 
 using namespace gamefw;
 
+const int POINTLIGHTS_IDX = 0;
 
 Renderer::Renderer(const GLuint display_width, const GLuint display_height) :
     m_display_width((float) display_width),
@@ -136,7 +137,6 @@ void Renderer::createTexturesForFBO(shared_ptr<RenderJob> renderjob,
     }
 }
 
-
 void Renderer::initBuffers(const GLuint width, const GLuint height)
 {
     int num_textures = 4;
@@ -172,6 +172,19 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
 
         bool status = checkFramebuffer();
         assert(status);
+        GLuint gbuffer_program = gbuffer_renderjob->getShaderProgramID();
+        
+        // Bind uniform block for pointlights.
+        GLuint material_location = glGetUniformBlockIndex(gbuffer_program,
+                                                          "pointlights");
+        assert(material_location != GL_INVALID_INDEX);
+        glGenBuffers(1, &m_uniform_blocks.pointlights);
+
+        // Attach the UBO to pointlights index.
+        glBindBufferBase(GL_UNIFORM_BUFFER, POINTLIGHTS_IDX,
+                         m_uniform_blocks.pointlights);
+        // Associate the block in the GLSL source to this index.
+        glUniformBlockBinding(gbuffer_program, material_location, POINTLIGHTS_IDX);
     }
 
     // PBUFFER STAGE.
@@ -351,6 +364,18 @@ void Renderer::renderGBuffers()
 
 void Renderer::renderPBuffers()
 {
+    // Load light sources into uniform blocks.
+    GLfloat pointlight[8];
+    memcpy(pointlight, &m_pointlight->m_position.x, sizeof(GLfloat) * 3);
+    glm::vec4 light_color(1.0f, 1.0f, 1.0f, 1.0f);
+    memcpy(pointlight + 4, &light_color.x, sizeof(GLfloat) * 4);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_uniform_blocks.pointlights);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLfloat) * 8, pointlight,
+                 GL_STATIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, POINTLIGHTS_IDX,
+                     m_uniform_blocks.pointlights);
+
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.pbuffer);
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

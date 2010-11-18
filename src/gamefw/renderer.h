@@ -16,6 +16,8 @@ class RenderJob;
 class Renderer
 {
 public:
+    shared_ptr<Entity> m_pointlight;
+    
     /**
      * @brief Creates renderer for screen with given dimensions.
      *
@@ -54,6 +56,10 @@ private:
     struct {
         GLuint gbuffer, pbuffer;
     } m_depth_stencil_buffers;
+
+    struct {
+        GLuint pointlights, spotlights;
+    } m_uniform_blocks;
 
     std::queue<const Entity*> m_render_queue;
     Entity m_gbuffer;

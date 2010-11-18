@@ -5,13 +5,11 @@
     <gfx>
         <model>sphere</model>
 
-   <!-- Shader defines separated with comma -->
         <shader_defines>
-            DIFFUSE,
-            SPECULAR,
             MATERIALS,
-            HALFSIZE,
-            FRUSTUM
+            FRUSTUM,
+            LIGHTSOURCE,
+            TINYSIZE
         </shader_defines>
     </gfx>
 </entity>

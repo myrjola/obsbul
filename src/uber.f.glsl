@@ -49,6 +49,19 @@ float detect_edges(
     factor = min(1.0,factor) * weight;
     return factor;
 }
+
+#define POINTLIGHTS 1
+uniform uint num_pointlights;
+
+struct PointLight {
+    vec4 position;
+    vec4 color;
+};
+
+layout(std140) uniform pointlights {
+    PointLight PointLights[POINTLIGHTS];
+};
+
 #endif // GBUFFER
 
 #ifdef BLOOM
@@ -68,11 +81,9 @@ vec3 blur(vec2 pixel_size)
         #endif // POSTPROC
         vec3 t_pos = texture(texture1, frag_texcoord + coord * pixel_size).rgb;
         vec3 t_neg = texture(texture1, frag_texcoord - coord * pixel_size).rgb;
-//         color += (t_pos + t_neg) * exp(-(i * i) / (2.0 * sigma * sigma));
         color += (t_pos + t_neg) *
             (exp(-(i*i)/(2*sigma*sigma)) - exp(-(w*w)/(2*sigma*sigma)));
     }
-//     color *= 1.0 / (sigma * sigma) / sqrt(2 * pi);
     return color;
 }
 #endif // BLOOM
@@ -121,21 +132,28 @@ void main(void)
     #ifdef GBUFFER
     {
         vec4 normal = texture(texture2, frag_texcoord);
-        vec4 diffuse = texture(texture0, frag_texcoord);
+        vec3 diffuse = texture(texture0, frag_texcoord).xyz;
         vec4 spec_rgb_shininess = texture(texture1, frag_texcoord);
-        vec4 specular = vec4(spec_rgb_shininess.rgb, 1.0);
+        vec3 specular = spec_rgb_shininess.rgb;
         float shininess = spec_rgb_shininess.a * shin_encoder;
-        vec4 position = texture(texture3, frag_texcoord);
-        vec3 to_light =  vec3(-15.0, 0.0, 0.0) - position.xyz;
-        
+        vec3 position = texture(texture3, frag_texcoord).xyz;
+
         vec3 to_viewer = viewer_position - position.xyz;
-        vec3 half_vector = to_viewer + to_light;
-        float norm_dot_half = clamp(dot(normal.xyz, normalize(half_vector)), 0.0, 1.0);
-        float cos_theta = dot(normalize(normal.xyz), normalize(to_light));
-        out_diffuse = diffuse * cos_theta;
-        out_specular =
-//         vec4(norm_dot_half, norm_dot_half, norm_dot_half, 1.0);
-        specular * pow(norm_dot_half, shininess);
+
+        vec3 diffuse_temp = vec3(0.0, 0.0, 0.0);
+        vec3 specular_temp = vec3(0.0, 0.0, 0.0);
+
+        for (int i = 0; i < POINTLIGHTS; i++) {
+            vec3 lightpos = PointLights[i].position.xyz;
+            vec3 to_light = lightpos - position.xyz;
+            vec3 half_vector = to_viewer + to_light;
+            float norm_dot_half = clamp(dot(normal.xyz, normalize(half_vector)), 0.0, 1.0);
+            float cos_theta = dot(normalize(normal.xyz), normalize(to_light));
+            diffuse_temp += diffuse * cos_theta;
+            specular_temp += specular * pow(norm_dot_half, shininess);
+        }
+        out_diffuse = vec4(diffuse_temp, 1.0);
+        out_specular = vec4(specular_temp, 1.0);
         #ifdef ANTIALIAS
         float factor = detect_edges(pixel_size, 1.0);
         out_edges = vec4(factor, factor, factor, 1.0);
