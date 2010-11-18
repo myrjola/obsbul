@@ -1,4 +1,4 @@
-set(GAMEFW_SRCS icontroller.cpp entityfactory.cpp entity.cpp fileservice.cpp locator.cpp shaderprogram.cpp shaderfactory.cpp game.cpp gamestate.cpp renderer.cpp renderjob.cpp)
+set(GAMEFW_SRCS pointlight.cpp icontroller.cpp entityfactory.cpp entity.cpp fileservice.cpp locator.cpp shaderprogram.cpp shaderfactory.cpp game.cpp gamestate.cpp renderer.cpp renderjob.cpp)
 set(GAMEFW_HDRS icontroller.h entityfactory.h entity.h fileservice.h locator.h shaderprogram.h shaderfactory.h game.h gamestate.h renderer.h renderjob.h gamefw.h)
 
 add_library(gamefw ${GAMEFW_SRCS} ${GAMEFW_HDRS})

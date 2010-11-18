@@ -14,6 +14,18 @@ m_velocity_local(glm::vec3(0.0f, 0.0f, 0.0f))
 	m_orientation.roll = 0.0f;
 }
 
+Entity::Entity(const gamefw::Entity& entity)
+:
+m_name(entity.getName()),
+m_desc(entity.getDesc()),
+m_position(entity.m_position),
+m_orientation(entity.m_orientation),
+m_velocity_local(entity.m_velocity_local),
+m_renderjob(entity.m_renderjob)
+{
+}
+
+
 Entity::~Entity()
 {
 }
@@ -22,14 +34,14 @@ Entity::~Entity()
 // {
 // }
 
-const string Entity::getDesc() const
+shared_ptr<string> Entity::getDesc() const
 {
-    return *m_desc;
+    return m_desc;
 }
 
-const string Entity::getName() const
+shared_ptr<string> Entity::getName() const
 {
-    return *m_name;
+    return m_name;
 }
 
 void Entity::setRenderJob(shared_ptr< RenderJob > renderjob)

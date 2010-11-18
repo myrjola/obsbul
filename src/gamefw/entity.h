@@ -14,16 +14,15 @@ class Entity
 {
 public:
     Entity();
+    Entity(const Entity& entity);
 
     ~Entity();
-
-//     Entity(const Entity& entity);
      
     /// Getters and Setters
-    const std::string getName() const;
+    shared_ptr<string> getName() const;
     void setName(const char* name);
     
-    const std::string getDesc() const;
+    shared_ptr<string> getDesc() const;
     void setDesc(const char* desc);
 
     shared_ptr<RenderJob> getRenderJob() const;
@@ -41,7 +40,9 @@ public:
         float yaw, pitch, roll;
     } m_orientation;
 
-    /// Movement.
+    /**
+     * @brief Local space velocity.
+     **/
     glm::vec3 m_velocity_local;
 
 private:

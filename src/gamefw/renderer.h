@@ -35,6 +35,14 @@ public:
     void addToRenderQueue(const gamefw::Entity& entity);
 
     /**
+     * @brief Adds pointlight to the rendering pipeline.
+     *
+     * @param pointlight Entity representing a pointlight.
+     * @return void
+     **/
+    void addToPointLightQueue(const gamefw::Entity& pointlight);
+
+    /**
      * @brief Change given Entity to active camera.
      * 
      * @param camera ditto.
