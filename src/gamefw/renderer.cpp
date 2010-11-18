@@ -139,11 +139,16 @@ void Renderer::createTexturesForFBO(shared_ptr<RenderJob> renderjob,
 
 void Renderer::initBuffers(const GLuint width, const GLuint height)
 {
-    int num_textures = 4;
-
+    GLenum draw_buffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
+                             GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3,
+                             GL_COLOR_ATTACHMENT4, GL_COLOR_ATTACHMENT5,
+                             GL_COLOR_ATTACHMENT6, GL_COLOR_ATTACHMENT7};
+    
     // GBUFFER STAGE
 
     {
+        int num_textures = 5;
+        
         m_gbuffer = Locator::getFileService().createEntity("gbuffer");
         glGenFramebuffers(1, &m_fbo.gbuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.gbuffer);
@@ -152,14 +157,16 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
             GL_RGB8,
             GL_RGB8,
             GL_RGB16F,
-            GL_RGB32F
+            GL_RGB32F,
+            GL_RGB8
         };
-        const GLuint size_divisor[] = {1, 1, 1, 1};
+        const GLuint size_divisor[] = {1, 1, 1, 1, 1};
         const GLenum types[] = {
             GL_UNSIGNED_BYTE,
             GL_UNSIGNED_BYTE,
             GL_FLOAT,
-            GL_FLOAT
+            GL_FLOAT,
+            GL_UNSIGNED_BYTE
         };
         
         glActiveTexture(GL_TEXTURE0);
@@ -185,10 +192,16 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
                          m_uniform_blocks.pointlights);
         // Associate the block in the GLSL source to this index.
         glUniformBlockBinding(gbuffer_program, material_location, POINTLIGHTS_IDX);
+        
+        // Assign draw buffers.
+        glDrawBuffers(num_textures, draw_buffers);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     // PBUFFER STAGE.
     {
+        int num_textures = 4;
+        
         m_pbuffer = Locator::getFileService().createEntity("pbuffer");
 
         glGenFramebuffers(1, &m_fbo.pbuffer);
@@ -219,32 +232,27 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
 
         bool status = checkFramebuffer();
         assert(status);
+        
+        // Assign draw buffers.
+        glDrawBuffers(num_textures, draw_buffers);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     }
 
     // POSTPROCESSING STAGE
     {
+        int num_textures = 2;
         m_ppbuffer = Locator::getFileService().createEntity("ppbuffer");
         shared_ptr<RenderJob> ppbuffer_renderjob = m_ppbuffer.getRenderJob();
 
         // Use gbuffers diffuse and specular textures.
         m_fbo.ppbuffer = m_fbo.gbuffer;
         ppbuffer_renderjob->m_textures = m_gbuffer.getRenderJob()->m_textures;
-        ppbuffer_renderjob->m_num_textures = 2;
+        ppbuffer_renderjob->m_num_textures = num_textures;
     }
 
-    // Assign draw buffers.
-    GLenum draw_buffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
-                             GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3
-    };
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.gbuffer);
-    glDrawBuffers(4, draw_buffers);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.pbuffer);
-    glDrawBuffers(4, draw_buffers);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.ppbuffer);
-    glDrawBuffers(4, draw_buffers);
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    checkOpenGLError();
 }
 
 void Renderer::render()

@@ -9,7 +9,7 @@
             MATERIALS,
             FRUSTUM,
             LIGHTSOURCE,
-            TINYSIZE
+            HALFSIZE
         </shader_defines>
     </gfx>
 </entity>

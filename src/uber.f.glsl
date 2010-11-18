@@ -115,6 +115,7 @@ layout(location = OUTG_DIFFUSE) out vec4 out_diffuse;
 layout(location = OUTG_SPECULAR) out vec4 out_specular;
 layout(location = OUTG_NORMAL) out vec4 out_normal;
 layout(location = OUTG_POSITION) out vec4 out_position;
+layout(location = OUTG_EXTRA) out vec4 out_extra;
 layout(location = OUTP_EDGES) out vec4 out_edges;
 layout(location = OUTP_BLOOM) out vec4 out_bloom;
 #endif // GBUFFER
@@ -137,6 +138,8 @@ void main(void)
         vec3 specular = spec_rgb_shininess.rgb;
         float shininess = spec_rgb_shininess.a * shin_encoder;
         vec3 position = texture(texture3, frag_texcoord).xyz;
+        vec3 extra = texture(texture4, frag_texcoord).xyz;
+        float is_lightsource = extra.r;
 
         vec3 to_viewer = viewer_position - position.xyz;
 
@@ -150,7 +153,7 @@ void main(void)
             float norm_dot_half = clamp(dot(normal.xyz, normalize(half_vector)), 0.0, 1.0);
             float cos_theta = dot(normalize(normal.xyz), normalize(to_light));
             diffuse_temp += diffuse * cos_theta;
-            specular_temp += specular * pow(norm_dot_half, shininess);
+            specular_temp += specular * pow(norm_dot_half, is_lightsource * shininess);
         }
         out_diffuse = vec4(diffuse_temp, 1.0);
         out_specular = vec4(specular_temp, 1.0);
@@ -205,6 +208,10 @@ void main(void)
         out_specular = vec4(frag_specular.rgb, frag_shininess / shin_encoder);
         out_normal = vec4(normalize(frag_normal), 1.0);
         out_position = vec4(frag_worldspace_pos, 1.0);
+        out_extra = vec4(1.0, 1.0, 1.0, 1.0);
+        #ifdef LIGHTSOURCE
+        out_extra.r = 0.0;
+        #endif
     }
     #endif // not POSTPROC
     #endif // not PBUFFER
