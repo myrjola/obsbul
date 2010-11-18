@@ -14,18 +14,6 @@ m_velocity_local(glm::vec3(0.0f, 0.0f, 0.0f))
 	m_orientation.roll = 0.0f;
 }
 
-Entity::Entity(const gamefw::Entity& entity)
-:
-m_name(entity.getName()),
-m_desc(entity.getDesc()),
-m_position(entity.m_position),
-m_orientation(entity.m_orientation),
-m_velocity_local(entity.m_velocity_local),
-m_renderjob(entity.m_renderjob)
-{
-}
-
-
 Entity::~Entity()
 {
 }

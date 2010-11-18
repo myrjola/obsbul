@@ -14,7 +14,6 @@ class Entity
 {
 public:
     Entity();
-    Entity(const Entity& entity);
 
     ~Entity();
      
