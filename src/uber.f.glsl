@@ -55,7 +55,7 @@ uniform int num_pointlights;
 
 struct PointLight {
     vec4 position;
-    vec4 color;
+    vec4 rgbcolor_and_intensity;
 };
 
 layout(std140) uniform pointlights {
@@ -148,12 +148,16 @@ void main(void)
 
         for (int i = 0; i < num_pointlights; i++) {
             vec3 lightpos = PointLights[i].position.xyz;
+            vec3 color = PointLights[i].rgbcolor_and_intensity.rgb;
+            float intensity = PointLights[i].rgbcolor_and_intensity.a;
             vec3 to_light = lightpos - position.xyz;
+            float distance = length(to_light);
+            color *= intensity / pow(distance, 2);
             vec3 half_vector = to_viewer + to_light;
             float norm_dot_half = clamp(dot(normal.xyz, normalize(half_vector)), 0.0, 1.0);
             float cos_theta = dot(normalize(normal.xyz), normalize(to_light));
-            diffuse_temp += diffuse * cos_theta;
-            specular_temp += specular * pow(norm_dot_half, is_lightsource * shininess);
+            diffuse_temp += diffuse * color * cos_theta;
+            specular_temp += specular * color * pow(norm_dot_half, is_lightsource * shininess);
         }
         out_diffuse = vec4(diffuse_temp, 1.0);
         out_specular = vec4(specular_temp, 1.0);

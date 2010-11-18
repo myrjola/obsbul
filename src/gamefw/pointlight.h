@@ -13,6 +13,7 @@ public:
     PointLight(const Entity& entity);
 
     glm::vec3 m_color;
+    GLfloat m_intensity;
 };
     
 }

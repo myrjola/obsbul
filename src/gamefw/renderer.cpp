@@ -389,7 +389,7 @@ uint Renderer::loadLightsIntoUniformBlocks()
         pointlight_buffer.push_back(pointlight->m_color.r);
         pointlight_buffer.push_back(pointlight->m_color.g);
         pointlight_buffer.push_back(pointlight->m_color.b);
-        pointlight_buffer.push_back(0.0f); // padding.
+        pointlight_buffer.push_back(pointlight->m_intensity);
         num_pointlights++;
     }
     const int POINTLIGHTS_SIZE = sizeof(GLfloat) * 8;
