@@ -17,3 +17,9 @@ m_intensity(100.0)
 
 }
 
+gamefw::PointLight::~PointLight()
+{
+
+}
+
+

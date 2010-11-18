@@ -11,6 +11,8 @@ class PointLight : public Entity
 public:
     PointLight();
     PointLight(const Entity& entity);
+    
+    virtual ~PointLight();
 
     glm::vec3 m_color;
     GLfloat m_intensity;

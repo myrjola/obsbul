@@ -40,7 +40,9 @@ int main(int argc, char* argv[])
 
     sf::Window* main_window = game->getMainWindow();
 
-    shared_ptr<Entity> camera(new Entity);
+    PointLight* p_camera = new PointLight();
+    p_camera->m_intensity = 1.0f;
+    shared_ptr<Entity> camera(p_camera);
     DefaultFirstPersonController controller(camera);
     
     renderer->changeCamera(camera);
@@ -75,7 +77,7 @@ int main(int argc, char* argv[])
             renderer->addToRenderQueue(entity2);
             renderer->addToRenderQueue(entity3);
             renderer->addToPointLightQueue(entity2);
-            renderer->addToPointLightQueue(*camera);
+            renderer->addToPointLightQueue(*p_camera);
             renderer->render();
             main_window->Display();
         }

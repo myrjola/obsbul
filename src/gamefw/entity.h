@@ -15,7 +15,7 @@ class Entity
 public:
     Entity();
 
-    ~Entity();
+    virtual ~Entity();
      
     /// Getters and Setters
     shared_ptr<string> getName() const;
