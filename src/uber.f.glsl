@@ -155,7 +155,7 @@ void main(void)
             color *= intensity / pow(distance, 2);
             vec3 half_vector = to_viewer + to_light;
             float norm_dot_half = clamp(dot(normal.xyz, normalize(half_vector)), 0.0, 1.0);
-            float cos_theta = dot(normalize(normal.xyz), normalize(to_light));
+            float cos_theta = clamp(dot(normalize(normal.xyz), normalize(to_light)), 0.0, 1.0);
             diffuse_temp += diffuse * color * cos_theta;
             specular_temp += specular * color * pow(norm_dot_half, is_lightsource * shininess);
         }
