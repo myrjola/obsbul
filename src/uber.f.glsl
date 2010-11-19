@@ -133,12 +133,11 @@ void main(void)
     #ifdef GBUFFER
     {
         vec4 normal = texture(texture2, frag_texcoord);
-        vec3 diffuse = texture(texture0, frag_texcoord).xyz;
-        vec4 spec_rgb_shininess = texture(texture1, frag_texcoord);
-        vec3 specular = spec_rgb_shininess.rgb;
-        float shininess = spec_rgb_shininess.a * shin_encoder;
+        vec3 diffuse = texture(texture0, frag_texcoord).rgb;
+        vec3 specular = texture(texture1, frag_texcoord).rgb;
         vec3 position = texture(texture3, frag_texcoord).xyz;
         vec3 extra = texture(texture4, frag_texcoord).xyz;
+        float shininess = extra.g * shin_encoder;
         float is_lightsource = extra.r;
 
         vec3 to_viewer = viewer_position - position.xyz;
@@ -209,10 +208,10 @@ void main(void)
         diffuse = frag_diffuse;
         #endif // not ALBEDO_TEX
         out_diffuse = diffuse;
-        out_specular = vec4(frag_specular.rgb, frag_shininess / shin_encoder);
+        out_specular = vec4(frag_specular);
         out_normal = vec4(normalize(frag_normal), 1.0);
         out_position = vec4(frag_worldspace_pos, 1.0);
-        out_extra = vec4(1.0, 1.0, 1.0, 1.0);
+        out_extra = vec4(1.0, frag_shininess / shin_encoder, 1.0, 1.0);
         #ifdef LIGHTSOURCE
         out_extra.r = 0.0;
         #endif
