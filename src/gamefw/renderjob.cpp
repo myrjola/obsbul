@@ -8,11 +8,11 @@ RenderJob::RenderJob()
 :
 m_num_textures(0)
 {
-	m_buffer_objects.element_buffer = 0;
-	m_buffer_objects.vao = 0;
-	m_buffer_objects.vertex_buffer = 0;
-	m_buffer_objects.vertex_extra_buffer = 0;
-	m_uniforms.materials = 0;
+    m_buffer_objects.element_buffer = 0;
+    m_buffer_objects.vao = 0;
+    m_buffer_objects.vertex_buffer = 0;
+    m_buffer_objects.vertex_extra_buffer = 0;
+    m_uniforms.materials = 0;
 }
 
 RenderJob::~RenderJob()
@@ -39,7 +39,7 @@ void RenderJob::setShaderProgram(shared_ptr< ShaderProgram > shaderprogram)
     m_shaderprogram = shaderprogram;
 }
 
-	
+    
 
 
 

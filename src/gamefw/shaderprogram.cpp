@@ -102,8 +102,8 @@ GLuint ShaderProgram::compileShader(GLenum type, const set<string>& defines,
             shader_source << line_number++ << '\t';
             shader_source << compiler_input[i];
         }
-		string rest_of_source_str(compiler_input[compiler_input.size() - 1]);
-		istringstream rest_of_source(rest_of_source_str);
+        string rest_of_source_str(compiler_input[compiler_input.size() - 1]);
+        istringstream rest_of_source(rest_of_source_str);
         string line;
         while (!rest_of_source.eof()) {
             getline(rest_of_source, line);

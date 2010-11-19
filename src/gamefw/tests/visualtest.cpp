@@ -31,8 +31,8 @@ int main(int argc, char* argv[])
     Entity entity3 = Locator::getFileService().createEntity("sphere");
 
     entity.m_position = glm::vec3(5.0f, 0.0f, -15.0f);
-	entity2.m_position = glm::vec3(5.0f, 0.0f, -5.0f);
-	entity3.m_position = glm::vec3(0.0f, 0.0f, -5.0f);
+    entity2.m_position = glm::vec3(5.0f, 0.0f, -5.0f);
+    entity3.m_position = glm::vec3(0.0f, 0.0f, -5.0f);
 
     Renderer* renderer = new Renderer(width, height);
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     game->changeController(&controller);
 
 
-	float timer = 0.0f;
+    float timer = 0.0f;
     while (true) {
         float time_since_draw = clock.GetElapsedTime();
         if (time_since_draw >= 1.0f/60) {
@@ -66,13 +66,13 @@ int main(int argc, char* argv[])
             if (!game->update()) { // If window closing.
                 break;
             }
-			entity2.m_position.x = 14.0f * glm::sin(timer);
-			entity2.m_position.y = 14.0f * glm::cos(timer);
-			timer += 0.01f;
-			entity.m_orientation.pitch += 0.01f;
-			entity2.m_orientation.roll += 0.03f;
-			entity3.m_orientation.yaw += 0.02f;
-			entity3.m_orientation.pitch += 0.005f;
+            entity2.m_position.x = 14.0f * glm::sin(timer);
+            entity2.m_position.y = 14.0f * glm::cos(timer);
+            timer += 0.01f;
+            entity.m_orientation.pitch += 0.01f;
+            entity2.m_orientation.roll += 0.03f;
+            entity3.m_orientation.yaw += 0.02f;
+            entity3.m_orientation.pitch += 0.005f;
             renderer->addToRenderQueue(entity);
             renderer->addToRenderQueue(entity2);
             renderer->addToRenderQueue(entity3);

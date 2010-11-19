@@ -53,7 +53,7 @@ const char* FileService::fileToBuffer(const string& filename ) const
 {
     const string realpath(getRealPath(filename));
 
-	// Open file at end.
+    // Open file at end.
     ifstream file( realpath.c_str(), ios::in | ios::ate );
 
     if ( file.is_open() ) {
@@ -61,12 +61,12 @@ const char* FileService::fileToBuffer(const string& filename ) const
         // The +1 is for '\0'.
         char* buffer = new char[size + 1];
         file.seekg( 0, ios::beg ); // Back to start.
-		char* c = buffer;
+        char* c = buffer;
         // Read the file to buffer.
-		while (file.good()) {
+        while (file.good()) {
             file.get(*c);
-			c++;
-		}
+            c++;
+        }
 
         file.close();
 

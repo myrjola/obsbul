@@ -33,7 +33,7 @@ ObjFile::ObjFile(const std::string& path)
 
 void ObjFile::parseFile(ifstream& file)
 {
-	streamsize LARGE_NUMBER = std::numeric_limits<std::streamsize>::max();
+    streamsize LARGE_NUMBER = std::numeric_limits<std::streamsize>::max();
     uint line_number = 1;
     uint current_mtl = 0; // Default material.
     GLfloat v1, v2, v3;
