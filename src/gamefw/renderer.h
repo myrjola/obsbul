@@ -56,7 +56,8 @@ public:
     void render();
     
 private:
-    float m_display_width, m_display_height, m_aspect_ratio;
+	uint m_display_width, m_display_height;
+	float m_aspect_ratio;
     
     struct {
         GLuint gbuffer, pbuffer, ppbuffer;

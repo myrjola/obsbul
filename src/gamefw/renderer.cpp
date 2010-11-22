@@ -11,8 +11,8 @@ using namespace gamefw;
 const int POINTLIGHTS_IDX = 0;
 
 Renderer::Renderer(const GLuint display_width, const GLuint display_height) :
-    m_display_width((float) display_width),
-    m_display_height((float) display_height),
+    m_display_width(display_width),
+    m_display_height(display_height),
     m_aspect_ratio((float) display_width / (float) display_height),
     m_camera(new Entity())
 {
@@ -113,7 +113,7 @@ void Renderer::createTexturesForFBO(shared_ptr<RenderJob> renderjob,
     renderjob->m_num_textures = num_textures;
     glGenTextures(num_textures, renderjob->m_textures);
 
-    for (int i = 0; i < num_textures; i++) {
+    for (uint i = 0; i < num_textures; i++) {
         glBindTexture(GL_TEXTURE_2D, renderjob->m_textures[i]);
 
         texParametersForRenderTargets();
@@ -341,9 +341,9 @@ void Renderer::renderEntity(const Entity& entity)
 
     // Bind display height and width uniforms.
     GLint location_width = glGetUniformLocation(program_id, "display_width");
-    glUniform1f(location_width, m_display_width);
+    glUniform1f(location_width, (GLfloat) m_display_width);
     GLint location_height = glGetUniformLocation(program_id, "display_height");
-    glUniform1f(location_height, m_display_height);
+    glUniform1f(location_height, (GLfloat) m_display_height);
 
     glBindVertexArray(renderjob->m_buffer_objects.vao);
 

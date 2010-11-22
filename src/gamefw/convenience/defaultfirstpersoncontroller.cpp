@@ -2,7 +2,7 @@
 
 #include "SFML/System.hpp"
 
-const float MOVEMENT_SPEED = 0.15;
+const float MOVEMENT_SPEED = 0.15f;
 
 DefaultFirstPersonController::DefaultFirstPersonController(
     const shared_ptr< Entity > controllable)

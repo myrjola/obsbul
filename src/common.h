@@ -17,7 +17,7 @@ using namespace std;
 #ifdef _WIN32
     typedef unsigned int uint;
 #endif
-    
+
 #include "util/logger.h"
 using namespace util;
 
