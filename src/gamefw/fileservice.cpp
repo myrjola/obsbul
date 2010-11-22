@@ -26,11 +26,16 @@ FileService::FileService()
     string project_name(PROJECT_NAME);
 
     int project_path_pos = basedir.find(project_name);
+    int fallback_path_pos = basedir.find(project_name);
     if (project_path_pos == basedir.npos) {
-        LOG(logFATAL) << "Project " << project_name <<
-        " root directory not found from " << basedir;
+        if (fallback_path_pos == basedir.npos) {
+            LOG(logFATAL) << "Project " << project_name <<
+                " root directory not found from " << basedir;
+		}
+		project_path_pos = fallback_path_pos;
     }
     basedir.erase(project_path_pos + project_name.length());
+
 
     PHYSFS_mount(basedir.c_str(), NULL, 0); // Mount to root.
 
