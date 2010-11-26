@@ -13,9 +13,9 @@ enum Windows {
 Game::Game(const uint display_width, const uint display_height)
 :
 m_main_window_context(24, 8, 0, 3, 3),
-m_controller(NULL),
 m_window_middle_x(display_width / 2),
-m_window_middle_y(display_height / 2)
+m_window_middle_y(display_height / 2),
+m_renderer(display_width, display_height)
 {
     m_main_window.Create(sf::VideoMode(display_width, display_height,
                                        24), "Test", sf::Style::Default,
@@ -38,7 +38,6 @@ sf::Window* Game::getMainWindow()
 {
     return &m_main_window;
 }
-
 
 int Game::update()
 {
@@ -75,6 +74,8 @@ int Game::update()
         m_main_window.SetCursorPosition(m_window_middle_x, m_window_middle_y);
     }
 
+	m_renderer.render();
+
     return 1;
 }
 
@@ -82,3 +83,12 @@ void gamefw::Game::changeController(IController* controller)
 {
     m_controller = controller;
 }
+
+void gamefw::Game::addToRenderQueue(const Entity& entity)
+{
+	m_renderer.addToRenderQueue(entity)
+}
+
+void gamefw::Game::addToPointLightQueue(const PointLight& pointlight)
+
+Renderer& getRenderer();

@@ -33,17 +33,32 @@ public:
      * @param gamestate ditto.
      */
     void changeGameState(shared_ptr<GameState> gamestate);
+    
+    /**
+     * @brief Adds entity to the rendering pipeline.
+     *
+     * @param entity ditto.
+     */
+    void addToRenderQueue(const Entity& entity);
 
-    void changeController(gamefw::IController* controller);
+    /**
+     * @brief Adds pointlight to the rendering pipeline.
+     *
+     * @param pointlight ditto.
+     * @return void
+     */
+    void addToPointLightQueue(const PointLight& pointlight);
+
+	Renderer& getRenderer();
 
 private:
+	Renderer m_renderer;
     const uint m_window_middle_x;
     const uint m_window_middle_y;
     sf::ContextSettings m_main_window_context;
     sf::Window m_main_window;
 
     shared_ptr<GameState> m_active_gamestate;
-    IController* m_controller;
 };
 
 }

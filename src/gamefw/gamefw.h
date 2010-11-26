@@ -60,6 +60,8 @@ inline void checkOpenGLError()
     }
 }
 
+#include "entity.h"
+#include "pointlight.h"
 #include "icontroller.h"
 #include "game.h"
 #include "gamestate.h"
@@ -67,10 +69,8 @@ inline void checkOpenGLError()
 #include "shaderfactory.h"
 #include "shaderprogram.h"
 #include "renderjob.h"
-#include "entity.h"
 #include "entityfactory.h"
 #include "fileservice.h"
 #include "locator.h"
-#include "pointlight.h"
 
-#endif
+#endif // GAMEFW_H
