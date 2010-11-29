@@ -2,13 +2,15 @@
 #define GAME_H
 
 #include "gamefw.h"
+#include "renderer.h"
+#include "igamestate.h"
 
 #include <SFML/Window.hpp>
 
-
 namespace gamefw {
     
-class GameState;
+
+class PointLight;
 
 /**
  * @brief Main game class. Provides the main window and performs input processing.
@@ -25,21 +27,21 @@ public:
     /**
      * @brief Draws the screen and performs input processing.
      */
-    int update();
+    UpdateStatus update();
 
     /**
      * @brief Changes the active GameState.
      * 
      * @param gamestate ditto.
      */
-    void changeGameState(shared_ptr<GameState> gamestate);
+    void changeGameState(shared_ptr<IGameState> gamestate);
     
     /**
      * @brief Adds entity to the rendering pipeline.
      *
      * @param entity ditto.
      */
-    void addToRenderQueue(const Entity& entity);
+    void addToRenderQueue(shared_ptr< Entity > entity);
 
     /**
      * @brief Adds pointlight to the rendering pipeline.
@@ -47,18 +49,16 @@ public:
      * @param pointlight ditto.
      * @return void
      */
-    void addToPointLightQueue(const PointLight& pointlight);
+    void addToPointLightQueue(shared_ptr< PointLight > pointlight);
 
-	Renderer& getRenderer();
+    shared_ptr<Renderer> getRenderer();
 
 private:
-	Renderer m_renderer;
-    const uint m_window_middle_x;
-    const uint m_window_middle_y;
+    shared_ptr<Renderer> m_renderer;
     sf::ContextSettings m_main_window_context;
     sf::Window m_main_window;
 
-    shared_ptr<GameState> m_active_gamestate;
+    shared_ptr<IGameState> m_active_gamestate;
 };
 
 }

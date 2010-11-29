@@ -40,7 +40,7 @@ public:
      * @param path The absolute path to the Entity's file.
      * @return Reference to the constructed Entity.
      */
-    Entity createEntity(const std::string& path);
+    shared_ptr<Entity> createEntity(const std::string& path);
 
 private:
     void loadModel(const ObjFile& model, shared_ptr<RenderJob> renderjob);

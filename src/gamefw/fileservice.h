@@ -91,7 +91,7 @@ public:
      * @param name The name of the entity file without the ".xml".
      * @return A fully initialized Entity object.
      */
-    Entity createEntity(const std::string& name) const;
+    shared_ptr<Entity> createEntity(const std::string& name) const;
 
     /**
      * Issues a search in the virtual filesystem and returns the absolute path

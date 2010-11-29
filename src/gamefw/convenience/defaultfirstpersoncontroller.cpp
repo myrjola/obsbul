@@ -5,7 +5,7 @@
 const float MOVEMENT_SPEED = 0.15f;
 
 DefaultFirstPersonController::DefaultFirstPersonController(
-    const shared_ptr< Entity > controllable)
+    shared_ptr< Entity > controllable)
 :
 m_controllable(controllable),
 m_last_mouse_x(0),

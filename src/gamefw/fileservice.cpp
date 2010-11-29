@@ -31,8 +31,8 @@ FileService::FileService()
         if (fallback_path_pos == basedir.npos) {
             LOG(logFATAL) << "Project " << project_name <<
                 " root directory not found from " << basedir;
-		}
-		project_path_pos = fallback_path_pos;
+        }
+        project_path_pos = fallback_path_pos;
     }
     basedir.erase(project_path_pos + project_name.length());
 
@@ -146,7 +146,7 @@ const string FileService::getRealPath(const string& path) const
     return realpath;
 }
 
-Entity FileService::createEntity(const string& name) const
+shared_ptr<Entity> FileService::createEntity(const string& name) const
 {
     string path = "assets/entities/" + name + ".xml";
     string realpath(getRealPath(path));

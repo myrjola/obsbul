@@ -33,7 +33,7 @@ public:
      *
      * @param entity ditto.
      */
-    void addToRenderQueue(const gamefw::Entity& entity);
+    void addToRenderQueue(shared_ptr< Entity > entity);
 
     /**
      * @brief Adds pointlight to the rendering pipeline.
@@ -41,7 +41,7 @@ public:
      * @param pointlight ditto.
      * @return void
      **/
-    void addToPointLightQueue(const gamefw::PointLight& pointlight);
+    void addToPointLightQueue(shared_ptr<PointLight> pointlight);
 
     /**
      * @brief Change given Entity to active camera.
@@ -56,8 +56,8 @@ public:
     void render();
     
 private:
-	uint m_display_width, m_display_height;
-	float m_aspect_ratio;
+    uint m_display_width, m_display_height;
+    float m_aspect_ratio;
     
     struct {
         GLuint gbuffer, pbuffer, ppbuffer;
@@ -71,8 +71,8 @@ private:
         GLuint pointlights, spotlights;
     } m_uniform_blocks;
 
-    std::queue<const Entity*> m_render_queue;
-    std::queue<const PointLight*> m_pointlight_queue;
+    std::queue<shared_ptr<Entity> > m_render_queue;
+    std::queue<shared_ptr<PointLight> > m_pointlight_queue;
     
     Entity m_gbuffer;
     Entity m_pbuffer;

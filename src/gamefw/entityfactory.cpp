@@ -58,11 +58,11 @@ const char* EntityCreationError::what() const throw()
     return "Error when creating Entity.";
 }
 
-Entity EntityFactory::createEntity(const string& path)
+shared_ptr<Entity> EntityFactory::createEntity(const string& path)
 {
-    Entity entity;
+    shared_ptr<Entity> entity(new Entity);
     shared_ptr<RenderJob> renderjob(new RenderJob());
-    entity.setRenderJob(renderjob);
+    entity->setRenderJob(renderjob);
 
     TiXmlDocument current_entityfile(path);
     if (!current_entityfile.LoadFile()) { // If error when loading file.
@@ -78,12 +78,12 @@ Entity EntityFactory::createEntity(const string& path)
 
     TiXmlElement* name_element = dochandle.FirstChild("name").ToElement();
     if (name_element)
-        entity.setName(name_element->GetText());
+        entity->setName(name_element->GetText());
     else
         LOG(logWARNING) << "No name element in entity file " << path;
     TiXmlElement* desc_element = dochandle.FirstChild("desc").ToElement();
     if (desc_element) {
-        entity.setDesc(desc_element->GetText());
+        entity->setDesc(desc_element->GetText());
     }
     else {
         LOG(logWARNING) << "No desc element in entity file " << path;

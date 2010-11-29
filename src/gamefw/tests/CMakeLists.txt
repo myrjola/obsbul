@@ -9,6 +9,6 @@ if(UnitTest++_FOUND)
 endif(UnitTest++_FOUND)
 
 add_executable(visualtest visualtest.cpp)
-target_link_libraries(visualtest gamefw gamefw_convenience)
+target_link_libraries(visualtest gamefw_convenience)
 
 add_test(testGameFW testgamefw)

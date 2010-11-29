@@ -18,7 +18,7 @@ public:
      *
      * @param controllable ditto.
      **/
-    DefaultFirstPersonController(const shared_ptr< Entity > controllable);
+    DefaultFirstPersonController(shared_ptr< Entity > controllable);
 
     virtual void keyPressed(sf::Event::KeyEvent& keyevent);
 

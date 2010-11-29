@@ -1,8 +1,10 @@
 #include "../../common.h"
 
 #include "../gamefw.h"
+#include "../igamestate.h"
 
 #include "../convenience/defaultfirstpersoncontroller.h"
+#include "../convenience/defaultfirstpersongamestate.h"
 
 #include <physfs.h>
 
@@ -12,42 +14,41 @@ int main(int argc, char* argv[])
 {
     PHYSFS_init(argv[0]);
 
-    uint width = 1024, height = 768;
-
-    Game* game = new Game(width, height);
-    
     int status= glewInit();
     if (GLEW_OK != status) {
         LOG(logERROR) << "Error:" << glewGetErrorString(status) << "\n";
     }
-
+    
     FileService* fileservice = new FileService();
     Locator::registerFileService(*fileservice);
     ShaderFactory* shaderfactory = new ShaderFactory();
     Locator::registerShaderFactory(*shaderfactory);
+    
+    uint width = 1024, height = 768;
+    Game game(width, height);
 
-    Entity entity = Locator::getFileService().createEntity("flatsmooth");
-    Entity entity2 = Locator::getFileService().createEntity("lightball");
-    Entity entity3 = Locator::getFileService().createEntity("sphere");
+    shared_ptr<Entity> entity = Locator::getFileService().createEntity("flatsmooth");
+    shared_ptr<Entity> entity2 = Locator::getFileService().createEntity("lightball");
+    shared_ptr<Entity> entity3 = Locator::getFileService().createEntity("sphere");
+    shared_ptr<PointLight> light(new PointLight(*entity2));
 
-    entity.m_position = glm::vec3(5.0f, 0.0f, -15.0f);
-    entity2.m_position = glm::vec3(5.0f, 0.0f, -5.0f);
-    entity3.m_position = glm::vec3(0.0f, 0.0f, -5.0f);
+    entity->m_position = glm::vec3(5.0f, 0.0f, -15.0f);
+    light->m_position = glm::vec3(5.0f, 0.0f, -5.0f);
+    entity3->m_position = glm::vec3(0.0f, 0.0f, -5.0f);
 
-    Renderer* renderer = new Renderer(width, height);
+    shared_ptr<Renderer> renderer = game.getRenderer();
 
     sf::Clock clock;
 
-    sf::Window* main_window = game->getMainWindow();
+    sf::Window* main_window = game.getMainWindow();
 
     PointLight* p_camera = new PointLight();
     p_camera->m_intensity = 1.0f;
-    shared_ptr<Entity> camera(p_camera);
-    DefaultFirstPersonController controller(camera);
+    shared_ptr<PointLight> camera(p_camera);
+    shared_ptr<IGameState> gamestate(new DefaultFirstPersonGameState(&game, camera));
+    game.changeGameState(gamestate);
     
     renderer->changeCamera(camera);
-    game->changeController(&controller);
-
 
     float timer = 0.0f;
     while (true) {
@@ -63,27 +64,24 @@ int main(int argc, char* argv[])
                             glm::cos(glm::radians(camera->m_orientation.yaw));
             camera->m_position.y += camera->m_velocity_local.y;
             clock.Reset();
-            if (!game->update()) { // If window closing.
+            
+            light->m_position.x = 14.0f * glm::sin(timer);
+            light->m_position.y = 14.0f * glm::cos(timer);
+            timer += 0.01f;
+            entity->m_orientation.pitch += 0.01f;
+            light->m_orientation.roll += 0.03f;
+            entity3->m_orientation.yaw += 0.02f;
+            entity3->m_orientation.pitch += 0.005f;
+            renderer->addToRenderQueue(entity);
+            renderer->addToRenderQueue(light);
+            renderer->addToRenderQueue(entity3);
+            renderer->addToPointLightQueue(light);
+            renderer->addToPointLightQueue(camera);
+            if (game.update() == UpdateStatus::UPDATE_QUIT) { // If window closing.
                 break;
             }
-            entity2.m_position.x = 14.0f * glm::sin(timer);
-            entity2.m_position.y = 14.0f * glm::cos(timer);
-            timer += 0.01f;
-            entity.m_orientation.pitch += 0.01f;
-            entity2.m_orientation.roll += 0.03f;
-            entity3.m_orientation.yaw += 0.02f;
-            entity3.m_orientation.pitch += 0.005f;
-            renderer->addToRenderQueue(entity);
-            renderer->addToRenderQueue(entity2);
-            renderer->addToRenderQueue(entity3);
-            renderer->addToPointLightQueue(entity2);
-            renderer->addToPointLightQueue(*p_camera);
-            renderer->render();
-            main_window->Display();
         }
     }
-    delete renderer;
-    delete game;
     delete fileservice;
     delete shaderfactory;
 

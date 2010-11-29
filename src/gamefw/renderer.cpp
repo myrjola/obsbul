@@ -149,7 +149,7 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
     {
         int num_textures = 5;
         
-        m_gbuffer = Locator::getFileService().createEntity("gbuffer");
+        m_gbuffer = *Locator::getFileService().createEntity("gbuffer");
         glGenFramebuffers(1, &m_fbo.gbuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.gbuffer);
 
@@ -202,7 +202,7 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
     {
         int num_textures = 4;
         
-        m_pbuffer = Locator::getFileService().createEntity("pbuffer");
+        m_pbuffer = *Locator::getFileService().createEntity("pbuffer");
 
         glGenFramebuffers(1, &m_fbo.pbuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo.pbuffer);
@@ -242,7 +242,7 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
     // POSTPROCESSING STAGE
     {
         int num_textures = 2;
-        m_ppbuffer = Locator::getFileService().createEntity("ppbuffer");
+        m_ppbuffer = *Locator::getFileService().createEntity("ppbuffer");
         shared_ptr<RenderJob> ppbuffer_renderjob = m_ppbuffer.getRenderJob();
 
         // Use gbuffers diffuse and specular textures.
@@ -273,14 +273,14 @@ void Renderer::render()
     renderEntity(m_ppbuffer);
 }
 
-void Renderer::addToRenderQueue(const Entity& entity)
+void Renderer::addToRenderQueue(shared_ptr<Entity> entity)
 {
-    m_render_queue.push(&entity);
+    m_render_queue.push(entity);
 }
 
-void Renderer::addToPointLightQueue(const gamefw::PointLight& pointlight)
+void Renderer::addToPointLightQueue(shared_ptr< PointLight > pointlight)
 {
-    m_pointlight_queue.push(&pointlight);
+    m_pointlight_queue.push(pointlight);
 }
 
 void Renderer::renderEntity(const Entity& entity)
@@ -369,7 +369,7 @@ void Renderer::renderGBuffers()
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     while (!m_render_queue.empty()) {
-        const Entity* current_entity = m_render_queue.front();
+        shared_ptr<Entity> current_entity = m_render_queue.front();
         m_render_queue.pop();
         renderEntity(*current_entity);
     }
@@ -380,7 +380,7 @@ uint Renderer::loadLightsIntoUniformBlocks()
     uint num_pointlights = 0;
     vector<GLfloat> pointlight_buffer;
     while (!m_pointlight_queue.empty()) {
-        const PointLight* pointlight = m_pointlight_queue.front();
+        shared_ptr<PointLight> pointlight = m_pointlight_queue.front();
         m_pointlight_queue.pop();
         pointlight_buffer.push_back(pointlight->m_position.x);
         pointlight_buffer.push_back(pointlight->m_position.y);

@@ -12,10 +12,7 @@ enum Windows {
 
 Game::Game(const uint display_width, const uint display_height)
 :
-m_main_window_context(24, 8, 0, 3, 3),
-m_window_middle_x(display_width / 2),
-m_window_middle_y(display_height / 2),
-m_renderer(display_width, display_height)
+m_main_window_context(24, 8, 0, 3, 3)
 {
     m_main_window.Create(sf::VideoMode(display_width, display_height,
                                        24), "Test", sf::Style::Default,
@@ -27,6 +24,8 @@ m_renderer(display_width, display_height)
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+    // Renderer must be initialized after main window because of OpenGL context dependency.
+    m_renderer = shared_ptr<Renderer>(new Renderer(display_width, display_height));
 }
 
 Game::~Game()
@@ -39,56 +38,30 @@ sf::Window* Game::getMainWindow()
     return &m_main_window;
 }
 
-int Game::update()
+UpdateStatus Game::update()
 {
-    sf::Event event;
-    const sf::Input& input_state = m_main_window.GetInput();
-    while (m_main_window.GetEvent(event)) {
-        if (event.Type == sf::Event::Closed) {
-            m_main_window.Close();
-            return 0;
-        } else if (event.Type == sf::Event::KeyPressed) {
-            switch (event.Key.Code) {
-                case (sf::Key::R):
-                    Locator::getShaderFactory().reloadShaders();
-                    break;
-                case (sf::Key::Escape):
-                    m_main_window.Close();
-                    return 0;
-                default:
-                    m_controller->keyPressed(event.Key);
-            }
-        } else if (event.Type == sf::Event::KeyReleased) {
-            m_controller->keyReleased(event.Key);
-        }
-    }
-
-    int x = input_state.GetMouseX();
-    int y = input_state.GetMouseY();
-    m_controller->mouseMoved(x, y, input_state);
-    
-    // Center mouse if outside of window.
-    if (glm::abs(x - m_window_middle_x) > 100 ||
-        glm::abs(y - m_window_middle_y) > 100) {
-        m_controller->newMousePosition(m_window_middle_x, m_window_middle_y);
-        m_main_window.SetCursorPosition(m_window_middle_x, m_window_middle_y);
-    }
-
-	m_renderer.render();
-
-    return 1;
+    UpdateStatus status = m_active_gamestate->update();
+    m_renderer->render();
+    m_main_window.Display();
+    return status;
 }
 
-void gamefw::Game::changeController(IController* controller)
+void gamefw::Game::addToRenderQueue(shared_ptr<Entity> entity)
 {
-    m_controller = controller;
+    m_renderer->addToRenderQueue(entity);
 }
 
-void gamefw::Game::addToRenderQueue(const Entity& entity)
+void gamefw::Game::addToPointLightQueue(shared_ptr<PointLight> pointlight)
 {
-	m_renderer.addToRenderQueue(entity)
+    m_renderer->addToPointLightQueue(pointlight);
 }
 
-void gamefw::Game::addToPointLightQueue(const PointLight& pointlight)
+shared_ptr<Renderer> gamefw::Game::getRenderer()
+{
+    return m_renderer;
+}
 
-Renderer& getRenderer();
+void gamefw::Game::changeGameState(shared_ptr< IGameState > gamestate)
+{
+    m_active_gamestate = gamestate;
+}
