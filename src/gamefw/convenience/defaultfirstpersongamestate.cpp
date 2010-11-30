@@ -28,7 +28,6 @@ UpdateStatus DefaultFirstPersonGameState::update()
     const sf::Input& input_state = main_window->GetInput();
     while (main_window->GetEvent(event)) {
         if (event.Type == sf::Event::Closed) {
-            main_window->Close();
             return UpdateStatus::UPDATE_QUIT;
         } else if (event.Type == sf::Event::KeyPressed) {
             switch (event.Key.Code) {
@@ -36,7 +35,6 @@ UpdateStatus DefaultFirstPersonGameState::update()
                     gamefw::Locator::getShaderFactory().reloadShaders();
                     break;
                 case (sf::Key::Escape):
-                    main_window->Close();
                     return UpdateStatus::UPDATE_QUIT;
                 default:
                     m_controller.keyPressed(event.Key);
