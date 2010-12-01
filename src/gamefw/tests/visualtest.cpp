@@ -5,6 +5,7 @@
 
 #include "../convenience/defaultfirstpersoncontroller.h"
 #include "../convenience/defaultfirstpersongamestate.h"
+#include "../convenience/simplegameworld.h"
 
 #include <physfs.h>
 
@@ -47,22 +48,17 @@ int main(int argc, char* argv[])
     shared_ptr<PointLight> camera(p_camera);
     shared_ptr<IGameState> gamestate(new DefaultFirstPersonGameState(&game, camera));
     game.changeGameState(gamestate);
-    
+
     renderer->changeCamera(camera);
+
+    SimpleGameWorld gameworld;
+    gameworld.addEntity(camera);
 
     float timer = 0.0f;
     while (true) {
         float time_since_draw = clock.GetElapsedTime();
         if (time_since_draw >= 1.0f/60) {
-            camera->m_position.x += camera->m_velocity_local.x *
-                            glm::cos(glm::radians(camera->m_orientation.yaw)) +
-                            -camera->m_velocity_local.z *
-                            glm::sin(glm::radians(camera->m_orientation.yaw));
-            camera->m_position.z += camera->m_velocity_local.x *
-                            glm::sin(glm::radians(camera->m_orientation.yaw)) +
-                            camera->m_velocity_local.z *
-                            glm::cos(glm::radians(camera->m_orientation.yaw));
-            camera->m_position.y += camera->m_velocity_local.y;
+            gameworld.update();
             clock.Reset();
             
             light->m_position.x = 14.0f * glm::sin(timer);
