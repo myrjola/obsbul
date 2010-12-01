@@ -9,6 +9,9 @@
 
 #define TIXML_USE_STL
 #include "tinyxml.h"
+#include "renderjob.h"
+#include "locator.h"
+#include "gamefw.h"
 
 /**
  * @brief Vertex representation.

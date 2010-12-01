@@ -1,6 +1,8 @@
 #include "../common.h"
+#include "../ogl.h"
 
 #include "game.h"
+#include "renderer.h"
 
 #include <SFML/Graphics.hpp>
 

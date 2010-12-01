@@ -1,6 +1,5 @@
 #include "../common.h"
-
-#include "gamefw.h"
+#include "../ogl.h"
 
 #include <set>
 
@@ -45,7 +44,7 @@ public:
     /**
      * @return The object ID of the shader program.
      */
-    GLuint getProgramID() const;
+    uint getProgramID() const;
 
     /**
      * @return The defines used in the compilation of the program.

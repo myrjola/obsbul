@@ -1,11 +1,12 @@
 #ifndef POINTLIGHT_H
 #define POINTLIGHT_H
-
-#include "gamefw.h"
+#include "entity.h"
 
 namespace gamefw {
-    
-class PointLight : public Entity
+
+class PointLight
+:
+public Entity
 {
 
 public:
@@ -15,7 +16,7 @@ public:
     virtual ~PointLight();
 
     glm::vec3 m_color;
-    GLfloat m_intensity;
+    float m_intensity;
 };
     
 }

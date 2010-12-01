@@ -2,8 +2,6 @@
 #ifndef IGAMESTATE_H
 #define IGAMESTATE_H
 
-#include "gamefw.h"
-
 namespace gamefw {
 
 enum UpdateStatus {UPDATE_NORMAL, UPDATE_QUIT, UPDATE_MENU, UPDATE_PAUSE};

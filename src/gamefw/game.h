@@ -1,14 +1,15 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "gamefw.h"
-#include "renderer.h"
+#include <SFML/Window.hpp>
 #include "igamestate.h"
 
-#include <SFML/Window.hpp>
-
 namespace gamefw {
-    
+
+class Entity;
+
+
+class Renderer;
 
 class PointLight;
 
@@ -41,7 +42,7 @@ public:
      *
      * @param entity ditto.
      */
-    void addToRenderQueue(shared_ptr< Entity > entity);
+    void addToRenderQueue(shared_ptr<Entity> entity);
 
     /**
      * @brief Adds pointlight to the rendering pipeline.

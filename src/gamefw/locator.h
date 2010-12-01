@@ -1,7 +1,8 @@
 #ifndef LOCATOR_H
 #define LOCATOR_H
 
-#include "gamefw.h"
+#include "fileservice.h"
+#include "shaderfactory.h"
 
 namespace gamefw {
 

@@ -3,10 +3,9 @@
 #define ENTITYFACTORY_H
 
 #include "../common.h"
-
-#include "gamefw.h"
-
 #include "../util/objfile.h"
+
+#include "entity.h"
 
 typedef struct _vertex t_vertex;
 
