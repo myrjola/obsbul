@@ -18,7 +18,6 @@ m_num_textures(0)
 RenderJob::~RenderJob()
 {
     if (m_num_textures > 0) {
-//         glDeleteTextures(m_num_textures, m_textures);
         delete [] m_textures;
     }
     glDeleteVertexArrays(1, &m_buffer_objects.vao);

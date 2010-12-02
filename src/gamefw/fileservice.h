@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 
 #include "../common.h"
+#include <map>
 
 #ifndef PROJECT_NAME
     #define PROJECT_NAME "ObscureBulldozer"
@@ -80,7 +81,7 @@ public:
      * @param name The name of the image without the path and extension.
      * @return The OpenGL object ID of the created texture.
      */
-    GLuint makeTexture(const std::string& name) const;
+    GLuint makeTexture(const std::string& name);
 
     /**
      * Creates Entity using all the assets needed. Searches in the path
@@ -110,11 +111,10 @@ public:
     const std::string getDirSeparator() const;
 
 private:
-    fipImage* readImage(const std::string& name) const;
-
+    fipImage* readImage(const string& name) const;
     EntityFactory* m_entity_factory;
-    
     string m_dirseparator;
+    map<string, uint> m_texture_cache;
 };
 
 }

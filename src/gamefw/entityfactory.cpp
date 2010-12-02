@@ -111,7 +111,9 @@ shared_ptr<Entity> EntityFactory::createEntity(const string& path)
 
         int num_textures = created_textures.size();
 
-        renderjob->m_textures = new GLuint[num_textures];
+        if (num_textures > 0) {
+            renderjob->m_textures = new GLuint[num_textures];
+        }
         renderjob->m_num_textures = num_textures;;
         for (int i = 0; i < num_textures; i++) {
             renderjob->m_textures[i] = created_textures[i];

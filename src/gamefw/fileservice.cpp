@@ -45,6 +45,10 @@ FileService::FileService()
 FileService::~FileService()
 {
     delete m_entity_factory;
+    typedef map<string, uint>::value_type texcache_pair;
+    foreach(texcache_pair pair, m_texture_cache) {
+        glDeleteTextures(1, &pair.second);
+    }
     PHYSFS_deinit();
     FreeImage_DeInitialise();
 }
@@ -86,8 +90,12 @@ const char* FileService::fileToBuffer(const string& filename ) const
     throw FileNotFoundException();
 }
 
-GLuint FileService::makeTexture( const string& name ) const
+GLuint FileService::makeTexture(const string& name)
 {
+    map<string, uint >::iterator result = m_texture_cache.find(name);
+    if (result != m_texture_cache.end()) { // If texture already loaded.
+        return m_texture_cache[name];
+    }
     fipImage* image = readImage( name );
 
     assert( image->isValid() );
@@ -114,6 +122,9 @@ GLuint FileService::makeTexture( const string& name ) const
     image->clear();
     delete image;
 
+    // Add image to cache.
+    m_texture_cache[name] = texture;
+    
     return texture;
 
 }

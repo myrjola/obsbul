@@ -69,8 +69,8 @@ void DefaultFirstPersonController::keyReleased(sf::Event::KeyEvent& keyevent)
 void DefaultFirstPersonController::mouseMoved(const int x, const int y,
                                              const sf::Input& input_state)
 {
-    m_controllable->m_orientation.yaw += (x - m_last_mouse_x) / 5.0f;
-    m_controllable->m_orientation.pitch -= (y - m_last_mouse_y) / 5.0f;
+    m_controllable->m_orientation.x += (x - m_last_mouse_x) / 5.0f;
+    m_controllable->m_orientation.y -= (y - m_last_mouse_y) / 5.0f;
     newMousePosition(x, y);
 }
 

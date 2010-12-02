@@ -64,10 +64,10 @@ int main(int argc, char* argv[])
             light->m_position.x = 14.0f * glm::sin(timer);
             light->m_position.y = 14.0f * glm::cos(timer);
             timer += 0.01f;
-            entity->m_orientation.pitch += 0.01f;
-            light->m_orientation.roll += 0.03f;
-            entity3->m_orientation.yaw += 0.02f;
-            entity3->m_orientation.pitch += 0.005f;
+            entity->m_orientation.x += 0.01f;
+            light->m_orientation.y += 0.03f;
+            entity3->m_orientation.x += 0.02f;
+            entity3->m_orientation.y += 0.005f;
             renderer->addToRenderQueue(entity);
             renderer->addToRenderQueue(light);
             renderer->addToRenderQueue(entity3);

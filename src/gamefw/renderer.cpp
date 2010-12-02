@@ -10,14 +10,15 @@ using namespace gamefw;
 
 const int POINTLIGHTS_IDX = 0;
 
-Renderer::Renderer(const GLuint display_width, const GLuint display_height) :
-    m_display_width(display_width),
-    m_display_height(display_height),
-    m_aspect_ratio((float) display_width / (float) display_height),
-    m_camera(new Entity())
+Renderer::Renderer(const GLuint display_width, const GLuint display_height)
+:
+m_display_width(display_width),
+m_display_height(display_height),
+m_camera(new Entity),
+m_aspect_ratio((float) display_width / (float) display_height)
 {
-    initBuffers(display_width, display_height);
     m_camera->setName("Camera");
+    initBuffers(display_width, display_height);
 }
 
 Renderer::~Renderer()
@@ -308,9 +309,9 @@ void Renderer::renderEntity(const Entity& entity)
     // Calculate and bind mvp.
 
     // Model orientation ...
-   glm::mat4 model(glm::yawPitchRoll(entity.m_orientation.yaw,
-                                     entity.m_orientation.pitch,
-                                     entity.m_orientation.roll));
+   glm::mat4 model(glm::yawPitchRoll(entity.m_orientation.x,
+                                     entity.m_orientation.y,
+                                     entity.m_orientation.z));
     // ... + translation
     model[3] = glm::vec4(entity.m_position, 1.0);
 
@@ -319,10 +320,10 @@ void Renderer::renderEntity(const Entity& entity)
 
     // View transform.
     glm::mat4 view_orientation_x(glm::rotate(glm::mat4(1.0f),
-                                             m_camera->m_orientation.pitch,
+                                             m_camera->m_orientation.y,
                                              glm::vec3(-1.0f, 0.0f, 0.0f)));
     glm::mat4 view_orientation(glm::rotate(view_orientation_x,
-                               m_camera->m_orientation.yaw,
+                               m_camera->m_orientation.x,
                                glm::vec3(0.0f, 1.0f, 0.0f)));
     glm::mat4 view(glm::translate(view_orientation, -m_camera->m_position));
 

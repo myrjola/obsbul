@@ -8,11 +8,6 @@
 
 namespace gamefw {
 
-class PointLight;
-
-
-class RenderJob;
-
 /**
  * @brief Where the magic happens.
  */

@@ -34,15 +34,20 @@ public:
     
     /**
      * @brief World space orientation in degrees.
+     *
+     * XYZ is yaw , pitch and roll respectively.
      **/
-    struct {
-        float yaw, pitch, roll;
-    } m_orientation;
+    glm::vec3 m_orientation;
 
     /**
      * @brief Local space velocity.
      **/
     glm::vec3 m_velocity_local;
+
+    /**
+     * @brief World space angular velocity
+     */
+    glm::vec3 m_angular_velocity;
 
 private:
     shared_ptr<string> m_name;
