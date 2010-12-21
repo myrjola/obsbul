@@ -17,6 +17,8 @@ void SimpleGameWorld::update()
                             entity->m_velocity_local.z *
                             glm::cos(glm::radians(entity->m_orientation.x));
             entity->m_position.y += entity->m_velocity_local.y;
+	    
+	    entity->m_orientation += entity->m_angular_velocity;
     }
 }
 
