@@ -19,7 +19,7 @@ public:
      * @param keyevent The pressed key.
      * @return void
      **/
-    virtual void keyPressed(sf::Event::KeyEvent& keyevent);
+    virtual void keyPressed(sf::Event::KeyEvent& keyevent) = 0;
     
     /**
      * @brief Input processing on key release.
@@ -27,7 +27,7 @@ public:
      * @param keyevent The released key.
      * @return void
      **/
-    virtual void keyReleased(sf::Event::KeyEvent& keyevent);
+    virtual void keyReleased(sf::Event::KeyEvent& keyevent) = 0;
 
     /**
      * @brief Input processing on mouse movement.
@@ -36,7 +36,7 @@ public:
      * @return void
      **/
     virtual void mouseMoved(const int x, const int y,
-                            const sf::Input& input_state);
+                            const sf::Input& input_state) = 0;
 
     
     /**
@@ -46,7 +46,7 @@ public:
      * @param height y coordinates from window's bottom border.
      * @return void
      **/
-    virtual void newMousePosition(const int width, const int height);
+    virtual void newMousePosition(const int width, const int height) = 0;
 
 };
 

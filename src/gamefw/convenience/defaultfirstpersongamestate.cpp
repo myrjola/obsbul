@@ -28,14 +28,14 @@ UpdateStatus DefaultFirstPersonGameState::update()
     const sf::Input& input_state = main_window->GetInput();
     while (main_window->GetEvent(event)) {
         if (event.Type == sf::Event::Closed) {
-            return UpdateStatus::UPDATE_QUIT;
+            return UPDATE_QUIT;
         } else if (event.Type == sf::Event::KeyPressed) {
             switch (event.Key.Code) {
                 case (sf::Key::R):
                     gamefw::Locator::getShaderFactory().reloadShaders();
                     break;
                 case (sf::Key::Escape):
-                    return UpdateStatus::UPDATE_QUIT;
+                    return UPDATE_QUIT;
                 default:
                     m_controller.keyPressed(event.Key);
             }
@@ -54,5 +54,5 @@ UpdateStatus DefaultFirstPersonGameState::update()
         m_controller.newMousePosition(m_window_middle_x, m_window_middle_y);
         main_window->SetCursorPosition(m_window_middle_x, m_window_middle_y);
     }
-    return UpdateStatus::UPDATE_NORMAL;
+    return UPDATE_NORMAL;
 }

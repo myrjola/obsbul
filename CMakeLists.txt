@@ -21,10 +21,6 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(Boost REQUIRED COMPONENTS filesystem system)
 set(Boost_LIBRARIES ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-    ADD_DEFINITIONS(-std=c++0x) #Enable C++0x mode for gcc.
-endif(CMAKE_COMPILER_IS_GNUCXX)
-
 add_subdirectory(src)
 
 add_subdirectory(assets)

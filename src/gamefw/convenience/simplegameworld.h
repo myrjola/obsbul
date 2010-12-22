@@ -3,15 +3,19 @@
 
 #include "../../common.h"
 #include "../entity.h"
+#include "../igameworld.h"
 
-class SimpleGameWorld
+class SimpleGameWorld : public gamefw::IGameWorld
 {
 public:
-    void addEntity(shared_ptr<gamefw::Entity> entity);
-    void update();
-
+    SimpleGameWorld();
+    virtual void addEntity(shared_ptr< gamefw::Entity > entity);
+    virtual void addEntities(const std::vector< shared_ptr< gamefw::Entity > >& entities);
+    virtual void update();
+    virtual shared_ptr< vector< shared_ptr< gamefw::Entity > > > getEntityList();
+    
 private:
-    vector<shared_ptr<gamefw::Entity> > m_entity_list;
+    shared_ptr<vector<shared_ptr<gamefw::Entity> > > m_entity_list;
 };
 
 #endif // SIMPLEGAMEWORLD_H

@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone=yes>
+<level>
+    <name>Test level 1</name>
+    <entity name="sphere">
+        <position>1.0 2.0 -5.0</position>
+        <orientation>0.0 0.0 1.5</orientation>
+    </entity>
+    <entity name="flatsmooth">
+        <position>-5.0 0.0 -15.0</position>
+        <orientation>0.5 0.0 1.5</orientation>
+    </entity>
+    <entity name="floor">
+        <position>0.0 -5.0 0.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+    </entity>
+    <pointlight name="lightball">
+        <position>1.0 1.0 -1.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+        <color>1.0 1.0 1.0</color>
+        <intensity>100</intensity>
+    </pointlight>
+</level>

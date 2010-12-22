@@ -22,7 +22,7 @@ ObjFile::ObjFile(const std::string& path)
         m_num_triangles(0),
         m_num_materials(0)
 {
-    ifstream file(path);
+    ifstream file(path.c_str());
 
     assert(file.is_open());
 
@@ -157,7 +157,7 @@ void ObjFile::loadMaterials(string mtllib_name)
     mtllib_path.resize(directory_pos + 1); // Snip filename.obj.
     mtllib_path += mtllib_name;
 
-    ifstream file(mtllib_path);
+    ifstream file(mtllib_path.c_str());
     assert(file.is_open());
 
     GLfloat r, g, b;

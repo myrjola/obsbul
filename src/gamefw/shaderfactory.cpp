@@ -20,7 +20,7 @@ ShaderFactory::ShaderFactory()
 
 ShaderFactory::~ShaderFactory()
 {
-    pair<GLuint, shared_ptr<ShaderProgram>> program_table_pair;
+    pair<GLuint, shared_ptr<ShaderProgram> > program_table_pair;
     delete m_program_table;
 
     pair<string, vector<GLuint>* > define_table_pair;

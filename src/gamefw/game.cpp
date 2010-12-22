@@ -45,7 +45,7 @@ UpdateStatus Game::update()
     UpdateStatus status = m_active_gamestate->update();
     m_renderer->render();
     m_main_window.Display();
-    if (status == UpdateStatus::UPDATE_QUIT) {
+    if (status == UPDATE_QUIT) {
         m_main_window.Close();
     }
     return status;

@@ -8,7 +8,8 @@ Entity::Entity()
 m_name(new string("")), m_desc(new string("")),
 m_position(0.0f, 0.0f, 0.0f),
 m_velocity_local(0.0f, 0.0f, 0.0f),
-m_orientation(0.0f, 0.0f, 0.0f)
+m_orientation(0.0f, 0.0f, 0.0f),
+m_angular_velocity(0.0f, 0.0f, 0.0f)
 {
 }
 

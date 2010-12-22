@@ -6,6 +6,8 @@
 
 #include "../common.h"
 #include <map>
+#include "igameworld.h"
+#include "levelfile.h"
 
 #ifndef PROJECT_NAME
     #define PROJECT_NAME "ObscureBulldozer"
@@ -109,6 +111,15 @@ public:
      * @return The separator as a string ie. for windows '\\'.
      **/
     const std::string getDirSeparator() const;
+
+    /**
+     * @brief Load a level.
+     *
+     * @param name Name of level file without .xml.
+     * @param gameworld The world where the entities are added.
+     * @return void
+     **/
+    shared_ptr<LevelFile> loadLevelFile(string name) const;
 
 private:
     fipImage* readImage(const string& name) const;

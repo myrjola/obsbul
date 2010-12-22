@@ -7,15 +7,16 @@
 #include <cstring>
 #include <vector>
 #include <exception>
-#include <memory>
 
 using namespace std;
 
+#include <boost/shared_ptr.hpp>
+using boost::shared_ptr;
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
 #ifdef _WIN32
-    typedef unsigned int uint;
+typedef unsigned int uint;
 #endif
 
 #include "util/logger.h"

@@ -3,7 +3,6 @@
 add_custom_target(OBJ_EXPORT)
 file(GLOB Models_BLEND "*.blend")
 foreach(file ${Models_BLEND})
-    STRING(REGEX REPLACE ".blend" ".obj" file_obj ${file})
     set(blend2obj_cmd blender -b ${file} -P ${SCRIPTS_PATH}/obj_export.py)
     if(UNIX)
         # Strange bug in blender not finding scripts directory when running in background mode.

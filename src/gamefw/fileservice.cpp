@@ -8,6 +8,7 @@
 #include "fileservice.h"
 
 #include "gamefw.h"
+#include "levelfile.h"
 
 using namespace gamefw;
 
@@ -167,4 +168,11 @@ shared_ptr<Entity> FileService::createEntity(const string& name) const
 const std::string gamefw::FileService::getDirSeparator() const
 {
     return m_dirseparator;
+}
+
+shared_ptr<LevelFile> gamefw::FileService::loadLevelFile(string name) const
+{
+    string path = "assets/levels/" + name + ".xml";
+    string realpath(getRealPath(path));
+    return shared_ptr<LevelFile>(new LevelFile(realpath));
 }

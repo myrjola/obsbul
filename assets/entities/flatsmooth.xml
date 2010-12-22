@@ -3,9 +3,6 @@
     <name>Flatsmooth</name>
     <desc>A sphere using albedo and normal textures with phong shading</desc>
     <gfx>
-        <textures>
-        </textures>
-
         <model>flatsmooth</model>
 
    <!-- Shader defines separated with comma -->

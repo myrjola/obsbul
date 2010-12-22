@@ -8,7 +8,7 @@
 #include <boost/tuple/tuple_comparison.hpp>
 
 #define TIXML_USE_STL
-#include "tinyxml.h"
+#include <tinyxml.h>
 #include "renderjob.h"
 #include "locator.h"
 #include "gamefw.h"
@@ -52,7 +52,7 @@ typedef struct _t_material {
     /// Padding needed for std140 layout to align properly.
     GLfloat padding[3]; // Needed for std140 layout.
 } t_material;
- 
+
 
 using namespace gamefw;
 
@@ -67,15 +67,15 @@ shared_ptr<Entity> EntityFactory::createEntity(const string& path)
     shared_ptr<RenderJob> renderjob(new RenderJob());
     entity->setRenderJob(renderjob);
 
-    TiXmlDocument current_entityfile(path);
-    if (!current_entityfile.LoadFile()) { // If error when loading file.
+    TiXmlDocument entityfile(path);
+    if (!entityfile.LoadFile()) { // If error when loading file.
         LOG(logERROR) << "Error when loading entity file " << path <<
-        "\nError at line " << current_entityfile.ErrorRow() <<
-        "\nError description: " << current_entityfile.ErrorDesc();
+        "\nError at line " << entityfile.ErrorRow() <<
+        "\nError description: " << entityfile.ErrorDesc();
         throw EntityCreationError();
     }
 
-    TiXmlHandle dochandle = TiXmlHandle(&current_entityfile).FirstChild("entity");
+    TiXmlHandle dochandle = TiXmlHandle(&entityfile).FirstChild("entity");
 
     // Set name and description.
 
@@ -278,7 +278,7 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
     {
         glGenBuffers(1, &renderjob->m_buffer_objects.vertex_buffer);
         glGenBuffers(1, &renderjob->m_buffer_objects.element_buffer);
-        
+
         glBindBuffer(GL_ARRAY_BUFFER, renderjob->m_buffer_objects.vertex_buffer);
         glBufferData(GL_ARRAY_BUFFER, vertex_buffer_length * sizeof(t_vertex),
                      vertex_buffer, GL_STATIC_DRAW);
@@ -333,7 +333,7 @@ void EntityFactory::createMaterials(shared_ptr<RenderJob> renderjob,
         material_location,
         GL_UNIFORM_BLOCK_DATA_SIZE,
         &block_size);
-    
+
     // Tests if the the uniform block is similarly aligned in the buffer and the shader source.
     assert(block_size == sizeof(t_obj_mtl) * num_materials);
 

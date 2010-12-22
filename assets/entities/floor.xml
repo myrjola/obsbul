@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone=yes>
+    <entity>
+        <name>Floor</name>
+        <desc>A floor</desc>
+        <gfx>
+            <model>floor</model>
+            
+            <textures>
+                <albedo>spheretex</albedo>
+            </textures>
+            
+            <!-- Shader defines separated with comma -->
+            <shader_defines>
+                DIFFUSE,
+                SPECULAR,
+                MATERIALS,
+                FRUSTUM
+            </shader_defines>
+        </gfx>
+    </entity>
+    
