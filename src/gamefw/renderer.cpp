@@ -17,34 +17,39 @@ m_display_height(display_height),
 m_camera(new Entity),
 m_aspect_ratio((float) display_width / (float) display_height)
 {
+    m_ogl3_enabled = GLEW_GET_VAR(__GLEW_VERSION_3_0);
     m_camera->setName("Camera");
-    initBuffers(display_width, display_height);
+    if (m_ogl3_enabled) {
+        initBuffers(display_width, display_height);
+    }
 }
 
 Renderer::~Renderer()
 {
-    glDeleteRenderbuffers(1, &m_depth_stencil_buffers.gbuffer);
-    glDeleteRenderbuffers(1, &m_depth_stencil_buffers.pbuffer);
-    glDeleteFramebuffers(1, &m_fbo.gbuffer);
-    glDeleteFramebuffers(1, &m_fbo.pbuffer);
-    glDeleteFramebuffers(1, &m_fbo.ppbuffer);
+    if (m_ogl3_enabled) {
+        glDeleteRenderbuffers(1, &m_depth_stencil_buffers.gbuffer);
+        glDeleteRenderbuffers(1, &m_depth_stencil_buffers.pbuffer);
+        glDeleteFramebuffers(1, &m_fbo.gbuffer);
+        glDeleteFramebuffers(1, &m_fbo.pbuffer);
+        glDeleteFramebuffers(1, &m_fbo.ppbuffer);
 
-    // Delete manually allocated textures.
-    shared_ptr<RenderJob> gbuffer_renderjob = m_gbuffer.getRenderJob();
-    glDeleteTextures(gbuffer_renderjob->m_num_textures,
-                     gbuffer_renderjob->m_textures);
-    delete [] gbuffer_renderjob->m_textures;
-    gbuffer_renderjob->m_num_textures = 0;
+        // Delete manually allocated textures.
+        shared_ptr<RenderJob> gbuffer_renderjob = m_gbuffer.getRenderJob();
+        glDeleteTextures(gbuffer_renderjob->m_num_textures,
+                        gbuffer_renderjob->m_textures);
+        delete [] gbuffer_renderjob->m_textures;
+        gbuffer_renderjob->m_num_textures = 0;
 
-    shared_ptr<RenderJob> pbuffer_renderjob = m_pbuffer.getRenderJob();
-    glDeleteTextures(pbuffer_renderjob->m_num_textures,
-                     pbuffer_renderjob->m_textures);
-    delete [] pbuffer_renderjob->m_textures;
-    pbuffer_renderjob->m_num_textures = 0;
+        shared_ptr<RenderJob> pbuffer_renderjob = m_pbuffer.getRenderJob();
+        glDeleteTextures(pbuffer_renderjob->m_num_textures,
+                        pbuffer_renderjob->m_textures);
+        delete [] pbuffer_renderjob->m_textures;
+        pbuffer_renderjob->m_num_textures = 0;
 
-    shared_ptr<RenderJob> ppbuffer_renderjob = m_ppbuffer.getRenderJob();
-    // Shared textures with gbuffer.
-    ppbuffer_renderjob->m_num_textures = 0;
+        shared_ptr<RenderJob> ppbuffer_renderjob = m_ppbuffer.getRenderJob();
+        // Shared textures with gbuffer.
+        ppbuffer_renderjob->m_num_textures = 0;
+    }
 }
 
 void Renderer::createDepthStencilBuffer(GLuint* buffer, const GLuint width,
@@ -67,7 +72,6 @@ void Renderer::texParametersForRenderTargets() const
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1000);
 }
-
 bool Renderer::checkFramebuffer() const
 {
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -258,20 +262,24 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
 
 void Renderer::render()
 {
-    glEnable(GL_DEPTH_TEST);
+    if (m_ogl3_enabled) {
+        glEnable(GL_DEPTH_TEST);
 
-    renderGBuffers();
+        renderGBuffers();
 
-    glDisable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
 
-    renderPBuffers();
+        renderPBuffers();
 
-    renderPPBuffers();
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0); // Bind main window's framebuffer.
-    glClearColor(0.0, 0.0, 0.0, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    renderEntity(m_ppbuffer);
+        renderPPBuffers();
+        
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); // Bind main window's framebuffer.
+        glClearColor(0.0, 0.0, 0.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        renderGBuffers();
+    }
+    
+    renderRenderQueue();
 }
 
 void Renderer::addToRenderQueue(shared_ptr<Entity> entity)
@@ -301,9 +309,10 @@ void Renderer::renderEntity(const Entity& entity)
     }
 
     // Bind material uniform block.
-    if (renderjob->m_uniforms.materials != 0) {
+    if (m_ogl3_enabled && renderjob->m_uniforms.materials != 0) {
         glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL,
                          renderjob->m_uniforms.materials);
+        glEnableVertexAttribArray(renderjob_enums::MATERIAL_IDX);
     }
 
     // Calculate and bind mvp.
@@ -351,29 +360,34 @@ void Renderer::renderEntity(const Entity& entity)
     glEnableVertexAttribArray(renderjob_enums::POSITION);
     glEnableVertexAttribArray(renderjob_enums::NORMAL);
     glEnableVertexAttribArray(renderjob_enums::TEXCOORD);
-    glEnableVertexAttribArray(renderjob_enums::MATERIAL_IDX);
     glDrawElements(GL_TRIANGLES, renderjob->m_vertex_count, GL_UNSIGNED_SHORT, 0);
     glDisableVertexAttribArray(renderjob_enums::POSITION);
     glDisableVertexAttribArray(renderjob_enums::NORMAL);
     glDisableVertexAttribArray(renderjob_enums::TEXCOORD);
-    glDisableVertexAttribArray(renderjob_enums::MATERIAL_IDX);
 
     // Cleanup.
     glBindVertexArray(0);
     glUseProgram(0);
-    glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL, 0);
+    if (m_ogl3_enabled) {
+        glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL, 0);
+        glDisableVertexAttribArray(renderjob_enums::MATERIAL_IDX);
+    }
 }
 
 void Renderer::renderGBuffers()
 {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.gbuffer);
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+    renderRenderQueue();
+}
+
+void Renderer::renderRenderQueue()
+{
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     while (!m_render_queue.empty()) {
         shared_ptr<Entity> current_entity = m_render_queue.front();
         m_render_queue.pop();
         renderEntity(*current_entity);
-    }
+    } 
 }
 
 uint Renderer::loadLightsIntoUniformBlocks()

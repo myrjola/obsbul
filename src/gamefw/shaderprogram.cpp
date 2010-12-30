@@ -1,5 +1,7 @@
 #include "shaderprogram.h"
 
+#include "renderjob.h"
+
 #include <sstream>
 
 using namespace gamefw;
@@ -131,12 +133,17 @@ void ShaderProgram::makeProgram(const GLuint program_id)
     GLuint vertex_shader = compileShader(GL_VERTEX_SHADER, m_defines, m_vertex_source);
     GLuint fragment_shader = compileShader(GL_FRAGMENT_SHADER, m_defines, m_fragment_source);
 
-    // TODO: Make geometry shader compilation optional.
+// TODO: Make geometry shader compilation optional.
 //     geometry_shader = compileShader(GL_GEOMETRY_SHADER, defines, fragment_source);
 //     glAttachShader(program_id, geometry_shader);
 
     glAttachShader(program_id, vertex_shader);
     glAttachShader(program_id, fragment_shader);
+    if (!GLEW_GET_VAR(__GLEW_VERSION_3_0)) {
+        glBindAttribLocation(program_id, renderjob_enums::POSITION, "in_position");
+        glBindAttribLocation(program_id, renderjob_enums::NORMAL, "in_normal");
+        glBindAttribLocation(program_id, renderjob_enums::TEXCOORD, "in_texcoord");
+    }
     glLinkProgram(program_id);
 
     GLint status_ok;

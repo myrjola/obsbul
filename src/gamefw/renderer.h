@@ -74,6 +74,7 @@ private:
     Entity m_ppbuffer;
 
     shared_ptr<Entity> m_camera;
+    GLboolean m_ogl3_enabled;
 
     void initBuffers(const GLuint width, const GLuint height);
     void renderGBuffers();
@@ -90,6 +91,7 @@ private:
     void renderPBuffers();
     void renderPPBuffers();
     uint loadLightsIntoUniformBlocks();
+    void renderRenderQueue();
 };
 
 }

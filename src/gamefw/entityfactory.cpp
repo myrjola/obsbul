@@ -195,7 +195,7 @@ shared_ptr<Entity> EntityFactory::createEntity(const string& path)
     // needs a working shader program.
     loadModel(model, renderjob);
 
-    if (materials_defined) {
+    if (materials_defined && GLEW_GET_VAR(__GLEW_VERSION_3_0)) {
         createMaterials(renderjob, model);
         checkOpenGLError();
     }
@@ -303,11 +303,13 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
             (void*) offsetof(t_vertex, texcoord)
         );
 
-        glVertexAttribIPointer(
-            renderjob_enums::MATERIAL_IDX,
-            1, GL_UNSIGNED_INT, sizeof(t_vertex),
-            (void*) offsetof(t_vertex, material_idx)
-        );
+        if (GLEW_GET_VAR(__GLEW_VERSION_3_0)) {
+            glVertexAttribIPointer(
+                renderjob_enums::MATERIAL_IDX,
+                1, GL_UNSIGNED_INT, sizeof(t_vertex),
+                (void*) offsetof(t_vertex, material_idx)
+            );
+        }
         checkOpenGLError();
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderjob->m_buffer_objects.element_buffer);
