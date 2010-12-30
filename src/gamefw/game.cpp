@@ -5,6 +5,7 @@
 #include "renderer.h"
 
 #include <SFML/Graphics.hpp>
+#include "gamefw.h"
 
 using namespace gamefw;
 
@@ -13,9 +14,17 @@ enum Windows {
 };
 
 Game::Game(const uint display_width, const uint display_height)
-:
-m_main_window_context(24, 8, 0, 3, 3)
 {
+    if (GLEW_GET_VAR(__GLEW_VERSION_3_0)) {
+        m_main_window_context = sf::ContextSettings(24, 8, 0, 3, 3);
+        LOG(logINFO) << "Using OpenGL 3.3 Renderer.";
+    } else if (GLEW_GET_VAR(__GLEW_VERSION_2_1)) {
+        m_main_window_context = sf::ContextSettings(24, 8, 0, 2, 1);
+        LOG(logINFO) << "Falling back to OpenGL 2.1.";
+    } else {
+        throw OpenGLError();
+    }
+    
     m_main_window.Create(sf::VideoMode(display_width, display_height,
                                        24), "Test", sf::Style::Default,
                          m_main_window_context);

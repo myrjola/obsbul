@@ -4,17 +4,27 @@
 
 #include "gamefw.h"
 
-#define VERTEX_PATH "src/uber.v.glsl"
-#define GEOMETRY_PATH "src/uber.g.glsl"
-#define FRAGMENT_PATH "src/uber.f.glsl"
-
 using namespace gamefw;
 
 ShaderFactory::ShaderFactory()
 {
     m_program_table = new map< GLuint, shared_ptr<ShaderProgram> >();
     m_define_table = new map< string, vector<GLuint>* >();
+    
+    if (GLEW_GET_VAR(__GLEW_VERSION_3_0)) {
+        m_vertex_path = "src/uber.v.glsl";
+        m_geometry_path = "src/uber.f.glsl";
+        m_fragment_path = "src/uber.f.glsl";
+    } else if (GLEW_GET_VAR(__GLEW_VERSION_2_1)) {
+        m_vertex_path = "src/simple.v.glsl";
+        m_geometry_path = "src/simple.g.glsl";
+        m_fragment_path = "src/simple.f.glsl";
+    } else {
+        throw OpenGLError();
+    }
+    
     loadSources();
+    
     LOG(logINFO) << "ShaderFactory created";
 }
 
@@ -41,9 +51,9 @@ void ShaderFactory::deallocateSources()
 void ShaderFactory::loadSources()
 {
     const FileService& fileservice = Locator::getFileService();
-    m_vertex_source = fileservice.fileToBuffer(VERTEX_PATH);
-    m_geometry_source = fileservice.fileToBuffer(GEOMETRY_PATH);
-    m_fragment_source = fileservice.fileToBuffer(FRAGMENT_PATH);
+    m_vertex_source = fileservice.fileToBuffer(m_vertex_path);
+    m_geometry_source = fileservice.fileToBuffer(m_geometry_path);
+    m_fragment_source = fileservice.fileToBuffer(m_fragment_path);
 }
 
 void ShaderFactory::reloadShaders()
