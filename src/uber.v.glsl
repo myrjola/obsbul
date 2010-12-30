@@ -102,7 +102,7 @@ void main(void)
     
     #ifdef ORTHO
     gl_Position = in_position;
-    #endif ORTHO
+    #endif // ORTHO
     frag_normal = (normalmatrix * in_normal).xyz;
     frag_texcoord = in_texcoord;
     frag_worldspace_pos = (model * in_position).xyz;

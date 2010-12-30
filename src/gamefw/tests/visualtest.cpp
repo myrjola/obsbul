@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
     if (GLEW_OK != status) {
         LOG(logERROR) << "Error:" << glewGetErrorString(status) << "\n";
     }
-    
+
     FileService fileservice;
     Locator::registerFileService(fileservice);
     ShaderFactory shaderfactory;
