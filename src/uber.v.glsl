@@ -10,6 +10,8 @@ layout (location = MATERIAL_IDX) in unsigned int in_material_idx;
 uniform mat4 model;
 uniform mat4 normalmatrix;
 uniform mat4 mvp;
+uniform float near_z;
+uniform float far_z;
 
 #endif // POSITION
 
@@ -90,13 +92,20 @@ layout(std140) uniform materials {
 
 void main(void)
 {
+    mat4 mvp = mvp; 
+    #ifdef SKYBOX
+    mvp[3] = vec4(0.0, 0.0, -2.0 * far_z * near_z / (far_z - near_z), 0.0);
+    #endif // SKYBOX
+
     #ifdef FRUSTUM
     gl_Position = mvp
-                #ifdef HALFSIZE
+                #ifdef SKYBOX
+                * scale(far_z / 2.0)
+                #elif defined HALFSIZE
                 * scale(0.5)
                 #elif defined TINYSIZE
                 * scale(0.1)
-                #endif // SIZE
+                #endif
                 * in_position;
     #endif // FRUSTUM
     

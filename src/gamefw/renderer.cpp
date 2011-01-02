@@ -332,7 +332,10 @@ void Renderer::renderEntity(const Entity& entity)
     glm::mat4 view(glm::translate(view_orientation, -m_camera->m_position));
 
     // Projection transform
-    glm::mat4 projection = glm::perspective(60.0f, m_aspect_ratio, 0.1f, 100.f);
+    const GLfloat FOV = 60.0f;
+    const GLfloat near_z = 1.0f;
+    const GLfloat far_z = 1000.f;
+    glm::mat4 projection = glm::perspective(FOV, m_aspect_ratio, near_z, far_z);
 
     glm::mat4 mvp = projection * view * model;
 
@@ -349,6 +352,10 @@ void Renderer::renderEntity(const Entity& entity)
     glUniform1f(location_width, (GLfloat) m_display_width);
     GLint location_height = glGetUniformLocation(program_id, "display_height");
     glUniform1f(location_height, (GLfloat) m_display_height);
+    GLint location_near_z = glGetUniformLocation(program_id, "near_z");
+    glUniform1f(location_near_z, (GLfloat) near_z);
+    GLint location_far_z = glGetUniformLocation(program_id, "far_z");
+    glUniform1f(location_far_z, (GLfloat) far_z);
 
     glBindVertexArray(renderjob->m_buffer_objects.vao);
     

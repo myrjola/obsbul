@@ -17,8 +17,112 @@
         <position>0.0 -5.0 0.0</position>
         <orientation>0.0 0.0 0.0</orientation>
     </entity>
+    <entity name="floor">
+        <position>-16.0 -5.0 16.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+    </entity>
+    <entity name="floor">
+        <position>-16.0 -5.0 -16.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+    </entity>
+    <entity name="floor">
+        <position>16.0 -5.0 -16.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+    </entity>
+    <entity name="floor">
+        <position>16.0 -5.0 16.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+    </entity>
+    <entity name="floor">
+        <position>16.0 -5.0 0.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+    </entity>
+    <entity name="floor">
+        <position>-16.0 -5.0 0.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+    </entity>
+    <entity name="floor">
+        <position>0.0 -5.0 -16.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+    </entity>
+    <entity name="floor">
+        <position>0.0 -5.0 16.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+    </entity>
+    <entity name="skybox">
+        <position>0.0 0.0 0.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+    </entity>
     <pointlight name="lightball">
-        <position>10.0 50.0 -1.0</position>
+        <position>-10.0 15.0 -5.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+        <color>1.0 1.0 1.0</color>
+        <intensity>100</intensity>
+    </pointlight>
+    <pointlight name="lightball">
+        <position>-16.0 3.0 -20.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+        <color>1.0 1.0 1.0</color>
+        <intensity>250</intensity>
+    </pointlight>
+    <pointlight name="lightball">
+        <position>10.0 20.0 -1.0</position>
+        <orientation>0.0 0.0 0.0</orientation>
+        <color>1.0 1.0 1.0</color>
+        <intensity>500</intensity>
+    </pointlight>
+</level>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <pointlight name="lightball">
+        <position>10.0 20.0 -1.0</position>
         <orientation>0.0 0.0 0.0</orientation>
         <color>1.0 1.0 1.0</color>
         <intensity>500</intensity>

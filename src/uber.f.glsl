@@ -139,6 +139,7 @@ void main(void)
         vec3 extra = texture(texture4, frag_texcoord).xyz;
         float shininess = extra.g * shin_encoder;
         float is_lightsource = extra.r;
+        float is_skybox = extra.b;
 
         vec3 to_viewer = viewer_position - position.xyz;
 
@@ -157,9 +158,12 @@ void main(void)
             float norm_dot_half = clamp(dot(normal.xyz, normalize(half_vector)), 0.0, 1.0);
             float cos_theta = clamp(dot(normalize(normal.xyz), normalize(to_light)), 0.0, 1.0);
             diffuse_temp += diffuse * color * cos_theta;
-            specular_temp += specular * color * pow(norm_dot_half, is_lightsource * shininess);
+            specular_temp += max(specular * color * pow(norm_dot_half, is_lightsource * shininess), 0.0);
         }
         out_diffuse = vec4(diffuse_temp * is_lightsource, 1.0);
+        if (is_skybox <= 0.1) {
+            out_diffuse = vec4(diffuse, 1.0);
+        }
         out_specular = vec4(specular_temp, 1.0);
         #ifdef ANTIALIAS
         float factor = detect_edges(pixel_size, 1.0);
@@ -213,9 +217,14 @@ void main(void)
         out_normal = vec4(normalize(frag_normal), 1.0);
         out_position = vec4(frag_worldspace_pos, 1.0);
         out_extra = vec4(1.0, frag_shininess / shin_encoder, 1.0, 1.0);
+
         #ifdef LIGHTSOURCE
         out_extra.r = 0.0;
-        #endif
+        #endif // LIGHTSOURCE
+
+        #ifdef SKYBOX
+        out_extra.b = 0.0;
+        #endif // SKYBOX
     }
     #endif // not POSTPROC
     #endif // not PBUFFER

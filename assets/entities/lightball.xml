@@ -8,8 +8,7 @@
         <shader_defines>
             MATERIALS,
             FRUSTUM,
-            LIGHTSOURCE,
-            HALFSIZE
+            LIGHTSOURCE
         </shader_defines>
     </gfx>
 </entity>
