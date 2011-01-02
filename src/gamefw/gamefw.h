@@ -46,6 +46,7 @@ inline void checkOpenGLError()
     }
 }
 
+#include "openglversion.h"
 #include "entity.h"
 #include "pointlight.h"
 #include "icontroller.h"

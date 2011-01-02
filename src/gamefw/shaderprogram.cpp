@@ -14,11 +14,14 @@ const char* ShaderProgramCreationError::what() const throw()
 ShaderProgram::ShaderProgram(char const* vertex_source,
                              char const* geometry_source,
                              char const* fragment_source,
-                             const set< string >& defines)
+                             const set< string >& defines,
+                             const OpenGLVersion opengl_version)
 :
-m_defines(defines), m_vertex_source(vertex_source),
+m_defines(defines),
+m_vertex_source(vertex_source),
 m_geometry_source(geometry_source),
-m_fragment_source(fragment_source)
+m_fragment_source(fragment_source),
+m_opengl_version(opengl_version)
 {
     m_program_id = glCreateProgram();
     makeProgram(m_program_id);
@@ -139,7 +142,7 @@ void ShaderProgram::makeProgram(const GLuint program_id)
 
     glAttachShader(program_id, vertex_shader);
     glAttachShader(program_id, fragment_shader);
-    if (!GLEW_GET_VAR(__GLEW_VERSION_3_0)) {
+    if (m_opengl_version == OGL_2_1) {
         glBindAttribLocation(program_id, renderjob_enums::POSITION, "in_position");
         glBindAttribLocation(program_id, renderjob_enums::NORMAL, "in_normal");
         glBindAttribLocation(program_id, renderjob_enums::TEXCOORD, "in_texcoord");

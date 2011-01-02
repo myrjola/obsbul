@@ -2,6 +2,7 @@
 #include "../ogl.h"
 
 #include <set>
+#include "openglversion.h"
 
 #ifndef SHADERPROGRAM_H
 #define SHADERPROGRAM_H
@@ -39,7 +40,8 @@ public:
     ShaderProgram(char const* vertex_source,
                   char const* geometry_source,
                   char const* fragment_source,
-                  const set<string>& defines);
+                  const set<string>& defines,
+                  const OpenGLVersion opengl_version);
 
     /**
      * @return The object ID of the shader program.
@@ -76,6 +78,8 @@ private:
     GLuint m_vertex_shader, m_geometry_shader, m_fragment_shader, m_program_id;
 
     char const* m_vertex_source, *m_geometry_source, *m_fragment_source;
+    
+    const OpenGLVersion m_opengl_version;
 
     set<string> m_defines;
 };

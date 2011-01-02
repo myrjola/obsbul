@@ -13,15 +13,17 @@ enum Windows {
     MAIN
 };
 
-Game::Game(const uint display_width, const uint display_height)
+Game::Game(const uint display_width, const uint display_height,
+           OpenGLVersion opengl_version)
 {
-    if (GLEW_GET_VAR(__GLEW_VERSION_3_0)) {
+    if (opengl_version == OGL_3_3) {
         m_main_window_context = sf::ContextSettings(24, 8, 0, 3, 3);
         LOG(logINFO) << "Using OpenGL 3.3 Renderer.";
-    } else if (GLEW_GET_VAR(__GLEW_VERSION_2_1)) {
+    } else if (opengl_version == OGL_2_1) {
         m_main_window_context = sf::ContextSettings(24, 8, 0, 2, 1);
         LOG(logINFO) << "Falling back to OpenGL 2.1.";
     } else {
+        LOG(logERROR) << "No support for given OpenGL version.";
         throw OpenGLError();
     }
     
@@ -36,7 +38,7 @@ Game::Game(const uint display_width, const uint display_height)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     // Renderer must be initialized after main window because of OpenGL context dependency.
-    m_renderer = shared_ptr<Renderer>(new Renderer(display_width, display_height));
+    m_renderer = shared_ptr<Renderer>(new Renderer(display_width, display_height, opengl_version));
 }
 
 Game::~Game()

@@ -15,18 +15,18 @@ int main(int argc, char* argv[])
 {
     PHYSFS_init(argv[0]);
 
-    int status= glewInit();
+    int status = glewInit();
     if (GLEW_OK != status) {
         LOG(logERROR) << "Error:" << glewGetErrorString(status) << "\n";
     }
 
-    FileService fileservice;
+    FileService fileservice(OGL_3_3);
     Locator::registerFileService(fileservice);
-    ShaderFactory shaderfactory;
+    ShaderFactory shaderfactory(OGL_3_3);
     Locator::registerShaderFactory(shaderfactory);
     
     uint width = 1024, height = 768;
-    Game game(width, height);
+    Game game(width, height, OGL_3_3);
 
     shared_ptr<Renderer> renderer = game.getRenderer();
 

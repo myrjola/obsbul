@@ -10,23 +10,24 @@ using namespace gamefw;
 
 const int POINTLIGHTS_IDX = 0;
 
-Renderer::Renderer(const GLuint display_width, const GLuint display_height)
+Renderer::Renderer(const GLuint display_width, const GLuint display_height,
+                   OpenGLVersion opengl_version)
 :
 m_display_width(display_width),
 m_display_height(display_height),
 m_camera(new Entity),
-m_aspect_ratio((float) display_width / (float) display_height)
+m_aspect_ratio((float) display_width / (float) display_height),
+m_opengl_version(opengl_version)
 {
-    m_ogl3_enabled = GLEW_GET_VAR(__GLEW_VERSION_3_0);
     m_camera->setName("Camera");
-    if (m_ogl3_enabled) {
+    if (m_opengl_version == OGL_3_3) {
         initBuffers(display_width, display_height);
     }
 }
 
 Renderer::~Renderer()
 {
-    if (m_ogl3_enabled) {
+    if (m_opengl_version == OGL_3_3) {
         glDeleteRenderbuffers(1, &m_depth_stencil_buffers.gbuffer);
         glDeleteRenderbuffers(1, &m_depth_stencil_buffers.pbuffer);
         glDeleteFramebuffers(1, &m_fbo.gbuffer);
@@ -262,7 +263,7 @@ void Renderer::initBuffers(const GLuint width, const GLuint height)
 
 void Renderer::render()
 {
-    if (m_ogl3_enabled) {
+    if (m_opengl_version == OGL_3_3) {
         glEnable(GL_DEPTH_TEST);
 
         renderGBuffers();
@@ -276,10 +277,10 @@ void Renderer::render()
         glBindFramebuffer(GL_FRAMEBUFFER, 0); // Bind main window's framebuffer.
         glClearColor(0.0, 0.0, 0.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        renderGBuffers();
+        renderEntity(m_ppbuffer);
+    } else {
+        renderRenderQueue();
     }
-    
-    renderRenderQueue();
 }
 
 void Renderer::addToRenderQueue(shared_ptr<Entity> entity)
@@ -308,12 +309,6 @@ void Renderer::renderEntity(const Entity& entity)
         glUniform1i(location, i);
     }
 
-    // Bind material uniform block.
-    if (m_ogl3_enabled && renderjob->m_uniforms.materials != 0) {
-        glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL,
-                         renderjob->m_uniforms.materials);
-        glEnableVertexAttribArray(renderjob_enums::MATERIAL_IDX);
-    }
 
     // Calculate and bind mvp.
 
@@ -337,7 +332,7 @@ void Renderer::renderEntity(const Entity& entity)
     glm::mat4 view(glm::translate(view_orientation, -m_camera->m_position));
 
     // Projection transform
-    glm::mat4 projection = glm::perspective(45.0f, m_aspect_ratio, 0.1f, 100.f);
+    glm::mat4 projection = glm::perspective(60.0f, m_aspect_ratio, 0.1f, 100.f);
 
     glm::mat4 mvp = projection * view * model;
 
@@ -356,22 +351,29 @@ void Renderer::renderEntity(const Entity& entity)
     glUniform1f(location_height, (GLfloat) m_display_height);
 
     glBindVertexArray(renderjob->m_buffer_objects.vao);
+    
+    // Bind material uniform block.
+    if (m_opengl_version == OGL_3_3 && renderjob->m_uniforms.materials != 0) {
+        glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL,
+                         renderjob->m_uniforms.materials);
+        glEnableVertexAttribArray(renderjob_enums::MATERIAL_IDX);
+    }
 
     glEnableVertexAttribArray(renderjob_enums::POSITION);
     glEnableVertexAttribArray(renderjob_enums::NORMAL);
     glEnableVertexAttribArray(renderjob_enums::TEXCOORD);
     glDrawElements(GL_TRIANGLES, renderjob->m_vertex_count, GL_UNSIGNED_SHORT, 0);
+    // Cleanup.
     glDisableVertexAttribArray(renderjob_enums::POSITION);
     glDisableVertexAttribArray(renderjob_enums::NORMAL);
     glDisableVertexAttribArray(renderjob_enums::TEXCOORD);
 
-    // Cleanup.
-    glBindVertexArray(0);
-    glUseProgram(0);
-    if (m_ogl3_enabled) {
+    if (m_opengl_version == OGL_3_3) {
         glBindBufferBase(GL_UNIFORM_BUFFER, renderjob_enums::MATERIAL, 0);
         glDisableVertexAttribArray(renderjob_enums::MATERIAL_IDX);
     }
+    glBindVertexArray(0);
+    glUseProgram(0);
 }
 
 void Renderer::renderGBuffers()

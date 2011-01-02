@@ -6,16 +6,18 @@
 
 using namespace gamefw;
 
-ShaderFactory::ShaderFactory()
+ShaderFactory::ShaderFactory(OpenGLVersion opengl_version)
+:
+m_opengl_version(opengl_version)
 {
     m_program_table = new map< GLuint, shared_ptr<ShaderProgram> >();
     m_define_table = new map< string, vector<GLuint>* >();
     
-    if (GLEW_GET_VAR(__GLEW_VERSION_3_0)) {
+    if (m_opengl_version == OGL_3_3) {
         m_vertex_path = "src/uber.v.glsl";
         m_geometry_path = "src/uber.f.glsl";
         m_fragment_path = "src/uber.f.glsl";
-    } else if (GLEW_GET_VAR(__GLEW_VERSION_2_1)) {
+    } else if (m_opengl_version == OGL_2_1) {
         m_vertex_path = "src/simple.v.glsl";
         m_geometry_path = "src/simple.g.glsl";
         m_fragment_path = "src/simple.f.glsl";
@@ -95,7 +97,8 @@ shared_ptr<ShaderProgram> ShaderFactory::makeShader(const set< string >& defines
     shared_ptr<ShaderProgram> program(new ShaderProgram(m_vertex_source,
                                       m_geometry_source,
                                       m_fragment_source,
-                                      defines));
+                                      defines,
+                                      m_opengl_version));
     GLuint id = program->getProgramID();
     foreach (string current_define, defines) {
         if (m_define_table->find(current_define) == m_define_table->end()) {

@@ -61,6 +61,13 @@ const char* EntityCreationError::what() const throw()
     return "Error when creating Entity.";
 }
 
+EntityFactory::EntityFactory(const OpenGLVersion opengl_version)
+:
+m_opengl_version(opengl_version)
+{
+
+}
+
 shared_ptr<Entity> EntityFactory::createEntity(const string& path)
 {
     shared_ptr<Entity> entity(new Entity);
@@ -195,7 +202,7 @@ shared_ptr<Entity> EntityFactory::createEntity(const string& path)
     // needs a working shader program.
     loadModel(model, renderjob);
 
-    if (materials_defined && GLEW_GET_VAR(__GLEW_VERSION_3_0)) {
+    if (materials_defined && m_opengl_version == OGL_3_3) {
         createMaterials(renderjob, model);
         checkOpenGLError();
     }
@@ -303,7 +310,7 @@ void EntityFactory::genVertexBuffers(shared_ptr<RenderJob> renderjob,
             (void*) offsetof(t_vertex, texcoord)
         );
 
-        if (GLEW_GET_VAR(__GLEW_VERSION_3_0)) {
+        if (m_opengl_version == OGL_3_3) {
             glVertexAttribIPointer(
                 renderjob_enums::MATERIAL_IDX,
                 1, GL_UNSIGNED_INT, sizeof(t_vertex),

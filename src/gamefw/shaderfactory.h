@@ -4,6 +4,7 @@
 #include <set>
 
 #include "shaderprogram.h"
+#include "openglversion.h"
 
 using namespace std;
 
@@ -20,8 +21,9 @@ class ShaderFactory
 public:
     /**
      * The shader sources are read in the constructor.
-     */
-    ShaderFactory();
+     * @param opengl_version Determines the GLSL version. Defaults to OGL_3_3.
+     **/
+    ShaderFactory(OpenGLVersion opengl_version = OGL_3_3);
 
     /**
      * Creates a ShaderProgram made from an übershader.
@@ -45,6 +47,8 @@ public:
 private:
     map< string, vector<GLuint>* >* m_define_table;
     map< GLuint, shared_ptr<ShaderProgram> >*  m_program_table;
+    
+    const OpenGLVersion m_opengl_version;
 
     char const* m_vertex_source, *m_geometry_source, *m_fragment_source;
     string m_vertex_path, m_geometry_path, m_fragment_path;

@@ -3,6 +3,7 @@
 
 #include <SFML/Window.hpp>
 #include "igamestate.h"
+#include "openglversion.h"
 
 namespace gamefw {
 
@@ -19,7 +20,14 @@ class PointLight;
 class Game
 {
 public:
-    Game(const uint display_width, const uint display_height);
+    /**
+     * @brief Creates the game window.
+     *
+     * @param display_width Height in pixels.
+     * @param display_height Width in pixels.
+     * @param opengl_version OpenGL context version. Defaults to OGL_3_3.
+     **/
+    Game(const uint display_width, const uint display_height, const OpenGLVersion opengl_version = OGL_3_3);
 
     ~Game();
 

@@ -5,6 +5,7 @@
 #include <queue>
 
 #include "entity.h"
+#include "openglversion.h"
 
 namespace gamefw {
 
@@ -19,8 +20,9 @@ public:
      *
      * @param display_width Width of display in pixels.
      * @param display_height Height of display in pixels.
-     */
-    Renderer(const GLuint display_width, const GLuint display_height);
+     * @param opengl_version OpenGL version to use in rendering. Defaults to OGL_3_3.
+     **/
+    Renderer(const GLuint display_width, const GLuint display_height, OpenGLVersion opengl_version = OGL_3_3);
     ~Renderer();
     
     /**
@@ -53,6 +55,7 @@ public:
 private:
     uint m_display_width, m_display_height;
     float m_aspect_ratio;
+    const OpenGLVersion m_opengl_version;
     
     struct {
         GLuint gbuffer, pbuffer, ppbuffer;
@@ -74,8 +77,7 @@ private:
     Entity m_ppbuffer;
 
     shared_ptr<Entity> m_camera;
-    GLboolean m_ogl3_enabled;
-
+    
     void initBuffers(const GLuint width, const GLuint height);
     void renderGBuffers();
     void renderEntity(const gamefw::Entity& entity);

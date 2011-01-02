@@ -6,6 +6,7 @@
 #include "../util/objfile.h"
 
 #include "entity.h"
+#include "openglversion.h"
 
 typedef struct _vertex t_vertex;
 
@@ -32,6 +33,14 @@ class EntityFactory
 {
 public:
     /**
+     * @brief Creates EntityFactory.
+     *
+     * @param opengl_version OpenGL version to be used for rendering.
+     **/
+    EntityFactory(const OpenGLVersion opengl_version = OGL_3_3);
+    
+    
+    /**
      * Constructs an Entity from it's file. The format is simple XML.
      *
      * @throw EntityCreationError When the creation fails.
@@ -51,6 +60,8 @@ private:
     void createMaterials(shared_ptr<RenderJob> renderjob, const ObjFile& model) const;
 
     const std::string makeDefineFromEnum(const char* enum_name, int index) const;
+    
+    const OpenGLVersion m_opengl_version;
 };
 
 }

@@ -12,7 +12,7 @@
 
 using namespace gamefw;
 
-FileService::FileService()
+FileService::FileService(const OpenGLVersion opengl_version)
 {
     FreeImage_Initialise( 0 );
     if (!PHYSFS_isInit())
@@ -40,7 +40,7 @@ FileService::FileService()
 
     PHYSFS_mount(basedir.c_str(), NULL, 0); // Mount to root.
 
-    m_entity_factory = new EntityFactory();
+    m_entity_factory = new EntityFactory(opengl_version);
 }
 
 FileService::~FileService()

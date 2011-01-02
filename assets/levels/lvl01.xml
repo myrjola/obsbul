@@ -18,9 +18,9 @@
         <orientation>0.0 0.0 0.0</orientation>
     </entity>
     <pointlight name="lightball">
-        <position>1.0 1.0 -1.0</position>
+        <position>1.0 50.0 -1.0</position>
         <orientation>0.0 0.0 0.0</orientation>
         <color>1.0 1.0 1.0</color>
-        <intensity>100</intensity>
+        <intensity>500</intensity>
     </pointlight>
 </level>

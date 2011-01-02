@@ -8,6 +8,7 @@
 #include <map>
 #include "igameworld.h"
 #include "levelfile.h"
+#include "openglversion.h"
 
 #ifndef PROJECT_NAME
     #define PROJECT_NAME "ObscureBulldozer"
@@ -54,9 +55,12 @@ class FileService
 {
 public:
     /**
-     * Constructor.
-     */
-    FileService();
+     * @brief Constructor.
+     *
+     * @param opengl_version The OpenGL version used in rendering. Defaults to OGL_3_3.
+     **/
+    FileService(const OpenGLVersion opengl_version = OGL_3_3);
+    
     /**
      * Destructor.
      */
