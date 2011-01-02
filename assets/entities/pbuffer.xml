@@ -9,6 +9,7 @@
         <shader_defines>
             ORTHO,
             PBUFFER,
+            BLOOM,
             ANTIALIAS
         </shader_defines>
     </gfx>

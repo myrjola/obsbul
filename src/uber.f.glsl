@@ -150,15 +150,16 @@ void main(void)
             vec3 color = PointLights[i].rgbcolor_and_intensity.rgb;
             float intensity = PointLights[i].rgbcolor_and_intensity.a;
             vec3 to_light = lightpos - position.xyz;
+            color *= intensity;
             float distance = length(to_light);
-            color *= intensity / pow(distance, 2);
+            color /= distance * distance;
             vec3 half_vector = to_viewer + to_light;
             float norm_dot_half = clamp(dot(normal.xyz, normalize(half_vector)), 0.0, 1.0);
             float cos_theta = clamp(dot(normalize(normal.xyz), normalize(to_light)), 0.0, 1.0);
             diffuse_temp += diffuse * color * cos_theta;
             specular_temp += specular * color * pow(norm_dot_half, is_lightsource * shininess);
         }
-        out_diffuse = vec4(diffuse_temp, 1.0);
+        out_diffuse = vec4(diffuse_temp * is_lightsource, 1.0);
         out_specular = vec4(specular_temp, 1.0);
         #ifdef ANTIALIAS
         float factor = detect_edges(pixel_size, 1.0);

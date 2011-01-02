@@ -6,11 +6,12 @@
             <model>floor</model>
             
             <textures>
-                <albedo>spheretex</albedo>
+                <albedo>stones</albedo>
             </textures>
             
             <!-- Shader defines separated with comma -->
             <shader_defines>
+                ALBEDO_TEX,
                 DIFFUSE,
                 SPECULAR,
                 MATERIALS,
