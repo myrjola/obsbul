@@ -19,6 +19,10 @@ m_camera(new Entity),
 m_aspect_ratio((float) display_width / (float) display_height),
 m_opengl_version(opengl_version)
 {
+    // Don't write to zbuffer for transparent objects.
+    glAlphaFunc (GL_GREATER, 0.1) ;
+    glEnable (GL_ALPHA_TEST) ;
+    glClearColor(0.0,0.0,0.0,0.0);
     m_camera->setName("Camera");
     if (m_opengl_version == OGL_3_3) {
         initBuffers(display_width, display_height);

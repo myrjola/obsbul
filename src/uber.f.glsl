@@ -206,25 +206,29 @@ void main(void)
     #ifndef POSTPROC
     {
         vec4 diffuse;
+        float alpha = 1.0;
         #ifdef ALBEDO_TEX
         diffuse = texture(texture0, frag_texcoord);
+        alpha = diffuse.a;
         #endif ALBEDO_TEX
-        #ifndef ALBEDO_TEX
-        diffuse = frag_diffuse;
-        #endif // not ALBEDO_TEX
-        out_diffuse = diffuse;
-        out_specular = vec4(frag_specular);
-        out_normal = vec4(normalize(frag_normal), 1.0);
-        out_position = vec4(frag_worldspace_pos, 1.0);
-        out_extra = vec4(1.0, frag_shininess / shin_encoder, 1.0, 1.0);
+        if (alpha > 0.1) {
+            #ifndef ALBEDO_TEX
+            diffuse = frag_diffuse;
+            #endif // not ALBEDO_TEX
+            out_diffuse = diffuse;
+            out_specular = vec4(frag_specular);
+            out_normal = vec4(normalize(frag_normal), 1.0);
+            out_position = vec4(frag_worldspace_pos, 1.0);
+            out_extra = vec4(1.0, frag_shininess / shin_encoder, 1.0, 1.0);
 
-        #ifdef LIGHTSOURCE
-        out_extra.r = 0.0;
-        #endif // LIGHTSOURCE
+            #ifdef LIGHTSOURCE
+            out_extra.r = 0.0;
+            #endif // LIGHTSOURCE
 
-        #ifdef SKYBOX
-        out_extra.b = 0.0;
-        #endif // SKYBOX
+            #ifdef SKYBOX
+            out_extra.b = 0.0;
+            #endif // SKYBOX
+        }
     }
     #endif // not POSTPROC
     #endif // not PBUFFER

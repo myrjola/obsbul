@@ -114,9 +114,9 @@ GLuint FileService::makeTexture(const string& name)
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
     glTexImage2D(
         GL_TEXTURE_2D, 0,           // target, level
-        GL_RGB8,                    // internal format
+        GL_RGBA8,                    // internal format
         width, height, 0,           // width, height, border
-        GL_BGR, GL_UNSIGNED_BYTE,   // external format, type
+        GL_BGRA, GL_UNSIGNED_BYTE,   // external format, type
         pixels                      // pixels
     );
 
@@ -141,7 +141,7 @@ fipImage* FileService::readImage( const string& name ) const
     if ( !image->load( realpath.c_str() ) ) {
         assert(false); // Shouldn't fail.
     }
-    image->convertTo24Bits();
+    image->convertTo32Bits();
 
     LOG( logINFO ) << filename << " loaded to texture.";
     return image;
