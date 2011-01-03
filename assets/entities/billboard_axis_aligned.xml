@@ -1,0 +1,20 @@
+<?xml version="1.0" standalone=yes>
+    <entity>
+        <name>Axis aligned billboard</name>
+        <desc>Rotated around the y axis to face the viewer.</desc>
+        <gfx>
+            <model>screen</model>
+            
+            <textures>
+                <albedo>spheretex</albedo>
+            </textures>
+            
+            <!-- Shader defines separated with comma -->
+            <shader_defines>
+                ALBEDO_TEX,
+                BILLBOARD_AXIS_ALIGNED,
+                FRUSTUM
+            </shader_defines>
+        </gfx>
+    </entity>
+    

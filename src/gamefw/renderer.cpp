@@ -350,6 +350,8 @@ void Renderer::renderEntity(const Entity& entity)
     glUniformMatrix4fv(location_model, 1, GL_FALSE, &model[0][0]);
     GLint location_normalmatrix = glGetUniformLocation(program_id, "normalmatrix");
     glUniformMatrix4fv(location_normalmatrix, 1, GL_FALSE, &normalmatrix[0][0]);
+    glUniform3fv(glGetUniformLocation(program_id, "viewer_position"),
+                 1, &m_camera->m_position[0]);
 
     // Bind display height and width uniforms.
     GLint location_width = glGetUniformLocation(program_id, "display_width");
@@ -441,8 +443,6 @@ void Renderer::renderPBuffers()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     GLuint program_id = m_gbuffer.getRenderJob()->getShaderProgramID();
     glUseProgram(program_id);
-    glUniform3fv(glGetUniformLocation(program_id, "viewer_position"),
-                 1, &m_camera->m_position[0]);
     glUniform1i(glGetUniformLocation(program_id, "num_pointlights"),
                 num_pointlights);
     renderEntity(m_gbuffer);

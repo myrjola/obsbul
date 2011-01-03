@@ -12,6 +12,7 @@ uniform mat4 normalmatrix;
 uniform mat4 mvp;
 uniform float near_z;
 uniform float far_z;
+uniform vec3 viewer_position;
 
 #endif // POSITION
 
@@ -93,13 +94,24 @@ layout(std140) uniform materials {
 void main(void)
 {
     mat4 mvp = mvp; 
+
     #ifdef SKYBOX
     mvp[3] = vec4(0.0, 0.0, -2.0 * far_z * near_z / (far_z - near_z), 0.0);
     #endif // SKYBOX
 
+    #ifdef BILLBOARD_AXIS_ALIGNED
+    vec2 to_viewer = normalize(viewer_position.xz - model[3].xz);
+    float angle_y = acos(normalize(-to_viewer.x) * -to_viewer.y);
+    if (to_viewer.x > 0.0) {
+        angle_y += radians(180.0);
+    }
+    #endif // BILLBOARD_AXIS_ALIGNED
+
     #ifdef FRUSTUM
     gl_Position = mvp
-                #ifdef SKYBOX
+                #ifdef BILLBOARD_AXIS_ALIGNED
+                * rotate_x(angle_y)
+                #elif defined SKYBOX
                 * scale(far_z / 2.0)
                 #elif defined HALFSIZE
                 * scale(0.5)

@@ -1,6 +1,10 @@
 <?xml version="1.0" standalone=yes>
 <level>
     <name>Test level 1</name>
+    <entity name="billboard_axis_aligned">
+        <position>10.0 3.0 -5.0</position>
+        <orientation>0.0 0.0 1.5</orientation>
+    </entity>
     <entity name="sphere">
         <position>3.0 3.0 -5.0</position>
         <orientation>0.0 0.0 1.5</orientation>
