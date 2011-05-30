@@ -15,11 +15,6 @@ int main(int argc, char* argv[])
 {
     PHYSFS_init(argv[0]);
 
-    int status = glewInit();
-    if (GLEW_OK != status) {
-        LOG(logERROR) << "Error:" << glewGetErrorString(status) << "\n";
-    }
-
     FileService fileservice(OGL_3_3);
     Locator::registerFileService(fileservice);
     ShaderFactory shaderfactory(OGL_3_3);

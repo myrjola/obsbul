@@ -26,6 +26,11 @@ Game::Game(const uint display_width, const uint display_height,
         LOG(logERROR) << "No support for given OpenGL version.";
         throw OpenGLError();
     }
+    int status = glewInit();
+    if (GLEW_OK != status) {
+        LOG(logERROR) << "GLEW: " << glewGetErrorString(status) << "\n";
+    }
+
     
     m_main_window.Create(sf::VideoMode(display_width, display_height,
                                        24), "Test", sf::Style::Default,
@@ -33,7 +38,6 @@ Game::Game(const uint display_width, const uint display_height,
     m_main_window.SetActive();
     m_main_window.EnableKeyRepeat(false);
     m_main_window.ShowMouseCursor(false);
-    m_main_window.UseVerticalSync(true);
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);

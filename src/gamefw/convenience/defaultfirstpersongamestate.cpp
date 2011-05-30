@@ -26,7 +26,7 @@ UpdateStatus DefaultFirstPersonGameState::update()
     sf::Window* main_window = m_parent->getMainWindow();
     sf::Event event;
     const sf::Input& input_state = main_window->GetInput();
-    while (main_window->GetEvent(event)) {
+    while (main_window->PollEvent(event)) {
         if (event.Type == sf::Event::Closed) {
             return UPDATE_QUIT;
         } else if (event.Type == sf::Event::KeyPressed) {

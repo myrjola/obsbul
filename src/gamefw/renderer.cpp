@@ -2,7 +2,6 @@
 #include "../common.h"
 #include "gamefw.h"
 
-#include <glm/gtc/matrix_projection.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
