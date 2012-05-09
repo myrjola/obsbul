@@ -26,14 +26,19 @@ Game::Game(const uint display_width, const uint display_height,
         LOG(logERROR) << "No support for given OpenGL version.";
         throw OpenGLError();
     }
+    int status = glewInit();
+    if (GLEW_OK != status) {
+        LOG(logERROR) << "Error:" << glewGetErrorString(status) << "\n";
+    }
+
     
-    m_main_window.Create(sf::VideoMode(display_width, display_height,
+    m_main_window.create(sf::VideoMode(display_width, display_height,
                                        24), "Test", sf::Style::Default,
                          m_main_window_context);
-    m_main_window.SetActive();
-    m_main_window.EnableKeyRepeat(false);
-    m_main_window.ShowMouseCursor(false);
-    m_main_window.UseVerticalSync(true);
+    m_main_window.setActive();
+    m_main_window.setKeyRepeatEnabled(false);
+    m_main_window.setMouseCursorVisible(false);
+    m_main_window.setVerticalSyncEnabled(true);
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -43,7 +48,7 @@ Game::Game(const uint display_width, const uint display_height,
 
 Game::~Game()
 {
-    m_main_window.Close();
+    m_main_window.close();
 }
 
 sf::Window* Game::getMainWindow()
@@ -55,9 +60,9 @@ UpdateStatus Game::update()
 {
     UpdateStatus status = m_active_gamestate->update();
     m_renderer->render();
-    m_main_window.Display();
+    m_main_window.display();
     if (status == UPDATE_QUIT) {
-        m_main_window.Close();
+        m_main_window.close();
     }
     return status;
 }

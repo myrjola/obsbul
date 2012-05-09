@@ -7,8 +7,9 @@ m_parent(parent),
 m_controller(controllable)
 {
     sf::Window* main_window = m_parent->getMainWindow();
-    m_window_middle_x = main_window->GetWidth() / 2;
-    m_window_middle_y = main_window->GetHeight() / 2;
+    const sf::Vector2u windowsize = main_window->getSize();
+    m_window_middle_x = windowsize.x / 2;
+    m_window_middle_y = windowsize.y / 2;
 }
 
 DefaultFirstPersonGameState::~DefaultFirstPersonGameState()
@@ -21,38 +22,41 @@ void DefaultFirstPersonGameState::changeControlledEntity(shared_ptr< Entity > co
     m_controller = DefaultFirstPersonController(controllable);
 }
 
+
 UpdateStatus DefaultFirstPersonGameState::update()
 {
     sf::Window* main_window = m_parent->getMainWindow();
     sf::Event event;
-    const sf::Input& input_state = main_window->GetInput();
-    while (main_window->GetEvent(event)) {
-        if (event.Type == sf::Event::Closed) {
+    while (main_window->pollEvent(event)) {
+        if (event.type == sf::Event::Closed) {
             return UPDATE_QUIT;
-        } else if (event.Type == sf::Event::KeyPressed) {
-            switch (event.Key.Code) {
-                case (sf::Key::R):
+        } else if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case (sf::Keyboard::R):
+                    LOG(logERROR) << "Reloading shaders.";
                     gamefw::Locator::getShaderFactory().reloadShaders();
                     break;
-                case (sf::Key::Escape):
+                case (sf::Keyboard::Escape):
                     return UPDATE_QUIT;
                 default:
-                    m_controller.keyPressed(event.Key);
+                    m_controller.keyPressed(event.key);
             }
-        } else if (event.Type == sf::Event::KeyReleased) {
-            m_controller.keyReleased(event.Key);
+        } else if (event.type == sf::Event::KeyReleased) {
+            m_controller.keyReleased(event.key);
         }
     }
-
-    int x = input_state.GetMouseX();
-    int y = input_state.GetMouseY();
-    m_controller.mouseMoved(x, y, input_state);
+    
+    sf::Vector2i mousepos = sf::Mouse::getPosition(*main_window);
+    int x = mousepos.x;
+    int y = mousepos.y;
+    m_controller.mouseMoved(x, y);
 
     // Center mouse if outside of window.
     if (glm::abs(x - m_window_middle_x) > 100 ||
         glm::abs(y - m_window_middle_y) > 100) {
         m_controller.newMousePosition(m_window_middle_x, m_window_middle_y);
-        main_window->SetCursorPosition(m_window_middle_x, m_window_middle_y);
+        const sf::Vector2i mousepos = sf::Vector2i(m_window_middle_x, m_window_middle_y);
+        sf::Mouse::setPosition(mousepos, *main_window);
     }
     return UPDATE_NORMAL;
 }

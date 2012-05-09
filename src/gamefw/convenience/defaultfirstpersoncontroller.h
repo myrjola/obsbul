@@ -24,8 +24,7 @@ public:
 
     virtual void keyReleased(sf::Event::KeyEvent& keyevent);
 
-    virtual void mouseMoved(const int x, const int y,
-                            const sf::Input& input_state);
+    virtual void mouseMoved(const int x, const int y);
 
     virtual void newMousePosition(const int width, const int height);
 

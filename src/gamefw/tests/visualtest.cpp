@@ -15,11 +15,6 @@ int main(int argc, char* argv[])
 {
     PHYSFS_init(argv[0]);
 
-    int status = glewInit();
-    if (GLEW_OK != status) {
-        LOG(logERROR) << "Error:" << glewGetErrorString(status) << "\n";
-    }
-
     FileService fileservice(OGL_3_3);
     Locator::registerFileService(fileservice);
     ShaderFactory shaderfactory(OGL_3_3);
@@ -50,10 +45,10 @@ int main(int argc, char* argv[])
     
 
     while (true) {
-        float time_since_draw = clock.GetElapsedTime();
+        float time_since_draw = clock.getElapsedTime().asSeconds();
         if (time_since_draw >= 1.0f/60) {
             gameworld.update();
-            clock.Reset();
+            clock.restart();
             foreach(shared_ptr<Entity> entity, entitylist) {
                 renderer->addToRenderQueue(entity);
             }

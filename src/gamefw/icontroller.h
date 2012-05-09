@@ -32,11 +32,11 @@ public:
     /**
      * @brief Input processing on mouse movement.
      *
-     * @param event The caught event.
+     * @param x mouse x-coordinate relative to window.
+     * @param y mouse y-coordinate relative to window.
      * @return void
      **/
-    virtual void mouseMoved(const int x, const int y,
-                            const sf::Input& input_state) = 0;
+    virtual void mouseMoved(const int x, const int y) = 0;
 
     
     /**
